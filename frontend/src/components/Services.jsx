@@ -1,6 +1,116 @@
 import { useState } from 'react';
 import './Services.css';
 
+function ContactForm() {
+  const [formData, setFormData] = useState({
+    nombre: '',
+    email: '',
+    telefono: '',
+    asunto: '',
+    mensaje: ''
+  });
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Aquí se enviaría a un backend
+    console.log('Formulario enviado:', formData);
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setFormData({ nombre: '', email: '', telefono: '', asunto: '', mensaje: '' });
+    }, 3000);
+  };
+
+  return (
+    <form className="contact-form" onSubmit={handleSubmit}>
+      <div className="form-row">
+        <div className="form-group">
+          <label htmlFor="nombre">Nombre Completo *</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            value={formData.nombre}
+            onChange={handleChange}
+            required
+            placeholder="Tu nombre"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="email">Email *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            placeholder="tu@email.com"
+          />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-group">
+          <label htmlFor="telefono">Teléfono</label>
+          <input
+            type="tel"
+            id="telefono"
+            name="telefono"
+            value={formData.telefono}
+            onChange={handleChange}
+            placeholder="09X XXXX XXX"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="asunto">Asunto *</label>
+          <input
+            type="text"
+            id="asunto"
+            name="asunto"
+            value={formData.asunto}
+            onChange={handleChange}
+            required
+            placeholder="¿En qué podemos ayudarte?"
+          />
+        </div>
+      </div>
+
+      <div className="form-group full">
+        <label htmlFor="mensaje">Mensaje *</label>
+        <textarea
+          id="mensaje"
+          name="mensaje"
+          value={formData.mensaje}
+          onChange={handleChange}
+          required
+          rows="6"
+          placeholder="Cuéntanos más sobre lo que necesitas..."
+        ></textarea>
+      </div>
+
+      <button type="submit" className="submit-btn">
+        📧 Enviar Mensaje
+      </button>
+
+      {submitted && (
+        <div className="success-message">
+          ✅ ¡Gracias por tu mensaje! Nos pondremos en contacto pronto.
+        </div>
+      )}
+    </form>
+  );
+}
+
 function Services({ usuario, onBack }) {
   const [selectedService, setSelectedService] = useState(null);
 
@@ -169,6 +279,14 @@ function Services({ usuario, onBack }) {
             <p>📱 Oficina: 032 944 608</p>
             <p>📧 Email: israelmendoza18@hotmail.com</p>
             <button className="contact-btn">Contáctanos Ahora</button>
+          </div>
+
+          <div className="detail-section contact-form-section">
+            <h2>📞 Comuníquese con Nosotros</h2>
+            <p className="contact-intro">
+              Puede comunicarse con nosotros para solicitar información, o presupuestar el servicio exequial que requiera. Será para nosotros un gusto atenderlo, por favor llene el siguiente formulario.
+            </p>
+            <ContactForm />
           </div>
         </div>
       </div>
