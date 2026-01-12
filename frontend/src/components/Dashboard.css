@@ -528,7 +528,6 @@
 
 .obituario-image {
   width: 100%;
-  max-height: 400px;
   overflow: hidden;
   background: #f0f0f0;
 }
@@ -553,7 +552,7 @@
 
 .recuerdo-text {
   color: #555;
-  font-size: 1.1em;
+  font-size: 0.95em;
   line-height: 1.8;
   margin: 0;
   font-style: italic;
@@ -573,21 +572,22 @@
 
 .mortuorio-inicio {
   color: #666;
-  font-size: 1.1em;
+  font-size: 0.95em;
   margin: 10px 0;
   font-weight: 500;
 }
 
 .difunto-nombre {
   color: #2b2f38;
-  font-size: 1.5em;
+  font-size: 1.3em;
   margin: 20px 0;
 }
 
 .familiares-info p {
   color: #555;
-  margin: 12px 0;
+  margin: 10px 0;
   line-height: 1.6;
+  font-size: 0.95em;
 }
 
 .comunicado {
@@ -601,6 +601,7 @@
   color: #555;
   line-height: 1.8;
   margin: 10px 0;
+  font-size: 0.95em;
 }
 
 .agradecimiento {
@@ -621,6 +622,7 @@
 .datos-servicio p {
   color: #555;
   margin: 8px 0;
+  font-size: 0.9em;
 }
 
 .comentarios-section {
