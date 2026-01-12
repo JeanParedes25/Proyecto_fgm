@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .auth-container {
   position: relative;
   display: flex;
@@ -35,8 +43,12 @@
   text-align: center;
   color: #2b2f38;
   margin-bottom: 24px;
-  font-size: 27px;
-  letter-spacing: 0.3px;
+  font-size: 42px;
+  letter-spacing: 2px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  word-spacing: 2px;
 }
 
 .form-group {
