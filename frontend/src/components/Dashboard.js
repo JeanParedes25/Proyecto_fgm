@@ -246,16 +246,6 @@ function Dashboard({ usuario, isGuest, onLogout }) {
             </div>
           </div>
 
-          <div className="quick-access">
-            <button 
-              className="quick-btn"
-              onClick={() => setActiveSection('services')}
-            >
-              <span className="btn-icon">🕊️</span>
-              <span className="btn-text">Ver Nuestros Servicios</span>
-            </button>
-          </div>
-
           <div className="content-section">
             <h3>📖 Información de la Empresa</h3>
             <div className="public-content">
@@ -283,9 +273,125 @@ function Dashboard({ usuario, isGuest, onLogout }) {
       )}
 
       {activeSection === 'obituario' && (
-        <div className="content-section">
-          <h2>📰 Obituario Online</h2>
-          <p>Sección de Obituario Online en desarrollo...</p>
+        <div className="content-section obituario-section">
+          <div className="obituario-header">
+            <h2>📰 Obituario Online</h2>
+            <p className="obituario-subtitle">Funerales Gonzalo Mendoza</p>
+          </div>
+
+          <div className="obituario-search">
+            <h3>🔍 Buscador Obituario Online</h3>
+            <p className="search-description">Puede utilizar nuestro buscador para encontrar algún servicio mortuorio brindado por Funerales Gonzalo Mendoza.</p>
+            <div className="search-box">
+              <input 
+                type="text" 
+                placeholder="Ingrese el nombre a buscar..." 
+                className="search-input"
+              />
+              <button className="search-btn">Buscar</button>
+            </div>
+          </div>
+
+          <div className="servicios-recientes">
+            <h3>📋 Servicios Recientes</h3>
+            
+            <div className="obituario-card">
+              <div className="obituario-image">
+                <img src="https://i2.wp.com/funeralesgonzalomendoza.com/wp-content/uploads/2021/05/190052437_2851041938496209_4082308709424895814_n.png?w=900&ssl=1" alt="Segundo Enrique Adriano Campoverde" />
+              </div>
+              
+              <div className="obituario-content">
+                <div className="obituario-recuerdo">
+                  <p className="recuerdo-text">
+                    Recordamos tus ojos llenos de alegría y bondad, tu sonrisa cariñosa que nos da la fuerza para seguir adelante, 
+                    tu inmensa ternura y generosidad con la que te ganaste el cariño de todos.
+                    Tu ejemplo y enseñanzas de hijo, hermano, esposo, padre, abuelito cariñoso, abnegado, responsable, alegre y 
+                    solidario perdurarán por siempre.
+                  </p>
+                </div>
+
+                <div className="parte-mortuorio">
+                  <h4>⚱️ Parte Mortuorio</h4>
+                  <p className="mortuorio-inicio">
+                    Descansa en la paz del Señor el que en vida fue Señor.
+                  </p>
+                  <p className="difunto-nombre"><strong>Segundo Enrique Adriano Campoverde</strong></p>
+                  
+                  <div className="familiares-info">
+                    <p><strong>Sus padres:</strong> Luis Adriano (+) y Ana Campoverde (+)</p>
+                    <p><strong>Su Esposa:</strong> Zoila Victoria Adriano Escudero</p>
+                    <p><strong>Sus Hijos:</strong> Fernando, Piedad, Guillermo, Guadalupe (+), Elsa, Margoth y Miriam Adriano Adriano</p>
+                    <p><strong>Sus Hijos Políticos:</strong> Elizabeth Cuvi, Luis Tixi, Mariana Echeverría, Juan Bonilla, Mauro Vargas y Juan Pomaino</p>
+                    <p><strong>Sus Nietos:</strong> Anderson y Juleidy Adriano Cuvi, Alexandra, Erick y Cristopher Tixi Adriano, María José Adriano Echeverría; Joel, Ariel y Ainhoa Vargas Adriano; Génesis, Danilo, Daniela y Samara Bonilla Adriano; Ismael Cuñes Adriano y Mayte Pomaino Adriano</p>
+                    <p><strong>Sus Hermanos:</strong> Humberto (+), Oswaldo (+), Rafael (+), Vicente (+), Gilberto y Narcisa Adriano Campoverde.</p>
+                    <p><strong>Sus Hermanos Políticos:</strong> Ana Moromenacho, Olga Cuzquicusma, Dalinda Quiroz, Etelvina Veloz y Gustavo López; Pablo, Domitila, Grimanesa y Rosa Adriano Escudero</p>
+                  </div>
+
+                  <div className="comunicado">
+                    <p>
+                      Tíos, sobrinos, primos y demás familiares tienen el pesar de comunicar su sensible fallecimiento acaecido el 
+                      Día Jueves 27 de mayo e invitan a la velación de sus restos mortales desde la sala "B" de Funerales Gonzalo Mendoza, 
+                      donde se oficiará sus honras fúnebres, el día Viernes 28 de mayo a las 11 de la mañana y de allí al Cementerio General 
+                      para su cristiana sepultura.
+                    </p>
+                    <p className="agradecimiento">
+                      <em>Por este acto de fe cristiana los familiares anticipan su sincero agradecimiento.</em>
+                    </p>
+                  </div>
+
+                  <div className="datos-servicio">
+                    <p><strong>Riobamba, mayo de 2021</strong></p>
+                    <p><strong>Funerales Gonzalo Mendoza</strong></p>
+                    <p>España y Olmedo | 2944608 / 0992829095</p>
+                  </div>
+                </div>
+
+                <div className="comentarios-section">
+                  <h4>💬 Comparta su comentario con los deudos</h4>
+                  
+                  <form className="comentarios-form">
+                    <div className="form-group">
+                      <label>Comentario *</label>
+                      <textarea 
+                        placeholder="Deja tu comentario aquí..." 
+                        rows="5"
+                        required
+                      ></textarea>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Nombre *</label>
+                        <input type="text" placeholder="Tu nombre" required />
+                      </div>
+                      <div className="form-group">
+                        <label>Correo electrónico *</label>
+                        <input type="email" placeholder="Tu correo" required />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Web (Opcional)</label>
+                      <input type="url" placeholder="Tu sitio web" />
+                    </div>
+
+                    <div className="form-group checkbox">
+                      <label>
+                        <input type="checkbox" />
+                        Recibir un email con los siguientes comentarios a esta entrada
+                      </label>
+                      <label>
+                        <input type="checkbox" />
+                        Recibir un email con cada nueva entrada
+                      </label>
+                    </div>
+
+                    <button type="submit" className="submit-btn">Publicar Comentario</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
