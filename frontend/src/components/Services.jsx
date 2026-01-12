@@ -188,11 +188,86 @@ function Services({ usuario, onBack }) {
         '🛌 Cuarto de descanso privado',
         '🔬 Laboratorio de tanatopraxia'
       ]
+    },
+    {
+      id: 'transport',
+      name: 'Servicio de Transporte',
+      icon: '🚗',
+      color: '#6c757d',
+      description: 'Modernas unidades móviles',
+      intro: 'Le ofrecemos el servicio de Transporte en Auto-carrozas fúnebres modernas y elegantes, antes, durante y después del acompañamiento al cementerio. Otro de los servicios que nos distingue es el del traslado desde cualquier centro hospitalario del IESS, hacia nuestra funeraria.',
+      isTransport: true
     }
   ];
 
   if (selectedService) {
     const service = services.find(s => s.id === selectedService);
+    
+    // Vista especial para Servicio de Transporte
+    if (service.isTransport) {
+      return (
+        <div className="service-detail">
+          <button className="back-button" onClick={() => setSelectedService(null)}>
+            ← Volver a Servicios
+          </button>
+
+          <div className="detail-header">
+            <h1>{service.icon} {service.name}</h1>
+            <p className="subtitle">🕊️ {service.description} 🕊️</p>
+          </div>
+
+          <div className="detail-container">
+            <div className="detail-section intro">
+              <h2>🚗 Nuestro Servicio</h2>
+              <p>{service.intro}</p>
+            </div>
+
+            <div className="detail-section">
+              <h2>🚙 Carrozas Fúnebres</h2>
+              <div className="transport-info">
+                <p>Contamos con modernas unidades de transporte para brindarle el mejor servicio en los momentos más importantes.</p>
+                <div className="transport-features">
+                  <div className="feature-item">
+                    <span className="feature-icon">✨</span>
+                    <span>Auto-carrozas modernas y elegantes</span>
+                  </div>
+                  <div className="feature-item">
+                    <span className="feature-icon">🏥</span>
+                    <span>Traslado desde centros hospitalarios del IESS</span>
+                  </div>
+                  <div className="feature-item">
+                    <span className="feature-icon">⛪</span>
+                    <span>Acompañamiento al cementerio</span>
+                  </div>
+                  <div className="feature-item">
+                    <span className="feature-icon">🏢</span>
+                    <span>Traslado a nuestra funeraria</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="detail-section cta">
+              <h3>¿Deseas más información?</h3>
+              <p>📞 Celular: 099 28 29 095 | 099 90 90 860</p>
+              <p>📱 Oficina: 032 944 608</p>
+              <p>📧 Email: israelmendoza18@hotmail.com</p>
+              <button className="contact-btn">Contáctanos Ahora</button>
+            </div>
+
+            <div className="detail-section contact-form-section">
+              <h2>📞 Comuníquese con Nosotros</h2>
+              <p className="contact-intro">
+                Puede comunicarse con nosotros para solicitar información, o presupuestar el servicio exequial que requiera. Será para nosotros un gusto atenderlo, por favor llene el siguiente formulario.
+              </p>
+              <ContactForm />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Vista normal para servicios exequiales
     return (
       <div className="service-detail">
         <button className="back-button" onClick={() => setSelectedService(null)}>

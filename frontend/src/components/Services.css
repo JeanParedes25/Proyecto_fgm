@@ -472,6 +472,60 @@
   }
 }
 
+/* Transport Service Styles */
+.transport-info {
+  padding: 20px 0;
+}
+
+.transport-info > p {
+  font-size: 16px;
+  color: #2b2f38;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.transport-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f9f7f2 0%, #f5f2ed 100%);
+  border-radius: 8px;
+  border-left: 4px solid #6c757d;
+  transition: all 0.3s;
+}
+
+.feature-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
+}
+
+.feature-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.feature-item span:last-child {
+  color: #2b2f38;
+  font-size: 15px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .transport-features {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .services-container {
     padding: 15px;
