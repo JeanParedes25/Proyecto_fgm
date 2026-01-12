@@ -13,11 +13,24 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #f5f2ed 0%, #eae3d9 100%);
+            background: url('logo_fgm.png') center/cover no-repeat fixed;
+            background-color: linear-gradient(135deg, #f5f2ed 0%, #eae3d9 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
         }
 
         .auth-card {
@@ -81,6 +94,27 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
         }
 
+        .switch-auth {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .link-button {
+            background: none;
+            border: none;
+            color: #c49a6c;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+            font-size: inherit;
+        }
+
+        .link-button:hover {
+            color: #a77c4f;
+        }
+
         .error {
             background-color: #f4e2e2;
             color: #8c2f2f;
@@ -100,7 +134,6 @@
 </head>
 <body>
     <div class="auth-card">
-        <img src="logo_fgm.png" alt="FGM Logo" style="width: 80px; height: 80px; margin: 0 auto 20px; display: block;">
         <h1>Inicio de Sesión</h1>
         <form id="loginForm">
             <div class="form-group">
@@ -124,9 +157,11 @@
             <div id="error" class="error"></div>
             <button type="submit">Ingresar</button>
         </form>
-        <p class="info">
-            Demo - Proyecto FGM<br>
-            <small>Backend en desarrollo</small>
+        <p class="switch-auth">
+            ¿No tienes cuenta? 
+            <button type="button" class="link-button" onclick="alert('Contacta al administrador para crear una cuenta')">
+                Regístrate aquí
+            </button>
         </p>
     </div>
 
