@@ -274,6 +274,24 @@
   line-height: 1.5;
 }
 
+.include-item.additional {
+  background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+  border-left-color: #ffc107;
+}
+
+.include-item.additional .check-icon {
+  color: #ffc107;
+}
+
+.include-item.premium {
+  background: linear-gradient(135deg, #fff0f8 0%, #fff5fb 100%);
+  border-left-color: #e91e63;
+}
+
+.include-item.premium .check-icon {
+  color: #e91e63;
+}
+
 .extra-services {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));

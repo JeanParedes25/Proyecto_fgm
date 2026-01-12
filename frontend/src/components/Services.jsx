@@ -39,33 +39,43 @@ function Services({ usuario, onBack }) {
       name: 'Servicio Exequial VIP Premium',
       icon: '👑',
       color: '#a77c4f',
+      description: 'Moderna sala de velación',
+      intro: 'Sabemos lo difícil que son aquellos momentos de pérdida de un ser querido y basados en ese sentimiento de empatía, queremos brindarle el mejor servicio para que únicamente tenga en su mente el dar el último adiós. Es por ello que Funerales Gonzalo Mendoza se encarga de todos los aspectos del servicio exequial VIP, en nuestras modernas salas de velación.',
       includes: [
-        'Financiamiento a 5 años',
-        'Congelación del Precio',
-        'Transferible',
-        'Sin límite de edad',
-        'Trámites legales',
-        'Traslado en carroza',
-        'Capilla ardiente',
+        'Cofre de madera señorial',
+        'Trámites legales (Registro Civil, Jefatura civil, entre otros)',
+        'Traslado en Auto-Carroza a las salas de velación',
+        'Servicio Religioso',
+        'Acompañamiento musical ceremonia religiosa',
         'Tanatopraxia',
-        'Cofre',
-        'Sala de velación premium',
-        'Servicio religioso personalizado',
-        'Libro recordatorio de lujo',
-        'Servicios de Bar',
+        'Obituario Online',
+        'Ofrendas Online',
+        'Libro recordatorio',
+        'Formolización',
         'Servicio telefónico (Llamadas locales)',
-        'Servicio personalizado 24/7',
-        'Foto póster a color'
+        'CAMPO SANTO O CREMACIÓN'
       ],
-      halls: ['Sala A Premium', 'Sala B Premium', 'Sala C Premium'],
-      capacity: '100 personas',
+      additional: [
+        'Alquiler de bóveda en el cementerio municipal de Riobamba',
+        'Cremación con la correspondiente tramitación y traslado'
+      ],
+      noChargeServices: [
+        'Publicación en diario local 1/4 de página',
+        'Acompañamiento con música instrumental (noche de velación)',
+        'Música ambiental',
+        '2 Fotos póster recordatorio a color',
+        'Servicios de guardanía privada',
+        'Gestión para la adquisición del nicho en el cementerio',
+        'Salas virtuales con cámaras IP (Transmición vía internet)'
+      ],
+      halls: ['Sala VIP'],
+      capacity: '500 personas',
       extraServices: [
         '🅿️ Parqueadero privado reservado',
-        '🛋️ Sala de espera VIP',
-        '☕ Cafetería premium con servicio de bar',
-        '🛌 Área de descanso privada',
-        '📱 Servicio telefónico incluido',
-        '🎵 Música ambiental personalizada'
+        '🛋️ Salas de espera cómodas',
+        '☕ Cafetería premium',
+        '🛌 Cuarto de descanso privado',
+        '🔬 Laboratorio de tanatopraxia'
       ]
     }
   ];
@@ -80,13 +90,13 @@ function Services({ usuario, onBack }) {
 
         <div className="detail-header">
           <h1>{service.icon} {service.name}</h1>
-          <p className="subtitle">🕊️ Despídete con dignidad y respeto 🕊️</p>
+          <p className="subtitle">🕊️ {service.description} 🕊️</p>
         </div>
 
         <div className="detail-container">
           <div className="detail-section intro">
             <h2>💝 Nuestro Compromiso</h2>
-            <p>Sabemos lo difícil que son aquellos momentos de pérdida de un ser querido y basados en ese sentimiento de empatía, queremos brindarle el mejor servicio para que únicamente tenga en su mente el dar el último adiós. Es por ello que Funerales Gonzalo Mendoza se encarga de todos los aspectos del servicio exequial para su comodidad y tranquilidad.</p>
+            <p>{service.intro}</p>
           </div>
 
           <div className="detail-section">
@@ -113,6 +123,34 @@ function Services({ usuario, onBack }) {
               ))}
             </div>
           </div>
+
+          {service.additional && service.additional.length > 0 && (
+            <div className="detail-section">
+              <h2>🔑 Servicios Adicionales</h2>
+              <div className="includes-grid">
+                {service.additional.map((item, idx) => (
+                  <div key={idx} className="include-item additional">
+                    <span className="check-icon">⭐</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {service.noChargeServices && service.noChargeServices.length > 0 && (
+            <div className="detail-section">
+              <h2>💎 Valores Agregados sin Costo</h2>
+              <div className="includes-grid">
+                {service.noChargeServices.map((item, idx) => (
+                  <div key={idx} className="include-item premium">
+                    <span className="check-icon">✨</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="detail-section">
             <h2>🏢 Servicios Adicionales en Nuestras Instalaciones</h2>
