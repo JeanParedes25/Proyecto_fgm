@@ -73,7 +73,21 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeh(
+              placeholder="tu@email.com"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Contraseña:</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              placeholder="••••••••"
+            />
+          </div>
+          {error && (
             <div className="error-message">
               {error}
               {showRegisterPrompt && (
@@ -89,21 +103,7 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
                 </div>
               )}
             </div>
-          )
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Contraseña:</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
-          </div>
-          {error && <div className="error-message">{error}</div>}
+          )}
           <button type="submit" disabled={loading}>
             {loading ? 'Cargando...' : 'Ingresar'}
           </button>
