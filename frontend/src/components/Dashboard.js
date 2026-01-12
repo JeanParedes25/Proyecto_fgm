@@ -215,6 +215,24 @@ function Dashboard({ usuario, isGuest, onLogout }) {
         >
           🕊️ Servicios Exequiales
         </button>
+        <button 
+          className={activeSection === 'obituario' ? 'active' : ''}
+          onClick={() => setActiveSection('obituario')}
+        >
+          📰 Obituario Online
+        </button>
+        <button 
+          className={activeSection === 'seguro' ? 'active' : ''}
+          onClick={() => setActiveSection('seguro')}
+        >
+          🛡️ Seguro Provisor
+        </button>
+        <button 
+          className={activeSection === 'contacto' ? 'active' : ''}
+          onClick={() => setActiveSection('contacto')}
+        >
+          📞 Contacto
+        </button>
       </nav>
 
       {activeSection === 'dashboard' && (
@@ -262,6 +280,41 @@ function Dashboard({ usuario, isGuest, onLogout }) {
 
       {activeSection === 'services' && (
         <Services usuario={usuario} onBack={() => setActiveSection('dashboard')} />
+      )}
+
+      {activeSection === 'obituario' && (
+        <div className="content-section">
+          <h2>📰 Obituario Online</h2>
+          <p>Sección de Obituario Online en desarrollo...</p>
+        </div>
+      )}
+
+      {activeSection === 'seguro' && (
+        <div className="content-section">
+          <h2>🛡️ Seguro Provisor</h2>
+          <p>Información sobre Seguro Provisor en desarrollo...</p>
+        </div>
+      )}
+
+      {activeSection === 'contacto' && (
+        <div className="content-section">
+          <h2>📞 Contáctenos</h2>
+          <div className="public-content">
+            <div className="info-card">
+              <h4>📞 Teléfonos</h4>
+              <p>Celular: 099 28 29 095 | 099 90 90 860</p>
+              <p>Oficina: 032 944 608</p>
+            </div>
+            <div className="info-card">
+              <h4>📧 Email</h4>
+              <p>israelmendoza18@hotmail.com</p>
+            </div>
+            <div className="info-card">
+              <h4>📍 Dirección</h4>
+              <p>España y Olmedo, Riobamba, Ecuador</p>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
