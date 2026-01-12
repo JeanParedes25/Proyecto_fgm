@@ -104,7 +104,7 @@ function ContactForm() {
 
       {submitted && (
         <div className="success-message">
-          ✅ ¡Gracias por tu mensaje! Nos pondremos en contacto pronto.
+          ✅ ¡Gracias por su mensaje! Nos pondremos en contacto pronto.
         </div>
       )}
     </form>
@@ -120,6 +120,7 @@ function Services({ usuario, onBack }) {
       name: 'Servicio Exequial Estándar',
       icon: '⚱️',
       color: '#c49a6c',
+      intro: 'Sabemos los difícil que son aquellos momentos de pérdida de un ser querido y basados en ese sentimiento de empatía, queremos brindarle el mejor servicio para que únicamente tenga en su mente el dar el último adiós. Es por ello que Funerales Gonzalo Mendoza se encarga de todos los aspectos del servicio exequial para su comodidad y tranquilidad.',
       includes: [
         'Trámites Legales',
         'Salas de velación (A, B o C)',
@@ -263,7 +264,7 @@ function Services({ usuario, onBack }) {
           )}
 
           <div className="detail-section">
-            <h2>🏢 Servicios Adicionales en Nuestras Instalaciones</h2>
+            <h2>🏢 Le Brindamos También</h2>
             <div className="extra-services">
               {service.extraServices.map((item, idx) => (
                 <div key={idx} className="extra-item">
@@ -274,7 +275,7 @@ function Services({ usuario, onBack }) {
           </div>
 
           <div className="detail-section cta">
-            <h3>¿Deseas más información?</h3>
+            <h3>¿Desea más información?</h3>
             <p>📞 Celular: 099 28 29 095 | 099 90 90 860</p>
             <p>📱 Oficina: 032 944 608</p>
             <p>📧 Email: israelmendoza18@hotmail.com</p>
