@@ -5,6 +5,7 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showRegisterPrompt, setShowRegisterPrompt] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const containerStyle = {
@@ -36,13 +37,27 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
         localStorage.setItem('usuario', JSON.stringify(data.cliente));
         onLoginSuccess(data.cliente);
       } else {
-        setError(data.error || 'Error en el login');
+        const errorMsg = data.error || 'Error en el login';
+        setError(errorMsg);
+        
+        // Si es un error de usuario no encontrado, mostrar prompt de registro
+        if (errorMsg.toLowerCase().includes('no encontrado') || 
+            errorMsg.toLowerCase().includes('no existe') ||
+            errorMsg.toLowerCase().includes('invalid')) {
+          setShowRegisterPrompt(true);
+        }
       }
     } catch (err) {
       setError('Error de conexión: ' + err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRegisterRedirect = () => {
+    setShowRegisterPrompt(false);
+    setError('');
+    onSwitchToRegister();
   };
 
   return (
@@ -58,7 +73,23 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="tu@email.com"
+              placeh(
+            <div className="error-message">
+              {error}
+              {showRegisterPrompt && (
+                <div className="register-prompt">
+                  <p>Parece que no estás registrado aún.</p>
+                  <button 
+                    type="button"
+                    className="register-prompt-btn"
+                    onClick={handleRegisterRedirect}
+                  >
+                    Crear Cuenta Ahora
+                  </button>
+                </div>
+              )}
+            </div>
+          )
             />
           </div>
           <div className="form-group">

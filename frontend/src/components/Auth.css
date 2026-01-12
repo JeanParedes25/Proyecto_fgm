@@ -101,6 +101,40 @@
   border: 1px solid #d9b2b2;
 }
 
+.register-prompt {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #d9b2b2;
+  background: #fff0f0;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.register-prompt p {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.register-prompt-btn {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #c49a6c 0%, #a77c4f 100%);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.register-prompt-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(196, 154, 108, 0.3);
+}
+
+
 .success-message {
   background-color: #e3f0e5;
   color: #2f5c3c;
