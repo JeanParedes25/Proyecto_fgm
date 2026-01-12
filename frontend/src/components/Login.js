@@ -40,12 +40,9 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
         const errorMsg = data.error || 'Error en el login';
         setError(errorMsg);
         
-        // Si es un error de usuario no encontrado, mostrar prompt de registro
-        if (errorMsg.toLowerCase().includes('no encontrado') || 
-            errorMsg.toLowerCase().includes('no existe') ||
-            errorMsg.toLowerCase().includes('invalid')) {
-          setShowRegisterPrompt(true);
-        }
+        // Mostrar prompt de registro si el login falla (excepto errores de conexión)
+        // Esto cubre: usuario no encontrado, contraseña incorrecta, email no existe, etc.
+        setShowRegisterPrompt(true);
       }
     } catch (err) {
       setError('Error de conexión: ' + err.message);
