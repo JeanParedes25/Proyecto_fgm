@@ -4,30 +4,31 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  overflow: hidden;
   background: linear-gradient(135deg, #f5f2ed 0%, #eae3d9 100%);
 }
 
 .auth-container::before {
   content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--auth-bg, none) center center/contain no-repeat;
-  opacity: 0.22;
-  filter: saturate(0.95);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  pointer-events: none;
 }
 
 .auth-card {
   position: relative;
-  z-index: 1;
-  background: rgba(245, 242, 237, 0.65);
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.9);
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0 18px 35px rgba(0, 0, 0, 0.28);
-  width: 100%;
+  width: 90%;
   max-width: 420px;
   border: 1px solid rgba(196, 154, 108, 0.25);
-  backdrop-filter: blur(4px);
 }
 
 .auth-card h1 {
@@ -71,20 +72,19 @@
   width: 100%;
   padding: 12px;
   background: linear-gradient(135deg, #c49a6c 0%, #a77c4f 100%);
-  color: #f9f7f2;
+  color: white;
   border: none;
   border-radius: 6px;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  letter-spacing: 0.3px;
-  transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+  margin-top: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .auth-card button[type="submit"]:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
-  filter: brightness(1.02);
 }
 
 .auth-card button[type="submit"]:disabled {
@@ -113,22 +113,54 @@
 .switch-auth {
   text-align: center;
   margin-top: 20px;
-  color: #3f434d;
+  color: #666;
   font-size: 14px;
 }
 
 .link-button {
   background: none;
   border: none;
-  color: #a77c4f;
-  font-weight: 700;
+  color: #c49a6c;
   cursor: pointer;
+  font-weight: 600;
   text-decoration: underline;
+  font-size: inherit;
   padding: 0;
-  font-size: 14px;
-  transition: color 0.2s;
 }
 
 .link-button:hover {
-  color: #c49a6c;
+  color: #a77c4f;
+}
+
+.guest-access {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.guest-button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-bottom: 10px;
+}
+
+.guest-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.guest-info {
+  color: #888;
+  font-size: 12px;
+  margin: 0;
+  font-style: italic;
 }

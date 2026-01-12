@@ -10,6 +10,14 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const containerStyle = {
+    backgroundImage: `url(${process.env.PUBLIC_URL}/logo_fgm.png)`,
+    backgroundSize: '85%',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed'
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -65,10 +73,7 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
   };
 
   return (
-    <div
-      className="auth-container"
-      style={{ '--auth-bg': "url('/logo_fgm.png')" }}
-    >
+    <div className="auth-container" style={containerStyle}>
       <div className="auth-card">
         <h1>Registro</h1>
         <form onSubmit={handleSubmit}>

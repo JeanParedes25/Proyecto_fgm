@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import './Auth.css';
 
-function Login({ onLoginSuccess, onSwitchToRegister }) {
+function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const containerStyle = {
+    backgroundImage: `url(${process.env.PUBLIC_URL}/logo_fgm.png)`,
+    backgroundSize: '85%',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed'
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,10 +46,7 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
   };
 
   return (
-    <div
-      className="auth-container"
-      style={{ '--auth-bg': "url('/logo_fgm.png')" }}
-    >
+    <div className="auth-container" style={containerStyle}>
       <div className="auth-card">
         <h1>Inicio de Sesión</h1>
         <form onSubmit={handleSubmit}>
@@ -82,6 +87,16 @@ function Login({ onLoginSuccess, onSwitchToRegister }) {
             Regístrate aquí
           </button>
         </p>
+        <div className="guest-access">
+          <button 
+            type="button" 
+            className="guest-button"
+            onClick={onGuestAccess}
+          >
+            🔓 Continuar como Invitado
+          </button>
+          <p className="guest-info">Acceso limitado a contenido público</p>
+        </div>
       </div>
     </div>
   );

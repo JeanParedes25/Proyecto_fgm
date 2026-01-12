@@ -7,13 +7,19 @@ import './App.css';
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [usuario, setUsuario] = useState(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Verificar si hay usuario guardado en localStorage
   useEffect(() => {
     const usuarioGuardado = localStorage.getItem('usuario');
+    const modoInvitado = localStorage.getItem('modoInvitado');
+    
     if (usuarioGuardado) {
       setUsuario(JSON.parse(usuarioGuardado));
+      setCurrentPage('dashboard');
+    } else if (modoInvitado === 'true') {
+      setIsGuest(true);
       setCurrentPage('dashboard');
     }
     setLoading(false);
@@ -31,8 +37,16 @@ function App() {
 
   const handleLogout = () => {
     localStorage.removeItem('usuario');
+    localStorage.removeItem('modoInvitado');
     setUsuario(null);
+    setIsGuest(false);
     setCurrentPage('login');
+  };
+
+  const handleGuestAccess = () => {
+    localStorage.setItem('modoInvitado', 'true');
+    setIsGuest(true);
+    setCurrentPage('dashboard');
   };
 
   const handleSwitchToRegister = () => {
@@ -49,21 +63,23 @@ function App() {
 
   return (
     <div className="App">
-      {currentPage === 'login' && !usuario && (
+      {currentPage === 'login' && !usuario && !isGuest && (
         <Login 
           onLoginSuccess={handleLoginSuccess}
           onSwitchToRegister={handleSwitchToRegister}
+          onGuestAccess={handleGuestAccess}
         />
       )}
-      {currentPage === 'register' && !usuario && (
+      {currentPage === 'register' && !usuario && !isGuest && (
         <Register 
           onRegisterSuccess={handleRegisterSuccess}
           onSwitchToLogin={handleSwitchToLogin}
         />
       )}
-      {usuario && currentPage === 'dashboard' && (
+      {(usuario || isGuest) && currentPage === 'dashboard' && (
         <Dashboard 
           usuario={usuario}
+          isGuest={isGuest}
           onLogout={handleLogout}
         />
       )}
