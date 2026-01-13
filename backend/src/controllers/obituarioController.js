@@ -9,6 +9,15 @@ const obtenerObituarios = async (req, res) => {
     
     const obituariosConUrl = obituarios.map(obit => {
       const obj = obit.toObject ? obit.toObject() : obit;
+      
+      // Procesar fotos si existen
+      if (obj.fotos && Array.isArray(obj.fotos)) {
+        obj.fotos = obj.fotos.map(foto => ({
+          ...foto,
+          url: foto.url ? `http://localhost:5000${foto.url}` : foto.url
+        }));
+      }
+      
       return {
         ...obj,
         imagen_url: obj.imagen_url ? `http://localhost:5000${obj.imagen_url}` : null
@@ -42,6 +51,15 @@ const obtenerObituarioPorId = async (req, res) => {
     }
     
     const obj = obituario.toObject ? obituario.toObject() : obituario;
+    
+    // Procesar fotos si existen
+    if (obj.fotos && Array.isArray(obj.fotos)) {
+      obj.fotos = obj.fotos.map(foto => ({
+        ...foto,
+        url: foto.url ? `http://localhost:5000${foto.url}` : foto.url
+      }));
+    }
+    
     if (obj.imagen_url) {
       obj.imagen_url = `http://localhost:5000${obj.imagen_url}`;
     }
@@ -64,7 +82,7 @@ const crearObituario = async (req, res) => {
   try {
     console.log('\n========== CREAR OBITUARIO ==========');
     console.log('Body recibido:', req.body);
-    console.log('Archivo recibido:', req.file);
+    console.log('Archivos recibidos:', req.files);
     
     const { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento } = req.body;
     
@@ -78,25 +96,34 @@ const crearObituario = async (req, res) => {
       });
     }
     
-    if (!req.file) {
-      console.log('❌ Validación fallida: Sin imagen');
+    if (!req.files || req.files.length === 0) {
+      console.log('❌ Validación fallida: Sin imágenes');
       return res.status(400).json({ 
         success: false, 
-        mensaje: 'La imagen es obligatoria' 
+        mensaje: 'Debes cargar al menos una imagen' 
       });
     }
     
-    let imagenUrl = null;
-    if (req.file) {
-      imagenUrl = '/uploads/obituarios/' + req.file.filename;
-      console.log('Imagen subida:', imagenUrl);
-    }
+    // Procesar fotos
+    const fotos = req.files.map((file, index) => {
+      const descripcion = req.body[`fotos[${index}][descripcion]`] || '';
+      return {
+        url: '/uploads/obituarios/' + file.filename,
+        descripcion: descripcion
+      };
+    });
+    
+    console.log('Fotos procesadas:', fotos);
+    
+    // Mantener compatibilidad con imagen_url usando la primera foto
+    const imagenUrl = fotos.length > 0 ? fotos[0].url : null;
     
     console.log('Llamando a Obituario.crear()...');
     const obituarioId = await Obituario.crear({
       nombreCompleto,
       fechaFallecimiento,
       imagenUrl,
+      fotos,
       mensajeRecordatorio,
       arteMortuorio
     });
@@ -124,7 +151,7 @@ const crearObituario = async (req, res) => {
 const actualizarObituario = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento } = req.body;
+    const { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento, fotosExistentes } = req.body;
     
     const obituarioExistente = await Obituario.obtenerPorId(id);
     if (!obituarioExistente) {
@@ -141,16 +168,26 @@ const actualizarObituario = async (req, res) => {
     if (arteMortuorio) datosActualizar.arteMortuorio = arteMortuorio;
     if (fechaFallecimiento) datosActualizar.fechaFallecimiento = fechaFallecimiento;
     
-    if (req.file) {
-      datosActualizar.imagenUrl = '/uploads/obituarios/' + req.file.filename;
-      
-      const existente = obituarioExistente.toObject ? obituarioExistente.toObject() : obituarioExistente;
-      if (existente.imagen_url) {
-        const oldImagePath = path.join(__dirname, '../..', existente.imagen_url);
-        if (fs.existsSync(oldImagePath)) {
-          fs.unlinkSync(oldImagePath);
-        }
-      }
+    // Procesar fotos
+    let fotos = [];
+    if (fotosExistentes) {
+      fotos = JSON.parse(fotosExistentes);
+    }
+    
+    // Agregar fotos nuevas
+    if (req.files && req.files.length > 0) {
+      req.files.forEach((file, index) => {
+        const descripcion = req.body[`fotos[${index}][descripcion]`] || '';
+        fotos.push({
+          url: '/uploads/obituarios/' + file.filename,
+          descripcion: descripcion
+        });
+      });
+    }
+    
+    if (fotos.length > 0) {
+      datosActualizar.fotos = fotos;
+      datosActualizar.imagenUrl = fotos[0].url; // Primera foto como imagen principal
     }
     
     const actualizado = await Obituario.actualizar(id, datosActualizar);
@@ -189,11 +226,25 @@ const eliminarObituario = async (req, res) => {
     }
     
     const obj = obituario.toObject ? obituario.toObject() : obituario;
+    
+    // Eliminar imagen principal si existe
     if (obj.imagen_url) {
       const imagePath = path.join(__dirname, '../..', obj.imagen_url);
       if (fs.existsSync(imagePath)) {
         fs.unlinkSync(imagePath);
       }
+    }
+    
+    // Eliminar todas las fotos si existen
+    if (obj.fotos && Array.isArray(obj.fotos)) {
+      obj.fotos.forEach(foto => {
+        if (foto.url) {
+          const fotoPath = path.join(__dirname, '../..', foto.url);
+          if (fs.existsSync(fotoPath)) {
+            fs.unlinkSync(fotoPath);
+          }
+        }
+      });
     }
     
     const eliminado = await Obituario.eliminar(id);
@@ -226,6 +277,15 @@ const obtenerObituariosRecientes = async (req, res) => {
     
     const obituariosConUrl = obituarios.map(obit => {
       const obj = obit.toObject ? obit.toObject() : obit;
+      
+      // Procesar fotos si existen
+      if (obj.fotos && Array.isArray(obj.fotos)) {
+        obj.fotos = obj.fotos.map(foto => ({
+          ...foto,
+          url: foto.url ? `http://localhost:5000${foto.url}` : foto.url
+        }));
+      }
+      
       return {
         ...obj,
         imagen_url: obj.imagen_url ? `http://localhost:5000${obj.imagen_url}` : null

@@ -13,6 +13,16 @@ const obituarioSchema = new mongoose.Schema({
     type: String,
     default: null
   },
+  fotos: [{
+    url: {
+      type: String,
+      required: true
+    },
+    descripcion: {
+      type: String,
+      default: ''
+    }
+  }],
   mensaje_recordatorio: {
     type: String,
     required: true
@@ -79,6 +89,7 @@ class Obituario {
         nombre_completo: datos.nombreCompleto,
         fecha_fallecimiento: datos.fechaFallecimiento,
         imagen_url: datos.imagenUrl || null,
+        fotos: datos.fotos || [],
         mensaje_recordatorio: datos.mensajeRecordatorio,
         arte_mortuorio: datos.arteMortuorio
       });
@@ -107,6 +118,9 @@ class Obituario {
       }
       if (datos.imagenUrl !== undefined) {
         actualizacion.imagen_url = datos.imagenUrl;
+      }
+      if (datos.fotos !== undefined) {
+        actualizacion.fotos = datos.fotos;
       }
       if (datos.mensajeRecordatorio !== undefined) {
         actualizacion.mensaje_recordatorio = datos.mensajeRecordatorio;

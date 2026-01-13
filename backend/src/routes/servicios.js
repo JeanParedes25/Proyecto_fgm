@@ -3,19 +3,13 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const {
-  obtenerObituarios,
-  obtenerObituarioPorId,
-  crearObituario,
-  actualizarObituario,
-  eliminarObituario,
-  obtenerObituariosRecientes
-} = require('../controllers/obituarioController');
+const servicioController = require('../controllers/servicioController');
+const auth = require('../middleware/auth');
 
-// Configurar Multer aquí en las rutas
+// Configurar Multer para fotos de servicios
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '../../uploads/obituarios');
+    const uploadPath = path.join(__dirname, '../../uploads/servicios');
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
@@ -24,7 +18,7 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
-    cb(null, 'obituario-' + uniqueSuffix + ext);
+    cb(null, 'servicio-' + uniqueSuffix + ext);
   }
 });
 
@@ -44,7 +38,7 @@ const upload = multer({
 
 // Manejo de errores de Multer
 const handleUpload = (req, res, next) => {
-  upload.array('fotos[]', 20)(req, res, function(err) {
+  upload.array('fotos[]', 4)(req, res, function(err) {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ success: false, mensaje: 'Error al subir imágenes: ' + err.message });
     } else if (err) {
@@ -54,14 +48,13 @@ const handleUpload = (req, res, next) => {
   });
 };
 
-// Rutas públicas (GET)
-router.get('/', obtenerObituarios);
-router.get('/recientes', obtenerObituariosRecientes);
-router.get('/:id', obtenerObituarioPorId);
+// Rutas públicas
+router.get('/', servicioController.obtenerServicios);
+router.get('/:id', servicioController.obtenerServicioPorId);
 
-// Rutas para crear/actualizar/eliminar
-router.post('/', handleUpload, crearObituario);
-router.put('/:id', handleUpload, actualizarObituario);
-router.delete('/:id', eliminarObituario);
+// Rutas protegidas (solo admin)
+router.post('/', auth, handleUpload, servicioController.crearServicio);
+router.put('/:id', auth, handleUpload, servicioController.actualizarServicio);
+router.delete('/:id', auth, servicioController.eliminarServicio);
 
 module.exports = router;

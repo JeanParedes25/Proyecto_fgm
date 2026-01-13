@@ -33,7 +33,10 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
       const data = await response.json();
 
       if (response.ok) {
-        // Guardar datos en localStorage
+        // Guardar token y datos en localStorage
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
         localStorage.setItem('usuario', JSON.stringify(data.cliente));
         onLoginSuccess(data.cliente);
       } else {

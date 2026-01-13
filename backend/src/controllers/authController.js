@@ -1,5 +1,6 @@
 const Cliente = require('../models/cliente');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // Registro
 exports.register = async (req, res) => {
@@ -63,13 +64,27 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Email o contraseña incorrectos' });
     }
 
+    // Generar token JWT
+    const token = jwt.sign(
+      { 
+        id: cliente._id, 
+        email: cliente.email,
+        nombre: cliente.nombre,
+        rol: cliente.rol || 'cliente'
+      },
+      process.env.JWT_SECRET || 'clave_secreta_funeraria_2024',
+      { expiresIn: '7d' }
+    );
+
     // Respuesta exitosa
     res.json({
       mensaje: 'Login exitoso ✅',
+      token: token,
       cliente: {
         id: cliente._id,
         nombre: cliente.nombre,
-        email: cliente.email
+        email: cliente.email,
+        rol: cliente.rol || 'cliente'
       }
     });
   } catch (err) {

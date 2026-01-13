@@ -1,6 +1,7 @@
 import './Dashboard.css';
 import AdminAudit from './AdminAudit';
 import AdminObituarios from './AdminObituarios';
+import AdminServicios from './AdminServicios';
 import ObituariosPublicos from './ObituariosPublicos';
 import Services from './Services';
 import { useState, useEffect } from 'react';
@@ -140,6 +141,12 @@ function Dashboard({ usuario, isGuest, onLogout }) {
             🕯️ Obituarios
           </button>
           <button 
+            className={activeSection === 'servicios' ? 'active' : ''}
+            onClick={() => setActiveSection('servicios')}
+          >
+            🎁 Servicios
+          </button>
+          <button 
             className={activeSection === 'audit' ? 'active' : ''}
             onClick={() => setActiveSection('audit')}
           >
@@ -220,6 +227,10 @@ function Dashboard({ usuario, isGuest, onLogout }) {
 
         {activeSection === 'obituarios' && (
           <AdminObituarios />
+        )}
+
+        {activeSection === 'servicios' && (
+          <AdminServicios />
         )}
 
         {activeSection === 'audit' && (

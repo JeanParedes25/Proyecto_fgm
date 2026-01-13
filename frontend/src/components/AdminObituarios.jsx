@@ -12,8 +12,8 @@ function AdminObituarios() {
     arteMortuorio: '',
     fechaFallecimiento: ''
   });
-  const [imagenFile, setImagenFile] = useState(null);
-  const [previewImagen, setPreviewImagen] = useState(null);
+  const [fotos, setFotos] = useState([]);
+  const [fotosParaSubir, setFotosParaSubir] = useState([]);
 
   useEffect(() => {
     fetchObituarios();
@@ -46,16 +46,35 @@ function AdminObituarios() {
     }));
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImagenFile(file);
+  const handleFotoChange = (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImagen(reader.result);
+        setFotosParaSubir(prev => [...prev, {
+          file: file,
+          preview: reader.result,
+          descripcion: ''
+        }]);
       };
       reader.readAsDataURL(file);
-    }
+    });
+  };
+
+  const handleDescripcionFoto = (index, descripcion) => {
+    setFotosParaSubir(prev => {
+      const nuevasFotos = [...prev];
+      nuevasFotos[index].descripcion = descripcion;
+      return nuevasFotos;
+    });
+  };
+
+  const removeFotoParaSubir = (index) => {
+    setFotosParaSubir(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeFotoExistente = (index) => {
+    setFotos(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -67,9 +86,16 @@ function AdminObituarios() {
     formDataToSend.append('arteMortuorio', formData.arteMortuorio);
     formDataToSend.append('fechaFallecimiento', formData.fechaFallecimiento);
     
-    if (imagenFile) {
-      formDataToSend.append('imagen', imagenFile);
+    // Agregar fotos existentes
+    if (fotos.length > 0) {
+      formDataToSend.append('fotosExistentes', JSON.stringify(fotos));
     }
+    
+    // Agregar nuevas fotos
+    fotosParaSubir.forEach((foto, index) => {
+      formDataToSend.append(`fotos[${index}][file]`, foto.file);
+      formDataToSend.append(`fotos[${index}][descripcion]`, foto.descripcion);
+    });
 
     try {
       const url = editingId 
@@ -108,7 +134,8 @@ function AdminObituarios() {
       arteMortuorio: obituario.arte_mortuorio,
       fechaFallecimiento: obituario.fecha_fallecimiento.split('T')[0]
     });
-    setPreviewImagen(obituario.imagen_url);
+    setFotos(obituario.fotos || []);
+    setFotosParaSubir([]);
     setShowForm(true);
   };
 
@@ -144,8 +171,8 @@ function AdminObituarios() {
       arteMortuorio: '',
       fechaFallecimiento: ''
     });
-    setImagenFile(null);
-    setPreviewImagen(null);
+    setFotos([]);
+    setFotosParaSubir([]);
     setEditingId(null);
     setShowForm(false);
   };
@@ -209,17 +236,73 @@ function AdminObituarios() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="imagen">Fotografía *</label>
+              <label htmlFor="imagen">Fotografías</label>
               <input
                 type="file"
                 id="imagen"
                 accept="image/*"
-                onChange={handleImageChange}
-                required={!editingId}
+                multiple
+                onChange={handleFotoChange}
               />
-              {previewImagen && (
-                <div className="preview-image">
-                  <img src={previewImagen} alt="Vista previa" />
+              <small>Puedes seleccionar múltiples fotos a la vez</small>
+              
+              {/* Fotos existentes */}
+              {fotos.length > 0 && (
+                <div className="fotos-existentes">
+                  <h4>Fotos Actuales ({fotos.length})</h4>
+                  <div className="fotos-grid">
+                    {fotos.map((foto, index) => (
+                      <div key={`existente-${index}`} className="foto-item">
+                        <img src={foto.url} alt={`Foto ${index + 1}`} />
+                        <textarea
+                          placeholder="Descripción de la foto"
+                          value={foto.descripcion}
+                          onChange={(e) => {
+                            setFotos(prev => {
+                              const nuevasFotos = [...prev];
+                              nuevasFotos[index].descripcion = e.target.value;
+                              return nuevasFotos;
+                            });
+                          }}
+                          rows="2"
+                        />
+                        <button
+                          type="button"
+                          className="btn-remove-foto"
+                          onClick={() => removeFotoExistente(index)}
+                        >
+                          🗑️ Eliminar
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Fotos nuevas para subir */}
+              {fotosParaSubir.length > 0 && (
+                <div className="fotos-nuevas">
+                  <h4>Nuevas Fotos a Subir ({fotosParaSubir.length})</h4>
+                  <div className="fotos-grid">
+                    {fotosParaSubir.map((foto, index) => (
+                      <div key={`nueva-${index}`} className="foto-item">
+                        <img src={foto.preview} alt={`Nueva foto ${index + 1}`} />
+                        <textarea
+                          placeholder="Descripción de la foto"
+                          value={foto.descripcion}
+                          onChange={(e) => handleDescripcionFoto(index, e.target.value)}
+                          rows="2"
+                        />
+                        <button
+                          type="button"
+                          className="btn-remove-foto"
+                          onClick={() => removeFotoParaSubir(index)}
+                        >
+                          🗑️ Eliminar
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -274,11 +357,26 @@ function AdminObituarios() {
           <div className="obituarios-grid">
             {obituarios.map(obituario => (
               <div key={obituario.id} className="obituario-card">
-                <div className="obituario-image">
-                  <img 
-                    src={obituario.imagen_url || '/placeholder.jpg'} 
-                    alt={obituario.nombre_completo}
-                  />
+                <div className="obituario-images">
+                  {obituario.fotos && obituario.fotos.length > 0 ? (
+                    <div className="fotos-grid-view">
+                      {obituario.fotos.map((foto, idx) => (
+                        <div key={idx} className="foto-view">
+                          <img src={foto.url} alt={`Foto ${idx + 1}`} />
+                          {foto.descripcion && (
+                            <p className="foto-descripcion">{foto.descripcion}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : obituario.imagen_url ? (
+                    <div className="obituario-image">
+                      <img 
+                        src={obituario.imagen_url} 
+                        alt={obituario.nombre_completo}
+                      />
+                    </div>
+                  ) : null}
                 </div>
                 <div className="obituario-content">
                   <h4>{obituario.nombre_completo}</h4>

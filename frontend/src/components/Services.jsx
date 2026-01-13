@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Services.css';
 
 function ContactForm() {
@@ -113,98 +113,45 @@ function ContactForm() {
 
 function Services({ usuario, onBack }) {
   const [selectedService, setSelectedService] = useState(null);
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const services = [
-    {
-      id: 'standard',
-      name: 'Servicio Exequial Estándar',
-      icon: '⚱️',
-      color: '#c49a6c',
-      intro: 'Sabemos los difícil que son aquellos momentos de pérdida de un ser querido y basados en ese sentimiento de empatía, queremos brindarle el mejor servicio para que únicamente tenga en su mente el dar el último adiós. Es por ello que Funerales Gonzalo Mendoza se encarga de todos los aspectos del servicio exequial para su comodidad y tranquilidad.',
-      includes: [
-        'Trámites Legales',
-        'Salas de velación (A, B o C)',
-        'Capillas Ardientes dentro y fuera de la ciudad',
-        'Servicio Religioso',
-        'Gestión para la adquisición del nicho',
-        'Obituario Online',
-        'Ofrendas Online',
-        'Obituario biográfico en pantalla electrónica',
-        'Servicio de carroza a campo santo',
-        'Crédito directo a 3 y 6 meses sin intereses',
-        'Tramitación exequial en el IESS, ISSPOL, ISSFA',
-        'Filial de MEMORIAL INTERNATIONAL (Banco Solidario)',
-        'Club de clase de la policía, Armoni, Resurrección'
-      ],
-      halls: ['Sala A', 'Sala B', 'Sala C'],
-      capacity: '100 personas',
-      extraServices: [
-        '🅿️ Parqueadero privado',
-        '🛋️ Sala de espera cómoda',
-        '☕ Cafetería',
-        '🛌 Área de descanso'
-      ]
-    },
-    {
-      id: 'vip',
-      name: 'Servicio Exequial VIP Premium',
-      icon: '👑',
-      color: '#a77c4f',
-      description: 'Moderna sala de velación',
-      intro: 'Sabemos lo difícil que son aquellos momentos de pérdida de un ser querido y basados en ese sentimiento de empatía, queremos brindarle el mejor servicio para que únicamente tenga en su mente el dar el último adiós. Es por ello que Funerales Gonzalo Mendoza se encarga de todos los aspectos del servicio exequial VIP, en nuestras modernas salas de velación.',
-      includes: [
-        'Cofre de madera señorial',
-        'Trámites legales (Registro Civil, Jefatura civil, entre otros)',
-        'Traslado en Auto-Carroza a las salas de velación',
-        'Servicio Religioso',
-        'Acompañamiento musical ceremonia religiosa',
-        'Tanatopraxia',
-        'Obituario Online',
-        'Ofrendas Online',
-        'Libro recordatorio',
-        'Formolización',
-        'Servicio telefónico (Llamadas locales)',
-        'CAMPO SANTO O CREMACIÓN'
-      ],
-      additional: [
-        'Alquiler de bóveda en el cementerio municipal de Riobamba',
-        'Cremación con la correspondiente tramitación y traslado'
-      ],
-      noChargeServices: [
-        'Publicación en diario local 1/4 de página',
-        'Acompañamiento con música instrumental (noche de velación)',
-        'Música ambiental',
-        '2 Fotos póster recordatorio a color',
-        'Servicios de guardanía privada',
-        'Gestión para la adquisición del nicho en el cementerio',
-        'Salas virtuales con cámaras IP (Transmición vía internet)'
-      ],
-      halls: ['Sala VIP'],
-      capacity: '500 personas',
-      extraServices: [
-        '🅿️ Parqueadero privado reservado',
-        '🛋️ Salas de espera cómodas',
-        '☕ Cafetería premium',
-        '🛌 Cuarto de descanso privado',
-        '🔬 Laboratorio de tanatopraxia'
-      ]
-    },
-    {
-      id: 'transport',
-      name: 'Servicio de Transporte',
-      icon: '🚗',
-      color: '#6c757d',
-      description: 'Modernas unidades móviles',
-      intro: 'Le ofrecemos el servicio de Transporte en Auto-carrozas fúnebres modernas y elegantes, antes, durante y después del acompañamiento al cementerio. Otro de los servicios que nos distingue es el del traslado desde cualquier centro hospitalario del IESS, hacia nuestra funeraria.',
-      isTransport: true
+  useEffect(() => {
+    fetchServicios();
+  }, []);
+
+  const fetchServicios = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/servicios');
+      if (response.ok) {
+        const data = await response.json();
+        setServices(data.servicios || []);
+      }
+    } catch (err) {
+      console.error('Error al cargar servicios:', err);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <div className="services-container">
+        <button className="back-button" onClick={onBack}>
+          ← Volver al Panel
+        </button>
+        <div style={{ textAlign: 'center', padding: '40px', color: '#c49a6c' }}>
+          Cargando servicios...
+        </div>
+      </div>
+    );
+  }
 
   if (selectedService) {
-    const service = services.find(s => s.id === selectedService);
+    const service = services.find(s => s._id === selectedService);
     
     // Vista especial para Servicio de Transporte
-    if (service.isTransport) {
+    if (service && service.isTransport) {
       return (
         <div className="service-detail">
           <button className="back-button" onClick={() => setSelectedService(null)}>
@@ -212,14 +159,14 @@ function Services({ usuario, onBack }) {
           </button>
 
           <div className="detail-header">
-            <h1>{service.icon} {service.name}</h1>
-            <p className="subtitle">🕊️ {service.description} 🕊️</p>
+            <h1>{service.icono} {service.nombre}</h1>
+            <p className="subtitle">🕊️ {service.descripcion} 🕊️</p>
           </div>
 
           <div className="detail-container">
             <div className="detail-section intro">
               <h2>🚗 Nuestro Servicio</h2>
-              <p>{service.intro}</p>
+              <p>{service.introduccion}</p>
             </div>
 
             <div className="detail-section">
@@ -275,50 +222,64 @@ function Services({ usuario, onBack }) {
         </button>
 
         <div className="detail-header">
-          <h1>{service.icon} {service.name}</h1>
-          <p className="subtitle">🕊️ {service.description} 🕊️</p>
+          <h1>{service.icono} {service.nombre}</h1>
+          <p className="subtitle">🕊️ {service.descripcion} 🕊️</p>
         </div>
 
         <div className="detail-container">
           <div className="detail-section intro">
             <h2>💝 Nuestro Compromiso</h2>
-            <p>{service.intro}</p>
+            <p>{service.introduccion}</p>
           </div>
 
-          <div className="detail-section">
-            <h2>🏛️ Salas de Velación</h2>
-            <div className="halls-grid">
-              {service.halls.map((hall, idx) => (
-                <div key={idx} className="hall-card">
-                  <div className="hall-icon">⛪</div>
-                  <h3>{hall}</h3>
-                  <p>Capacidad: {service.capacity}</p>
+          {service.nombrePlan && (
+            <div className="detail-section plan-info">
+              <h2>💎 Plan: {service.nombrePlan}</h2>
+              {service.descripcionPlan && (
+                <div className="plan-description">
+                  {service.descripcionPlan.split('\n').map((line, idx) => (
+                    <p key={idx}>- {line.trim()}</p>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          </div>
+          )}
 
-          <div className="detail-section">
-            <h2>✅ Incluye en este Servicio</h2>
-            <div className="includes-grid">
-              {service.includes.map((item, idx) => (
-                <div key={idx} className="include-item">
-                  <span className="check-icon">✦</span>
-                  <span>{item}</span>
-                </div>
-              ))}
+          {service.cantidadSalas && (
+            <div className="detail-section">
+              <h2>🏛️ Salas de Velación</h2>
+              <p style={{ fontSize: '18px', color: '#c49a6c', fontWeight: 'bold' }}>
+                Contamos con {service.cantidadSalas} sala{service.cantidadSalas > 1 ? 's' : ''} de velación
+              </p>
+              <div className="halls-grid">
+                {service.halls && service.halls.map((hall, idx) => (
+                  <div key={idx} className="hall-card">
+                    <div className="hall-icon">⛪</div>
+                    <h3>{hall}</h3>
+                    <p>Capacidad: {service.capacity}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {service.includes && service.includes.length > 0 && (
+            <div className="detail-section">
+              <h2>✅ El servicio Incluye</h2>
+              <div className="bullet-list">
+                {service.includes.map((item, idx) => (
+                  <p key={idx}>- {item}</p>
+                ))}
+              </div>
+            </div>
+          )}
 
           {service.additional && service.additional.length > 0 && (
             <div className="detail-section">
               <h2>🔑 Servicios Adicionales</h2>
-              <div className="includes-grid">
+              <div className="bullet-list">
                 {service.additional.map((item, idx) => (
-                  <div key={idx} className="include-item additional">
-                    <span className="check-icon">⭐</span>
-                    <span>{item}</span>
-                  </div>
+                  <p key={idx}>- {item}</p>
                 ))}
               </div>
             </div>
@@ -327,27 +288,51 @@ function Services({ usuario, onBack }) {
           {service.noChargeServices && service.noChargeServices.length > 0 && (
             <div className="detail-section">
               <h2>💎 Valores Agregados sin Costo</h2>
-              <div className="includes-grid">
+              <div className="bullet-list">
                 {service.noChargeServices.map((item, idx) => (
-                  <div key={idx} className="include-item premium">
-                    <span className="check-icon">✨</span>
-                    <span>{item}</span>
+                  <p key={idx}>- {item}</p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {service.brindamos && service.brindamos.length > 0 && (
+            <div className="detail-section">
+              <h2>⭐ Le Brindamos También</h2>
+              <div className="bullet-list">
+                {service.brindamos.map((item, idx) => (
+                  <p key={idx}>- {item}</p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {service.extraServices && service.extraServices.length > 0 && (
+            <div className="detail-section">
+              <h2>🎁 Servicios Adicionales</h2>
+              <div className="extra-services">
+                {service.extraServices.map((item, idx) => (
+                  <div key={idx} className="extra-item">
+                    {item}
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          <div className="detail-section">
-            <h2>🏢 Le Brindamos También</h2>
-            <div className="extra-services">
-              {service.extraServices.map((item, idx) => (
-                <div key={idx} className="extra-item">
-                  {item}
-                </div>
-              ))}
+          {service.fotos && service.fotos.length > 0 && (
+            <div className="detail-section">
+              <h2>📸 Galería de Nuestras Instalaciones</h2>
+              <div className="photos-gallery">
+                {service.fotos.map((foto, idx) => (
+                  <div key={idx} className="photo-item">
+                    <img src={foto.url} alt={`Foto ${idx + 1}`} />
+                    <p className="photo-caption">{foto.descripcion}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="detail-section cta">
             <h3>¿Desea más información?</h3>
@@ -386,25 +371,39 @@ function Services({ usuario, onBack }) {
       </div>
 
       <div className="services-grid">
-        {services.map((service) => (
-          <div 
-            key={service.id} 
-            className="service-card"
-            style={{ borderTopColor: service.color }}
-            onClick={() => setSelectedService(service.id)}
-          >
-            <div className="service-icon" style={{ color: service.color }}>
-              {service.icon}
-            </div>
-            <h3>{service.name}</h3>
-            <p className="service-preview">
-              Haz clic para ver todos los detalles y servicios incluidos.
+        {services.length === 0 ? (
+          <div className="no-services-message">
+            <div className="construction-icon">🚧</div>
+            <h2>Sección en Desarrollo</h2>
+            <p>Los servicios exequiales estarán disponibles próximamente.</p>
+            <p className="subtitle">El administrador está preparando la información de nuestros servicios.</p>
+            <p className="contact-info">
+              Por favor, contáctanos si tienes alguna consulta:<br/>
+              📞 Celular: 099 28 29 095 | 099 90 90 860<br/>
+              📱 Oficina: 032 944 608
             </p>
-            <button className="details-btn" style={{ backgroundColor: service.color }}>
-              Ver Detalles →
-            </button>
           </div>
-        ))}
+        ) : (
+          services.map((service) => (
+            <div 
+              key={service._id} 
+              className="service-card"
+              style={{ borderTopColor: service.color }}
+              onClick={() => setSelectedService(service._id)}
+            >
+              <div className="service-icon" style={{ color: service.color }}>
+                {service.icono}
+              </div>
+              <h3>{service.nombre}</h3>
+              <p className="service-preview">
+                Haz clic para ver todos los detalles y servicios incluidos.
+              </p>
+              <button className="details-btn" style={{ backgroundColor: service.color }}>
+                Ver Detalles →
+              </button>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="services-footer">

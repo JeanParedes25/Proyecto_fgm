@@ -51,6 +51,10 @@ app.use('/api/estadisticas', estadisticasRouter);
 const auditRouter = require('./routes/audit');
 app.use('/api/audit', auditRouter);
 
+// Importar rutas de servicios
+const serviciosRouter = require('./routes/servicios');
+app.use('/api/servicios', serviciosRouter);
+
 // Puerto
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
