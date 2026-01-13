@@ -95,6 +95,44 @@
   color: #856404;
 }
 
+/* Navegación de invitados */
+.guest-nav {
+  display: flex;
+  gap: 15px;
+  background: rgba(245, 242, 237, 0.95);
+  padding: 15px;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.guest-nav button {
+  padding: 12px 30px;
+  background: white;
+  color: #2b2f38;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 15px;
+}
+
+.guest-nav button:hover {
+  background: #f5f2ed;
+  border-color: #667eea;
+  transform: translateY(-2px);
+}
+
+.guest-nav button.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-color: #667eea;
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
 .public-content {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));

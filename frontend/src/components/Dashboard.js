@@ -1,11 +1,44 @@
 import './Dashboard.css';
 import AdminAudit from './AdminAudit';
+import AdminObituarios from './AdminObituarios';
+import ObituariosPublicos from './ObituariosPublicos';
 import Services from './Services';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Dashboard({ usuario, isGuest, onLogout }) {
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [stats, setStats] = useState({
+    usuarios_totales: 0,
+    registros_totales: 0,
+    activos_hoy: 0,
+    sistema_operativo: 'N/A'
+  });
+  const [loadingStats, setLoadingStats] = useState(true);
   const isAdmin = usuario?.rol === 'admin' || usuario?.email === 'israelmendoza18@hotmail.com';
+
+  // Cargar estadísticas en tiempo real
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/estadisticas');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error al cargar estadísticas:', error);
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    if (isAdmin) {
+      fetchStats();
+      // Recargar estadísticas cada 30 segundos
+      const interval = setInterval(fetchStats, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [isAdmin]);
 
   if (isGuest) {
     return (
@@ -25,32 +58,53 @@ function Dashboard({ usuario, isGuest, onLogout }) {
           </p>
         </div>
 
-        <div className="content-section">
-          <h3>📖 Contenido Público</h3>
-          <div className="public-content">
-            <div className="info-card">
-              <h4>🏢 Sobre Nosotros</h4>
-              <p>Funerales «Gonzalo Mendoza», Servicios funerarios de calidad, nuestra misión es acompañar a las familias durante los momentos más difíciles y ofrecer la mejor despedida a sus seres queridos.</p>
-            </div>
-            <div className="info-card">
-              <h4>📞 Contacto</h4>
-              <p>Celular: 099 28 29 095 | 099 90 90 860</p>
-              <p>Oficina: 032 944 608</p>
-              <p>Correo: israelmendoza18@hotmail.com</p>
-            </div>
-            <div className="info-card">
-              <h4>📍 Ubicación</h4>
-              <p>España y Olmedo, Riobamba, Ecuador</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="cta-section">
-          <h3>¿Quieres acceder a más funcionalidades?</h3>
-          <button className="cta-button" onClick={onLogout}>
-            Iniciar Sesión
+        <div className="guest-nav">
+          <button 
+            className={activeSection === 'info' ? 'active' : ''}
+            onClick={() => setActiveSection('info')}
+          >
+            📖 Información
+          </button>
+          <button 
+            className={activeSection === 'obituarios' ? 'active' : ''}
+            onClick={() => setActiveSection('obituarios')}
+          >
+            🕯️ Ver Obituarios
           </button>
         </div>
+
+        {activeSection === 'obituarios' ? (
+          <ObituariosPublicos />
+        ) : (
+          <>
+            <div className="content-section">
+              <h3>📖 Contenido Público</h3>
+              <div className="public-content">
+                <div className="info-card">
+                  <h4>🏢 Sobre Nosotros</h4>
+                  <p>Funerales «Gonzalo Mendoza», Servicios funerarios de calidad, nuestra misión es acompañar a las familias durante los momentos más difíciles y ofrecer la mejor despedida a sus seres queridos.</p>
+                </div>
+                <div className="info-card">
+                  <h4>📞 Contacto</h4>
+                  <p>Celular: 099 28 29 095 | 099 90 90 860</p>
+                  <p>Oficina: 032 944 608</p>
+                  <p>Correo: israelmendoza18@hotmail.com</p>
+                </div>
+                <div className="info-card">
+                  <h4>📍 Ubicación</h4>
+                  <p>España y Olmedo, Riobamba, Ecuador</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="cta-section">
+              <h3>¿Quieres acceder a más funcionalidades?</h3>
+              <button className="cta-button" onClick={onLogout}>
+                Iniciar Sesión
+              </button>
+            </div>
+          </>
+        )}
       </div>
     );
   }
@@ -80,6 +134,12 @@ function Dashboard({ usuario, isGuest, onLogout }) {
             👥 Usuarios
           </button>
           <button 
+            className={activeSection === 'obituarios' ? 'active' : ''}
+            onClick={() => setActiveSection('obituarios')}
+          >
+            🕯️ Obituarios
+          </button>
+          <button 
             className={activeSection === 'audit' ? 'active' : ''}
             onClick={() => setActiveSection('audit')}
           >
@@ -107,19 +167,19 @@ function Dashboard({ usuario, isGuest, onLogout }) {
 
             <div className="admin-stats">
               <div className="stat-card">
-                <h3>25</h3>
+                <h3>{stats.usuarios_totales}</h3>
                 <p>Usuarios Totales</p>
               </div>
               <div className="stat-card">
-                <h3>148</h3>
+                <h3>{stats.registros_totales}</h3>
                 <p>Registros</p>
               </div>
               <div className="stat-card">
-                <h3>12</h3>
+                <h3>{stats.activos_hoy}</h3>
                 <p>Activos Hoy</p>
               </div>
               <div className="stat-card">
-                <h3>100%</h3>
+                <h3>{stats.sistema_operativo}</h3>
                 <p>Sistema Operativo</p>
               </div>
             </div>
@@ -156,6 +216,10 @@ function Dashboard({ usuario, isGuest, onLogout }) {
               </div>
             </div>
           </div>
+        )}
+
+        {activeSection === 'obituarios' && (
+          <AdminObituarios />
         )}
 
         {activeSection === 'audit' && (
@@ -273,25 +337,7 @@ function Dashboard({ usuario, isGuest, onLogout }) {
       )}
 
       {activeSection === 'obituario' && (
-        <div className="content-section obituario-section">
-          <div className="obituario-header">
-            <h2>📰 Obituario Online</h2>
-            <p className="obituario-subtitle">Funerales Gonzalo Mendoza</p>
-          </div>
-
-          <div className="obituario-search">
-            <h3>🔍 Buscador Obituario Online</h3>
-            <p className="search-description">Puede utilizar nuestro buscador para encontrar algún servicio mortuorio brindado por Funerales Gonzalo Mendoza.</p>
-            <div className="search-box">
-              <input 
-                type="text" 
-                placeholder="Ingrese el nombre a buscar..." 
-                className="search-input"
-              />
-              <button className="search-btn">Buscar</button>
-            </div>
-          </div>
-        </div>
+        <ObituariosPublicos />
       )}
 
       {activeSection === 'seguro' && (

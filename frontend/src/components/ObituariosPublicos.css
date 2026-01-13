@@ -1,0 +1,351 @@
+.obituarios-publicos {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.obituarios-publicos-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.obituarios-publicos-header h2 {
+  font-size: 36px;
+  margin: 0 0 15px 0;
+  font-weight: 700;
+}
+
+.obituarios-subtitle {
+  font-size: 18px;
+  margin: 0;
+  opacity: 0.95;
+  font-style: italic;
+}
+
+.obituarios-publicos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.obituario-publico-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid #f0f0f0;
+}
+
+.obituario-publico-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-color: #667eea;
+}
+
+.obituario-publico-image {
+  position: relative;
+  width: 100%;
+  height: 450px;
+  overflow: hidden;
+  background: #e0e0e0;
+}
+
+.obituario-publico-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  padding: 10px;
+  background: white;
+}
+
+.obituario-publico-card:hover .obituario-publico-image img {
+  transform: scale(1.02);
+}
+
+.obituario-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 15px;
+  color: white;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obituario-publico-card:hover .obituario-overlay {
+  opacity: 1;
+}
+
+.obituario-publico-info {
+  padding: 20px;
+  background: #fafafa;
+}
+
+.obituario-publico-info h3 {
+  color: #1a1a1a;
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.obituario-fecha {
+  color: #666;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.fecha-icon {
+  font-size: 18px;
+}
+
+/* Modal */
+.obituario-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.obituario-modal-content {
+  background: white;
+  border-radius: 16px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close:hover {
+  background: #f44336;
+  color: white;
+  transform: rotate(90deg);
+}
+
+.modal-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-image {
+  width: 100%;
+  height: 500px;
+  background: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 20px;
+  background: white;
+}
+
+.modal-info {
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  background: white;
+}
+
+.modal-info h2 {
+  color: #1a1a1a;
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  border-bottom: 3px solid #667eea;
+  padding-bottom: 15px;
+}
+
+.modal-fecha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  font-size: 16px;
+  background: #f0f0f0;
+  padding: 12px 15px;
+  border-radius: 8px;
+}
+
+.modal-mensaje h3,
+.modal-arte h3 {
+  color: #667eea;
+  font-size: 18px;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+
+.modal-mensaje p,
+.modal-arte p {
+  color: #444;
+  line-height: 1.7;
+  font-size: 15px;
+  margin: 0;
+}
+
+.modal-mensaje p {
+  font-style: italic;
+  border-left: 4px solid #667eea;
+  padding-left: 15px;
+}
+
+.modal-arte p {
+  background: #f8f8f8;
+  padding: 12px 15px;
+  border-radius: 8px;
+}
+
+.modal-footer {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+  text-align: center;
+}
+
+.descanse-paz {
+  font-size: 18px;
+  font-weight: 600;
+  color: #667eea;
+  margin: 0 0 15px 0;
+  font-style: italic;
+}
+
+.contacto-info {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* Estados */
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #666;
+  font-size: 18px;
+}
+
+.no-obituarios {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.no-obituarios p {
+  font-size: 20px;
+  color: #999;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .obituarios-publicos-header h2 {
+    font-size: 28px;
+  }
+
+  .obituarios-subtitle {
+    font-size: 16px;
+  }
+
+  .obituarios-publicos-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .obituario-publico-image {
+    height: 400px;
+  }
+
+  .modal-body {
+    grid-template-columns: 1fr;
+    max-height: 90vh;
+  }
+
+  .modal-image {
+    height: 350px;
+  }
+
+  .modal-info {
+    padding: 20px;
+  }
+
+  .modal-info h2 {
+    font-size: 22px;
+  }
+}
