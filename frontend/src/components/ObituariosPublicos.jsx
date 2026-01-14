@@ -116,7 +116,7 @@ function ObituariosPublicos() {
                 </div>
 
                 <div className="modal-arte">
-                  <h3>⛪ Arte Mortuorio</h3>
+                  <h3>⛪ Parte Mortuorio</h3>
                   <p>{obituarioSeleccionado.arte_mortuorio}</p>
                 </div>
 

@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&display=swap');
+
 .admin-obituarios {
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
+  font-family: 'Constantia', 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
 }
 
 .obituarios-header {
@@ -21,6 +24,7 @@
   margin: 0;
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Cormorant Garamond', 'Constantia', Georgia, 'Times New Roman', serif;
 }
 
 .btn-nuevo {
@@ -57,6 +61,7 @@
   margin-bottom: 25px;
   font-size: 24px;
   font-weight: 700;
+  font-family: 'Cormorant Garamond', 'Constantia', Georgia, 'Times New Roman', serif;
 }
 
 .obituario-form {
@@ -181,6 +186,7 @@
   margin-bottom: 25px;
   font-size: 22px;
   font-weight: 700;
+  font-family: 'Cormorant Garamond', 'Constantia', Georgia, 'Times New Roman', serif;
 }
 
 .obituarios-grid {
@@ -225,6 +231,7 @@
   margin: 0 0 10px 0;
   font-size: 20px;
   font-weight: 700;
+  font-family: 'Cormorant Garamond', 'Constantia', Georgia, 'Times New Roman', serif;
 }
 
 .obituario-content .fecha {

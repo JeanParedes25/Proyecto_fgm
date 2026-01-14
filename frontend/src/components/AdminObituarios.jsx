@@ -321,7 +321,7 @@ function AdminObituarios() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="arteMortuorio">Arte Mortuorio *</label>
+              <label htmlFor="arteMortuorio">Parte Mortuorio *</label>
               <input
                 type="text"
                 id="arteMortuorio"
@@ -329,7 +329,7 @@ function AdminObituarios() {
                 value={formData.arteMortuorio}
                 onChange={handleInputChange}
                 required
-                placeholder="Ej: Capilla Ardiente en Funerales Gonzalo Mendoza"
+                placeholder="Ej: PARTE MORTUORIO ENTREGÓ SU ALMA AL CREADOR QUIEN EN VIDA"
               />
             </div>
 
@@ -382,7 +382,7 @@ function AdminObituarios() {
                   <h4>{obituario.nombre_completo}</h4>
                   <p className="fecha">📅 {formatDate(obituario.fecha_fallecimiento)}</p>
                   <p className="mensaje">{obituario.mensaje_recordatorio}</p>
-                  <p className="arte"><strong>Arte Mortuorio:</strong> {obituario.arte_mortuorio}</p>
+                  <p className="arte"><strong>Parte Mortuorio:</strong> {obituario.arte_mortuorio}</p>
                   <p className="fecha-publicacion">
                     <small>Publicado: {formatDate(obituario.created_at)}</small>
                   </p>
