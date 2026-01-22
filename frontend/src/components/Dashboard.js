@@ -2,11 +2,18 @@ import './Dashboard.css';
 import AdminAudit from './AdminAudit';
 import AdminObituarios from './AdminObituarios';
 import AdminServicios from './AdminServicios';
+import AdminFloristerias from './AdminFloristerias';
+import AdminNotificacionesFloristerias from './AdminNotificacionesFloristerias';
+import AdminCuentasBancarias from './AdminCuentasBancarias';
+import AdminPlanes from './AdminPlanes';
 import ObituariosPublicos from './ObituariosPublicos';
 import Services from './Services';
+import Floristerias from './Floristerias';
+import PlanesUsuario from './PlanesUsuario';
+import SeguroPrevisor from './SeguroPrevisor';
 import { useState, useEffect } from 'react';
 
-function Dashboard({ usuario, isGuest, onLogout }) {
+function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [stats, setStats] = useState({
     usuarios_totales: 0,
@@ -116,9 +123,16 @@ function Dashboard({ usuario, isGuest, onLogout }) {
       <div className="dashboard-container admin-dashboard">
         <header className="dashboard-header">
           <h1>🛡️ Panel de Administración</h1>
-          <button className="logout-btn" onClick={onLogout}>
-            Cerrar Sesión
-          </button>
+          <div className="header-actions">
+            {onGoToPerfil && (
+              <button className="perfil-btn" onClick={onGoToPerfil}>
+                👤 Mi Perfil
+              </button>
+            )}
+            <button className="logout-btn" onClick={onLogout}>
+              Cerrar Sesión
+            </button>
+          </div>
         </header>
 
         <nav className="admin-nav">
@@ -145,6 +159,36 @@ function Dashboard({ usuario, isGuest, onLogout }) {
             onClick={() => setActiveSection('servicios')}
           >
             🎁 Servicios
+          </button>
+          <button 
+            className={activeSection === 'floristerias' ? 'active' : ''}
+            onClick={() => setActiveSection('floristerias')}
+          >
+            🌹 Floristerías
+          </button>
+          <button 
+            className={activeSection === 'notificacionesFloristerias' ? 'active' : ''}
+            onClick={() => setActiveSection('notificacionesFloristerias')}
+          >
+            📬 Notificaciones Floristerías
+          </button>
+          <button 
+            className={activeSection === 'cuentasBancarias' ? 'active' : ''}
+            onClick={() => setActiveSection('cuentasBancarias')}
+          >
+            🏦 Cuentas Bancarias
+          </button>
+          <button 
+            className={activeSection === 'planes' ? 'active' : ''}
+            onClick={() => setActiveSection('planes')}
+          >
+            📋 Planes Funerarios
+          </button>
+          <button 
+            className={activeSection === 'seguroPrevisor' ? 'active' : ''}
+            onClick={() => setActiveSection('seguroPrevisor')}
+          >
+            🛡️ Seguro Previsor Prepago
           </button>
           <button 
             className={activeSection === 'audit' ? 'active' : ''}
@@ -233,6 +277,26 @@ function Dashboard({ usuario, isGuest, onLogout }) {
           <AdminServicios />
         )}
 
+        {activeSection === 'floristerias' && (
+          <AdminFloristerias />
+        )}
+
+        {activeSection === 'notificacionesFloristerias' && (
+          <AdminNotificacionesFloristerias />
+        )}
+
+        {activeSection === 'cuentasBancarias' && (
+          <AdminCuentasBancarias />
+        )}
+
+        {activeSection === 'planes' && (
+          <AdminPlanes />
+        )}
+
+        {activeSection === 'seguroPrevisor' && (
+          <SeguroPrevisor />
+        )}
+
         {activeSection === 'audit' && (
           <AdminAudit />
         )}
@@ -272,9 +336,16 @@ function Dashboard({ usuario, isGuest, onLogout }) {
     <div className="dashboard-container user-dashboard">
       <header className="dashboard-header">
         <h1>🕊️ Panel de Usuario</h1>
-        <button className="logout-btn" onClick={onLogout}>
-          Cerrar Sesión
-        </button>
+        <div className="header-actions">
+          {onGoToPerfil && (
+            <button className="perfil-btn" onClick={onGoToPerfil}>
+              👤 Mi Perfil
+            </button>
+          )}
+          <button className="logout-btn" onClick={onLogout}>
+            Cerrar Sesión
+          </button>
+        </div>
       </header>
 
       <nav className="user-nav">
@@ -291,6 +362,24 @@ function Dashboard({ usuario, isGuest, onLogout }) {
           🕊️ Servicios Exequiales
         </button>
         <button 
+          className={activeSection === 'floristerias' ? 'active' : ''}
+          onClick={() => setActiveSection('floristerias')}
+        >
+          🌹 Floristerías
+        </button>
+        <button 
+          className={activeSection === 'planes' ? 'active' : ''}
+          onClick={() => setActiveSection('planes')}
+        >
+          📋 Planes Funerarios
+        </button>
+        <button 
+          className={activeSection === 'seguroPrevisor' ? 'active' : ''}
+          onClick={() => setActiveSection('seguroPrevisor')}
+        >
+          🛡️ Seguro Previsor Prepago
+        </button>
+        <button 
           className={activeSection === 'obituario' ? 'active' : ''}
           onClick={() => setActiveSection('obituario')}
         >
@@ -300,7 +389,7 @@ function Dashboard({ usuario, isGuest, onLogout }) {
           className={activeSection === 'seguro' ? 'active' : ''}
           onClick={() => setActiveSection('seguro')}
         >
-          🛡️ Seguro Provisor
+          🛡️ Seguro Previsor
         </button>
         <button 
           className={activeSection === 'contacto' ? 'active' : ''}
@@ -345,6 +434,18 @@ function Dashboard({ usuario, isGuest, onLogout }) {
 
       {activeSection === 'services' && (
         <Services usuario={usuario} onBack={() => setActiveSection('dashboard')} />
+      )}
+
+      {activeSection === 'floristerias' && (
+        <Floristerias usuario={usuario} onBack={() => setActiveSection('dashboard')} />
+      )}
+
+      {activeSection === 'planes' && (
+        <PlanesUsuario />
+      )}
+
+      {activeSection === 'seguroPrevisor' && (
+        <SeguroPrevisor />
       )}
 
       {activeSection === 'obituario' && (

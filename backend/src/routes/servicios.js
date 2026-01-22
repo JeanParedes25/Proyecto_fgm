@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const servicioController = require('../controllers/servicioController');
 const auth = require('../middleware/auth');
+const { isAdmin } = require('../middleware/auth');
 
 // Configurar Multer para fotos de servicios
 const storage = multer.diskStorage({
@@ -23,10 +24,13 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
+  const allowedMimes = ['image/jpeg', 'image/png'];
+  const allowedExt = ['.jpg', '.jpeg', '.png'];
+  const ext = path.extname(file.originalname).toLowerCase();
+  if (allowedMimes.includes(file.mimetype) && allowedExt.includes(ext)) {
     cb(null, true);
   } else {
-    cb(new Error('Solo se permiten archivos de imagen'));
+    cb(new Error('Solo se permiten imágenes .jpg o .png'));
   }
 };
 
@@ -48,13 +52,13 @@ const handleUpload = (req, res, next) => {
   });
 };
 
-// Rutas públicas
-router.get('/', servicioController.obtenerServicios);
-router.get('/:id', servicioController.obtenerServicioPorId);
+// Rutas de solo lectura (usuarios autenticados)
+router.get('/', auth, servicioController.obtenerServicios);
+router.get('/:id', auth, servicioController.obtenerServicioPorId);
 
 // Rutas protegidas (solo admin)
-router.post('/', auth, handleUpload, servicioController.crearServicio);
-router.put('/:id', auth, handleUpload, servicioController.actualizarServicio);
-router.delete('/:id', auth, servicioController.eliminarServicio);
+router.post('/', auth, isAdmin, handleUpload, servicioController.crearServicio);
+router.put('/:id', auth, isAdmin, handleUpload, servicioController.actualizarServicio);
+router.delete('/:id', auth, isAdmin, servicioController.eliminarServicio);
 
 module.exports = router;

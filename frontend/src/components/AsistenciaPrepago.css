@@ -1,0 +1,195 @@
+/* Contenedor principal */
+.asistencia-prepago-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f2ed 0%, #ebe5dc 100%);
+  padding: 40px 20px;
+}
+
+.prepago-loading {
+  text-align: center;
+  padding: 100px 20px;
+  color: #2b2f38;
+  font-size: 20px;
+}
+
+/* Botón Volver */
+.btn-volver-prepago {
+  background: linear-gradient(135deg, #8b7355 0%, #6e5c47 100%);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  margin: 20px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+}
+
+.btn-volver-prepago:hover {
+  background: linear-gradient(135deg, #6e5c47 0%, #5a4a39 100%);
+  transform: translateX(-5px);
+}
+
+/* Contenido */
+.prepago-content {
+  max-width: 900px;
+  margin: 80px auto;
+  background: white;
+  padding: 80px 60px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+  border: 3px solid rgba(196, 154, 108, 0.3);
+}
+
+.prepago-icon-large {
+  font-size: 120px;
+  margin-bottom: 30px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.prepago-content h1 {
+  font-size: 48px;
+  color: #2b2f38;
+  margin-bottom: 20px;
+}
+
+.prepago-content h2 {
+  font-size: 28px;
+  color: #c49a6c;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+.prepago-message {
+  background: linear-gradient(135deg, #f3efe8 0%, #ffffff 100%);
+  padding: 35px;
+  border-radius: 12px;
+  margin: 40px 0;
+  border-left: 4px solid #c49a6c;
+}
+
+.prepago-message p {
+  font-size: 18px;
+  color: #555;
+  line-height: 1.8;
+  margin: 0;
+}
+
+/* Contacto */
+.prepago-contacto {
+  margin: 50px 0;
+  padding: 40px;
+  background: linear-gradient(135deg, #f3efe8 0%, #ffffff 100%);
+  border-radius: 16px;
+}
+
+.prepago-contacto h3 {
+  font-size: 24px;
+  color: #2b2f38;
+  margin-bottom: 25px;
+}
+
+.prepago-contacto-items {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.prepago-btn {
+  background: linear-gradient(135deg, #c49a6c 0%, #a77c4f 100%);
+  color: white;
+  text-decoration: none;
+  padding: 15px 30px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(196, 154, 108, 0.3);
+  display: inline-block;
+}
+
+.prepago-btn:hover {
+  background: linear-gradient(135deg, #a77c4f 0%, #8d6a43 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(196, 154, 108, 0.4);
+}
+
+/* Coming Soon */
+.prepago-coming-soon {
+  margin-top: 50px;
+  padding: 30px;
+  background: linear-gradient(135deg, #c49a6c 0%, #a77c4f 100%);
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  box-shadow: 0 8px 25px rgba(196, 154, 108, 0.4);
+}
+
+.coming-icon {
+  font-size: 32px;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .prepago-content {
+    padding: 60px 30px;
+    margin: 40px auto;
+  }
+
+  .prepago-icon-large {
+    font-size: 80px;
+  }
+
+  .prepago-content h1 {
+    font-size: 36px;
+  }
+
+  .prepago-content h2 {
+    font-size: 22px;
+  }
+
+  .prepago-message {
+    padding: 25px;
+  }
+
+  .prepago-message p {
+    font-size: 16px;
+  }
+
+  .prepago-contacto {
+    padding: 30px 20px;
+  }
+
+  .prepago-coming-soon {
+    font-size: 16px;
+    padding: 20px 30px;
+  }
+}

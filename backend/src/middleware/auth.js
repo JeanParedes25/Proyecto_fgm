@@ -33,4 +33,32 @@ const auth = (req, res, next) => {
   }
 };
 
+// Middleware para verificar rol de administrador
+const isAdmin = (req, res, next) => {
+  try {
+    if (!req.usuario) {
+      return res.status(401).json({ 
+        success: false, 
+        mensaje: 'No autenticado' 
+      });
+    }
+
+    if (req.usuario.rol !== 'admin') {
+      return res.status(403).json({ 
+        success: false, 
+        mensaje: 'Acceso denegado. Se requieren permisos de administrador' 
+      });
+    }
+
+    next();
+  } catch (error) {
+    console.error('Error en verificación de admin:', error);
+    res.status(500).json({ 
+      success: false, 
+      mensaje: 'Error en la verificación: ' + error.message 
+    });
+  }
+};
+
 module.exports = auth;
+module.exports.isAdmin = isAdmin;

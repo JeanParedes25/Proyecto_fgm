@@ -1,0 +1,134 @@
+/* Contenedor principal */
+.seguro-previsor-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f2ed 0%, #ebe5dc 100%);
+  padding: 20px;
+}
+
+/* Menu Principal */
+.seguro-menu {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.seguro-hero {
+  text-align: center;
+  padding: 60px 20px;
+  margin-bottom: 40px;
+}
+
+.seguro-hero h1 {
+  font-size: 48px;
+  color: #c49a6c;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.seguro-hero p {
+  font-size: 22px;
+  color: #2b2f38;
+  opacity: 0.85;
+}
+
+/* Opciones Cards */
+.seguro-opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 40px;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.opcion-card {
+  background: white;
+  border-radius: 16px;
+  padding: 50px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 2px solid rgba(196, 154, 108, 0.2);
+}
+
+.opcion-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 50px rgba(196, 154, 108, 0.3);
+  border-color: #c49a6c;
+}
+
+.opcion-icon {
+  font-size: 80px;
+  margin-bottom: 25px;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.opcion-card h2 {
+  color: #2b2f38;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.opcion-card p {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.btn-opcion {
+  background: linear-gradient(135deg, #c49a6c 0%, #a77c4f 100%);
+  color: white;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(196, 154, 108, 0.3);
+}
+
+.btn-opcion:hover {
+  background: linear-gradient(135deg, #a77c4f 0%, #8d6a43 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(196, 154, 108, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .seguro-hero h1 {
+    font-size: 36px;
+  }
+
+  .seguro-hero p {
+    font-size: 18px;
+  }
+
+  .seguro-opciones {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 10px;
+  }
+
+  .opcion-card {
+    padding: 40px 30px;
+  }
+
+  .opcion-icon {
+    font-size: 60px;
+  }
+
+  .opcion-card h2 {
+    font-size: 24px;
+  }
+}

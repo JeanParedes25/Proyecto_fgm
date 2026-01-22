@@ -16,8 +16,14 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Conexión a MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Conectado a MongoDB"))
+mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/proyecto_fgm')
+  .then(() => {
+    console.log("✅ Conectado a MongoDB");
+    
+    // Ejecutar seeding de datos temporales
+    const seedearClientes = require('./scripts/seedClientes');
+    seedearClientes();
+  })
   .catch(err => console.error("❌ Error de conexión:", err));
 
 // Inicializar colección de obituarios en MongoDB
@@ -54,6 +60,30 @@ app.use('/api/audit', auditRouter);
 // Importar rutas de servicios
 const serviciosRouter = require('./routes/servicios');
 app.use('/api/servicios', serviciosRouter);
+
+// Importar rutas de floristerias
+const floristeriasRouter = require('./routes/floristerias');
+app.use('/api/floristerias', floristeriasRouter);
+
+// Importar rutas de pedidos de floristerías
+const pedidosFloristeriasRouter = require('./routes/pedidosFloristerias');
+app.use('/api/pedidos-floristerias', pedidosFloristeriasRouter);
+
+// Importar rutas de notificaciones de floristerías
+const notificacionesFloristeriasRouter = require('./routes/notificacionesFloristerias');
+app.use('/api/notificaciones-floristerias', notificacionesFloristeriasRouter);
+
+// Importar rutas de cuentas bancarias
+const cuentasBancariasRouter = require('./routes/cuentasBancarias');
+app.use('/api/cuentas-bancarias', cuentasBancariasRouter);
+
+// Importar rutas de planes
+const planesRouter = require('./routes/planes');
+app.use('/api/planes', planesRouter);
+
+// Importar rutas de seguros
+const segurosRouter = require('./routes/seguros');
+app.use('/api/seguros', segurosRouter);
 
 // Puerto
 const PORT = process.env.PORT || 5000;

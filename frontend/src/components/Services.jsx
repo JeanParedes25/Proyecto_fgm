@@ -122,10 +122,17 @@ function Services({ usuario, onBack }) {
 
   const fetchServicios = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/servicios');
+      const response = await fetch('http://localhost:5000/api/servicios', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         setServices(data.servicios || []);
+      } else if (response.status === 401) {
+        console.warn('No autorizado para ver servicios');
+        setServices([]);
       }
     } catch (err) {
       console.error('Error al cargar servicios:', err);
@@ -134,87 +141,8 @@ function Services({ usuario, onBack }) {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="services-container">
-        <button className="back-button" onClick={onBack}>
-          ← Volver al Panel
-        </button>
-        <div style={{ textAlign: 'center', padding: '40px', color: '#c49a6c' }}>
-          Cargando servicios...
-        </div>
-      </div>
-    );
-  }
-
   if (selectedService) {
     const service = services.find(s => s._id === selectedService);
-    
-    // Vista especial para Servicio de Transporte
-    if (service && service.isTransport) {
-      return (
-        <div className="service-detail">
-          <button className="back-button" onClick={() => setSelectedService(null)}>
-            ← Volver a Servicios
-          </button>
-
-          <div className="detail-header">
-            <h1>{service.icono} {service.nombre}</h1>
-            <p className="subtitle">🕊️ {service.descripcion} 🕊️</p>
-          </div>
-
-          <div className="detail-container">
-            <div className="detail-section intro">
-              <h2>🚗 Nuestro Servicio</h2>
-              <p>{service.introduccion}</p>
-            </div>
-
-            <div className="detail-section">
-              <h2>🚙 Carrozas Fúnebres</h2>
-              <div className="transport-info">
-                <p>Contamos con modernas unidades de transporte para brindarle el mejor servicio en los momentos más importantes.</p>
-                <div className="transport-features">
-                  <div className="feature-item">
-                    <span className="feature-icon">✨</span>
-                    <span>Auto-carrozas modernas y elegantes</span>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">🏥</span>
-                    <span>Traslado desde centros hospitalarios del IESS</span>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">⛪</span>
-                    <span>Acompañamiento al cementerio</span>
-                  </div>
-                  <div className="feature-item">
-                    <span className="feature-icon">🏢</span>
-                    <span>Traslado a nuestra funeraria</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="detail-section cta">
-              <h3>¿Deseas más información?</h3>
-              <p>📞 Celular: 099 28 29 095 | 099 90 90 860</p>
-              <p>📱 Oficina: 032 944 608</p>
-              <p>📧 Email: israelmendoza18@hotmail.com</p>
-              <button className="contact-btn">Contáctanos Ahora</button>
-            </div>
-
-            <div className="detail-section contact-form-section">
-              <h2>📞 Comuníquese con Nosotros</h2>
-              <p className="contact-intro">
-                Puede comunicarse con nosotros para solicitar información, o presupuestar el servicio exequial que requiera. Será para nosotros un gusto atenderlo, por favor llene el siguiente formulario.
-              </p>
-              <ContactForm />
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    // Vista normal para servicios exequiales
     return (
       <div className="service-detail">
         <button className="back-button" onClick={() => setSelectedService(null)}>
@@ -222,107 +150,22 @@ function Services({ usuario, onBack }) {
         </button>
 
         <div className="detail-header">
-          <h1>{service.icono} {service.nombre}</h1>
-          <p className="subtitle">🕊️ {service.descripcion} 🕊️</p>
+          <h1>{service?.nombre}</h1>
+          <p className="subtitle">{service?.descripcion || 'Sin descripción'}</p>
         </div>
 
         <div className="detail-container">
-          <div className="detail-section intro">
-            <h2>💝 Nuestro Compromiso</h2>
-            <p>{service.introduccion}</p>
+          <div className="detail-section">
+            <h2>Información del Servicio</h2>
+            <div className="servicio-info">
+              <div><strong>Estado:</strong> {service?.activo ? 'Activo' : 'Inactivo'}</div>
+              <div><strong>Precio:</strong> {service?.precio ? `$${service.precio}` : 'No especificado'}</div>
+            </div>
           </div>
 
-          {service.nombrePlan && (
-            <div className="detail-section plan-info">
-              <h2>💎 Plan: {service.nombrePlan}</h2>
-              {service.descripcionPlan && (
-                <div className="plan-description">
-                  {service.descripcionPlan.split('\n').map((line, idx) => (
-                    <p key={idx}>- {line.trim()}</p>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {service.cantidadSalas && (
+          {service?.fotos && service.fotos.length > 0 && (
             <div className="detail-section">
-              <h2>🏛️ Salas de Velación</h2>
-              <p style={{ fontSize: '18px', color: '#c49a6c', fontWeight: 'bold' }}>
-                Contamos con {service.cantidadSalas} sala{service.cantidadSalas > 1 ? 's' : ''} de velación
-              </p>
-              <div className="halls-grid">
-                {service.halls && service.halls.map((hall, idx) => (
-                  <div key={idx} className="hall-card">
-                    <div className="hall-icon">⛪</div>
-                    <h3>{hall}</h3>
-                    <p>Capacidad: {service.capacity}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {service.includes && service.includes.length > 0 && (
-            <div className="detail-section">
-              <h2>✅ El servicio Incluye</h2>
-              <div className="bullet-list">
-                {service.includes.map((item, idx) => (
-                  <p key={idx}>- {item}</p>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {service.additional && service.additional.length > 0 && (
-            <div className="detail-section">
-              <h2>🔑 Servicios Adicionales</h2>
-              <div className="bullet-list">
-                {service.additional.map((item, idx) => (
-                  <p key={idx}>- {item}</p>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {service.noChargeServices && service.noChargeServices.length > 0 && (
-            <div className="detail-section">
-              <h2>💎 Valores Agregados sin Costo</h2>
-              <div className="bullet-list">
-                {service.noChargeServices.map((item, idx) => (
-                  <p key={idx}>- {item}</p>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {service.brindamos && service.brindamos.length > 0 && (
-            <div className="detail-section">
-              <h2>⭐ Le Brindamos También</h2>
-              <div className="bullet-list">
-                {service.brindamos.map((item, idx) => (
-                  <p key={idx}>- {item}</p>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {service.extraServices && service.extraServices.length > 0 && (
-            <div className="detail-section">
-              <h2>🎁 Servicios Adicionales</h2>
-              <div className="extra-services">
-                {service.extraServices.map((item, idx) => (
-                  <div key={idx} className="extra-item">
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {service.fotos && service.fotos.length > 0 && (
-            <div className="detail-section">
-              <h2>📸 Galería de Nuestras Instalaciones</h2>
+              <h2>📸 Galería</h2>
               <div className="photos-gallery">
                 {service.fotos.map((foto, idx) => (
                   <div key={idx} className="photo-item">
@@ -341,18 +184,25 @@ function Services({ usuario, onBack }) {
             <p>📧 Email: israelmendoza18@hotmail.com</p>
             <button className="contact-btn">Contáctanos Ahora</button>
           </div>
-
-          <div className="detail-section contact-form-section">
-            <h2>📞 Comuníquese con Nosotros</h2>
-            <p className="contact-intro">
-              Puede comunicarse con nosotros para solicitar información, o presupuestar el servicio exequial que requiera. Será para nosotros un gusto atenderlo, por favor llene el siguiente formulario.
-            </p>
-            <ContactForm />
-          </div>
         </div>
       </div>
     );
   }
+
+  if (loading) {
+    return (
+      <div className="services-container">
+        <button className="back-button" onClick={onBack}>
+          ← Volver al Panel
+        </button>
+        <div style={{ textAlign: 'center', padding: '40px', color: '#c49a6c' }}>
+          Cargando servicios...
+        </div>
+      </div>
+    );
+  }
+
+  // Vista simplificada: lista de servicios del administrador (solo lectura)
 
   return (
     <div className="services-container">
@@ -361,46 +211,34 @@ function Services({ usuario, onBack }) {
       </button>
 
       <div className="services-header">
-        <h1>🕊️ Nuestros Servicios Exequiales 🕊️</h1>
-        <p className="welcome-message">
-          ¡Bienvenido, {usuario.nombre}! 💝
-        </p>
-        <p className="description">
-          Te presentamos nuestras opciones de servicios funerarios diseñados para brindar dignidad y respeto en los momentos más importantes.
-        </p>
+        <h1>🕊️ Servicios Exequiales</h1>
+        <p className="welcome-message">¡Bienvenido, {usuario.nombre}! 💝</p>
+        <p className="description">Servicios creados por el administrador.</p>
       </div>
 
       <div className="services-grid">
         {services.length === 0 ? (
           <div className="no-services-message">
             <div className="construction-icon">🚧</div>
-            <h2>Sección en Desarrollo</h2>
-            <p>Los servicios exequiales estarán disponibles próximamente.</p>
-            <p className="subtitle">El administrador está preparando la información de nuestros servicios.</p>
-            <p className="contact-info">
-              Por favor, contáctanos si tienes alguna consulta:<br/>
-              📞 Celular: 099 28 29 095 | 099 90 90 860<br/>
-              📱 Oficina: 032 944 608
-            </p>
+            <h2>Sin servicios disponibles</h2>
+            <p>El administrador aún no ha creado servicios.</p>
           </div>
         ) : (
           services.map((service) => (
-            <div 
-              key={service._id} 
-              className="service-card"
-              style={{ borderTopColor: service.color }}
-              onClick={() => setSelectedService(service._id)}
-            >
-              <div className="service-icon" style={{ color: service.color }}>
-                {service.icono}
+            <div key={service._id} className="service-card" onClick={() => setSelectedService(service._id)}>
+              <div className="service-icon">
+                <img
+                  src={(service.fotos && service.fotos[0]?.url) || '/placeholder.jpg'}
+                  alt={service.nombre}
+                  style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 6 }}
+                />
               </div>
               <h3>{service.nombre}</h3>
-              <p className="service-preview">
-                Haz clic para ver todos los detalles y servicios incluidos.
-              </p>
-              <button className="details-btn" style={{ backgroundColor: service.color }}>
-                Ver Detalles →
-              </button>
+              <p className="service-preview">{service.descripcion || 'Sin descripción'}</p>
+              <div className="servicio-info" style={{ marginTop: 8 }}>
+                <div><strong>Estado:</strong> {service.activo ? 'Activo' : 'Inactivo'}</div>
+                <div><strong>Precio:</strong> {service.precio ? `$${service.precio}` : 'No especificado'}</div>
+              </div>
             </div>
           ))
         )}

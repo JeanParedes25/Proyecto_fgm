@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import './Auth.css';
 
-function Register({ onRegisterSuccess, onSwitchToLogin }) {
+function Register({ onSwitchToLogin, onNeedVerification }) {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
+  const [celular, setCelular] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,43 +27,22 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
     setSuccess('');
     setLoading(true);
 
-    // Validar contraseñas
-    if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
-      setLoading(false);
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
-      setLoading(false);
-      return;
-    }
-
     try {
       const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ nombre, email, password })
+        body: JSON.stringify({ nombre, email, celular, password, confirmPassword })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess('¡Registro exitoso! Iniciando sesión...');
-        setNombre('');
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-        
-        // Guardar datos en localStorage
-        localStorage.setItem('usuario', JSON.stringify(data.cliente));
-        
-        // Redirigir después de 2 segundos
+        setSuccess(data.mensaje);
+        // Redirigir a verificación
         setTimeout(() => {
-          onRegisterSuccess(data.cliente);
+          onNeedVerification(email);
         }, 2000);
       } else {
         setError(data.error || 'Error en el registro');
@@ -78,18 +60,18 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
         <h1>Registro</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="nombre">Nombre:</label>
+            <label htmlFor="nombre">Nombre Completo:</label>
             <input
               type="text"
               id="nombre"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               required
-              placeholder="Tu nombre"
+              placeholder="Tu nombre completo"
             />
           </div>
           <div className="form-group">
-            <label htmlFor="email">Email:</label>
+            <label htmlFor="email">Correo Electrónico:</label>
             <input
               type="email"
               id="email"
@@ -100,26 +82,58 @@ function Register({ onRegisterSuccess, onSwitchToLogin }) {
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password">Contraseña:</label>
+            <label htmlFor="celular">Número de Celular:</label>
             <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              type="tel"
+              id="celular"
+              value={celular}
+              onChange={(e) => setCelular(e.target.value)}
               required
-              placeholder="••••••••"
+              placeholder="999999999"
             />
           </div>
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
+            <label htmlFor="password">Contraseña:</label>
+            <div className="password-input-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+            <small className="password-hint">
+              Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (!@#$%^&*)
+            </small>
+          </div>
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Repetir Contraseña:</label>
+            <div className="password-input-container">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
           {error && <div className="error-message">{error}</div>}
           {success && <div className="success-message">{success}</div>}

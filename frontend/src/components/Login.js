@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import './Auth.css';
 
-function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
+function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onNeedVerification, onForgotPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [showRegisterPrompt, setShowRegisterPrompt] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,9 +44,14 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
         const errorMsg = data.error || 'Error en el login';
         setError(errorMsg);
         
-        // Mostrar prompt de registro si el login falla (excepto errores de conexión)
-        // Esto cubre: usuario no encontrado, contraseña incorrecta, email no existe, etc.
-        setShowRegisterPrompt(true);
+        // Si necesita verificación, redirigir
+        if (data.needsVerification) {
+          setTimeout(() => {
+            onNeedVerification(email);
+          }, 2000);
+        } else {
+          setShowRegisterPrompt(true);
+        }
       }
     } catch (err) {
       setError('Error de conexión: ' + err.message);
@@ -66,7 +72,7 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
         <h1>Inicio de Sesión</h1>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="email">Email:</label>
+            <label htmlFor="email">Correo Electrónico:</label>
             <input
               type="email"
               id="email"
@@ -78,14 +84,23 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
           </div>
           <div className="form-group">
             <label htmlFor="password">Contraseña:</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
+            <div className="password-input-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
           {error && (
             <div className="error-message">
@@ -98,35 +113,40 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess }) {
                     className="register-prompt-btn"
                     onClick={handleRegisterRedirect}
                   >
-                    Crear Cuenta Ahora
+                    Regístrate aquí
                   </button>
                 </div>
               )}
             </div>
           )}
           <button type="submit" disabled={loading}>
-            {loading ? 'Cargando...' : 'Ingresar'}
+            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
-        <p className="switch-auth">
-          ¿No tienes cuenta?{' '}
+        <div className="auth-links">
+          <button 
+            type="button" 
+            className="link-button"
+            onClick={() => onForgotPassword()}
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
           <button 
             type="button" 
             className="link-button"
             onClick={onSwitchToRegister}
           >
-            Regístrate aquí
+            ¿No tienes cuenta? Regístrate
           </button>
-        </p>
-        <div className="guest-access">
-          <button 
-            type="button" 
-            className="guest-button"
-            onClick={onGuestAccess}
-          >
-            🔓 Continuar como Invitado
-          </button>
-          <p className="guest-info">Acceso limitado a contenido público</p>
+          {onGuestAccess && (
+            <button 
+              type="button" 
+              className="link-button guest-link"
+              onClick={onGuestAccess}
+            >
+              Continuar como invitado
+            </button>
+          )}
         </div>
       </div>
     </div>
