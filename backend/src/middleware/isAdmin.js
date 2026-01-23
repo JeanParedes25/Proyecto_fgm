@@ -1,11 +1,21 @@
 const isAdmin = (req, res, next) => {
-  if (req.user.rol !== 'admin') {
-    return res.status(403).json({
+  try {
+    // Verificar que el usuario esté autenticado y sea admin
+    if (!req.usuario || req.usuario.rol !== 'admin') {
+      console.log('Acceso denegado - Usuario no es admin:', req.usuario);
+      return res.status(403).json({
+        success: false,
+        mensaje: 'Acceso denegado. Solo administradores pueden realizar esta acción.'
+      });
+    }
+    next();
+  } catch (error) {
+    console.error('Error en isAdmin:', error);
+    res.status(500).json({
       success: false,
-      mensaje: 'Acceso denegado. Solo administradores pueden realizar esta acción.'
+      mensaje: 'Error de servidor'
     });
   }
-  next();
 };
 
 module.exports = isAdmin;

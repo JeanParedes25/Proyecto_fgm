@@ -386,12 +386,6 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           📰 Obituario Online
         </button>
         <button 
-          className={activeSection === 'seguro' ? 'active' : ''}
-          onClick={() => setActiveSection('seguro')}
-        >
-          🛡️ Seguro Previsor
-        </button>
-        <button 
           className={activeSection === 'contacto' ? 'active' : ''}
           onClick={() => setActiveSection('contacto')}
         >
@@ -450,13 +444,6 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
 
       {activeSection === 'obituario' && (
         <ObituariosPublicos />
-      )}
-
-      {activeSection === 'seguro' && (
-        <div className="content-section">
-          <h2>🛡️ Seguro Provisor</h2>
-          <p>Información sobre Seguro Provisor en desarrollo...</p>
-        </div>
       )}
 
       {activeSection === 'contacto' && (

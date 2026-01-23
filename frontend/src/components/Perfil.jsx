@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Perfil.css';
 
-function Perfil({ usuario, onLogout }) {
+function Perfil({ usuario, onBack }) {
   const [perfil, setPerfil] = useState(null);
   const [editMode, setEditMode] = useState(false);
   const [changePasswordMode, setChangePasswordMode] = useState(false);
@@ -207,8 +207,11 @@ function Perfil({ usuario, onLogout }) {
               >
                 Cambiar Contraseña
               </button>
-              <button className="btn-logout" onClick={onLogout}>
-                Cerrar Sesión
+              <button
+                className="btn-back"
+                onClick={() => onBack && onBack(perfil?.rol === 'admin' ? 'admin' : 'usuario')}
+              >
+                Volver al Panel
               </button>
             </div>
           </div>

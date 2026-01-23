@@ -68,9 +68,8 @@ function PlanesUsuario() {
 
               <div className="plan-usuario-info-basica">
                 <div className="info-item">
-                  <span className="info-icon">🎁</span>
                   <div>
-                    <strong>Tipo de Cofre</strong>
+                    <strong>TIPO DE COFRE</strong>
                     <p>{plan.tipoCofre}</p>
                   </div>
                 </div>
@@ -175,6 +174,13 @@ function PlanesUsuario() {
                 </ul>
               </div>
 
+              <div className="contacto-cta-card">
+                <p>Si le gustó este paquete, comuníquese con nuestro asesor.</p>
+                <button type="button" className="btn-whatsapp-placeholder">
+                  Contactar por WhatsApp
+                </button>
+              </div>
+
               <button 
                 className="btn-ver-detalles"
                 onClick={() => verDetalles(plan)}
@@ -202,7 +208,7 @@ function PlanesUsuario() {
             <div className="modal-body">
               <section className="modal-section">
                 <h3>📋 Información General</h3>
-                <p><strong>Tipo de Cofre:</strong> {planSeleccionado.tipoCofre}</p>
+                <p><strong>TIPO DE COFRE:</strong> {planSeleccionado.tipoCofre}</p>
                 <p><strong>Duración de Velación:</strong> {planSeleccionado.duracionVelacion}</p>
               </section>
 
@@ -339,8 +345,11 @@ function PlanesUsuario() {
 
               <div className="modal-footer">
                 <p className="contacto-info">
-                  Para contratar este plan, contáctenos al teléfono o por correo electrónico.
+                  Si le gustó este paquete, comuníquese con nuestro asesor.
                 </p>
+                <button type="button" className="btn-whatsapp-placeholder">
+                  Contactar por WhatsApp
+                </button>
               </div>
             </div>
           </div>

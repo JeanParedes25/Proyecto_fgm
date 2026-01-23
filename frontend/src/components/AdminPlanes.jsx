@@ -166,26 +166,51 @@ function AdminPlanes() {
     const method = editingId ? 'PUT' : 'POST';
 
     try {
+      // Validar y convertir precio a Number
+      const datosEnvio = {
+        ...form,
+        precio: parseFloat(form.precio) || 0,
+        obituariosDomiciliarios: {
+          ...form.obituariosDomiciliarios,
+          cantidad: parseInt(form.obituariosDomiciliarios.cantidad) || 0
+        }
+      };
+
+      console.log('Enviando datos al backend:', JSON.stringify(datosEnvio, null, 2));
+
       const res = await fetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify(datosEnvio)
       });
+
+      console.log('Respuesta del servidor - Status:', res.status);
+      console.log('Content-Type:', res.headers.get('content-type'));
 
       if (res.ok) {
         alert(editingId ? 'Plan actualizado' : 'Plan creado');
         resetForm();
         fetchPlanes();
       } else {
-        const error = await res.json();
-        alert('Error: ' + (error.mensaje || 'No se pudo guardar'));
+        let error;
+        const contentType = res.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+          error = await res.json();
+          console.error('Error JSON del servidor:', error);
+          alert('Error: ' + (error.mensaje || error.message || JSON.stringify(error)));
+        } else {
+          const text = await res.text();
+          console.error('Error no-JSON del servidor:', text);
+          alert('Error: Respuesta inválida del servidor. Verifica la consola del navegador.');
+        }
       }
     } catch (e) {
-      console.error(e);
-      alert('Error al guardar plan');
+      console.error('Error al guardar plan:', e);
+      alert('Error al guardar plan: ' + (e.message || e));
     }
   };
 
@@ -193,7 +218,7 @@ function AdminPlanes() {
     setEditingId(plan._id);
     setForm({
       nombre: plan.nombre || '',
-      precio: plan.precio || '',
+      precio: plan.precio !== undefined ? String(plan.precio) : '',
       tipoCofre: plan.tipoCofre || '',
       duracionVelacion: plan.duracionVelacion || '',
       salasIncluidas: plan.salasIncluidas || [],

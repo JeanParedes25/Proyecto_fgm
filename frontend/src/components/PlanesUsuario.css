@@ -252,6 +252,37 @@
   box-shadow: 0 6px 16px rgba(196, 154, 108, 0.4);
 }
 
+.contacto-cta-card {
+  padding: 22px 24px;
+  background: #f8f6f2;
+  border-top: 1px solid #ecf0f1;
+  text-align: center;
+}
+
+.contacto-cta-card p {
+  margin: 0 0 12px 0;
+  color: #2b2f38;
+  font-weight: 600;
+}
+
+.btn-whatsapp-placeholder {
+  background: linear-gradient(135deg, #25d366, #1ebe5d);
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 6px 14px rgba(37, 211, 102, 0.25);
+}
+
+.btn-whatsapp-placeholder:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(37, 211, 102, 0.35);
+  opacity: 0.95;
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
@@ -386,7 +417,7 @@
 .contacto-info {
   color: #7f8c8d;
   font-size: 16px;
-  margin: 0;
+  margin: 0 0 12px 0;
 }
 
 /* Responsive */

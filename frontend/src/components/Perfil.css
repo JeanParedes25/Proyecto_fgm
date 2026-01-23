@@ -114,15 +114,16 @@
   box-shadow: 0 5px 15px rgba(243, 156, 18, 0.3);
 }
 
-.btn-logout {
-  background: #95a5a6;
+.btn-back {
+  background: linear-gradient(90deg, #667eea, #764ba2);
   color: white;
+  border: 1px solid #5b6fe0;
 }
 
-.btn-logout:hover {
-  background: #7f8c8d;
+.btn-back:hover {
+  background: linear-gradient(90deg, #5b6fe0, #6a3fa0);
   transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.35);
 }
 
 .btn-save {

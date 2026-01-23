@@ -37,6 +37,16 @@ app.get('/api/test', (req, res) => {
   res.json({ message: 'Servidor funcionando 🚀' });
 });
 
+// Ruta de prueba POST para validar JSON
+app.post('/api/test-post', (req, res) => {
+  console.log('\n=== TEST POST ===');
+  console.log('Datos recibidos:', JSON.stringify(req.body, null, 2));
+  res.json({ 
+    message: 'POST funcionando ✅',
+    datosRecibidos: req.body
+  });
+});
+
 // Importar rutas de autenticación
 const authRouter = require('./routes/auth');
 app.use('/api/auth', authRouter);
