@@ -55,6 +55,10 @@ app.use('/api/auth', authRouter);
 const clientesRouter = require('./routes/clientes');
 app.use('/api/clientes', clientesRouter);
 
+// Importar rutas de usuarios (admin)
+const usuariosRouter = require('./routes/usuarios');
+app.use('/api/usuarios', usuariosRouter);
+
 // Importar rutas de obituarios
 const obituariosRouter = require('./routes/obituarios');
 app.use('/api/obituarios', obituariosRouter);
@@ -82,6 +86,10 @@ app.use('/api/pedidos-floristerias', pedidosFloristeriasRouter);
 // Importar rutas de notificaciones de floristerías
 const notificacionesFloristeriasRouter = require('./routes/notificacionesFloristerias');
 app.use('/api/notificaciones-floristerias', notificacionesFloristeriasRouter);
+// Importar rutas de notificaciones generales
+const notificacionesRouter = require('./routes/notificaciones');
+app.use('/api/notificaciones', notificacionesRouter);
+
 
 // Importar rutas de cuentas bancarias
 const cuentasBancariasRouter = require('./routes/cuentasBancarias');
@@ -94,6 +102,10 @@ app.use('/api/planes', planesRouter);
 // Importar rutas de seguros
 const segurosRouter = require('./routes/seguros');
 app.use('/api/seguros', segurosRouter);
+
+// Importar rutas de asistencia prepago
+const asistenciaPrepagoRouter = require('./routes/asistenciaPrepago');
+app.use('/api/asistencia-prepago', asistenciaPrepagoRouter);
 
 // Puerto
 const PORT = process.env.PORT || 5000;

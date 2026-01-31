@@ -7,10 +7,12 @@ function Floristerias({ usuario, onBack }) {
   const [floraSeleccionada, setFloraSeleccionada] = useState(null);
   const [cuentasBancarias, setCuentasBancarias] = useState([]);
   const [nombrePersonaFallecida, setNombrePersonaFallecida] = useState('');
+  const [cantidadArreglos, setCantidadArreglos] = useState(1);
   const [mostrarFormPedido, setMostrarFormPedido] = useState(false);
-  const [creandoPedido, setCreandoPedido] = useState(false);
   const [mostrarCuentas, setMostrarCuentas] = useState(false);
   const [pedidoConfirmado, setPedidoConfirmado] = useState(false);
+  const [creandoPedido, setCreandoPedido] = useState(false);
+  const [pedidoCreado, setPedidoCreado] = useState(null);
 
   useEffect(() => {
     fetchFlores();
@@ -67,6 +69,7 @@ function Floristerias({ usuario, onBack }) {
     setMostrarCuentas(false);
     setPedidoConfirmado(false);
     setNombrePersonaFallecida('');
+    setCantidadArreglos(1);
   };
 
   const cerrarDetalle = () => {
@@ -75,6 +78,8 @@ function Floristerias({ usuario, onBack }) {
     setMostrarCuentas(false);
     setPedidoConfirmado(false);
     setNombrePersonaFallecida('');
+    setCantidadArreglos(1);
+    setPedidoCreado(null);
   };
 
   const iniciarPedido = () => {
@@ -98,8 +103,17 @@ function Floristerias({ usuario, onBack }) {
   const crearPedido = async () => {
     if (!floraSeleccionada) return;
 
+    // Validar cantidad
+    if (!cantidadArreglos || cantidadArreglos < 1) {
+      alert('Por favor selecciona una cantidad válida (mínimo 1)');
+      return;
+    }
+
     setCreandoPedido(true);
     try {
+      const precioUnitario = floraSeleccionada.precio;
+      const total = precioUnitario * cantidadArreglos;
+
       const response = await fetch('http://localhost:5000/api/pedidos-floristerias', {
         method: 'POST',
         headers: {
@@ -111,14 +125,17 @@ function Floristerias({ usuario, onBack }) {
           arregloId: floraSeleccionada._id,
           descripcionArreglo: floraSeleccionada.descripcion,
           nombrePersonaFallecida: nombrePersonaFallecida,
-          precio: floraSeleccionada.precio
+          precioUnitario: precioUnitario,
+          cantidad: cantidadArreglos,
+          total: total
         })
       });
 
       if (response.ok) {
-        setPedidoConfirmado(true);
+        const data = await response.json();
+        setPedidoCreado(data.pedido);
         setMostrarCuentas(false);
-        setMostrarFormPedido(false);
+        setPedidoConfirmado(true);
       } else {
         const error = await response.json();
         alert(`Error: ${error.mensaje || 'No se pudo crear el pedido'}`);
@@ -129,6 +146,22 @@ function Floristerias({ usuario, onBack }) {
     } finally {
       setCreandoPedido(false);
     }
+  };
+
+  // Abrir WhatsApp con número predefinido
+  const abrirWhatsApp = () => {
+    const numeroWhatsApp = '+593998794800';
+    const total = (pedidoCreado?.total || floraSeleccionada?.precio * cantidadArreglos).toFixed(2);
+    const mensaje = encodeURIComponent(
+      `Hola, acabo de realizar un pedido de flores en Funerales Gonzalo Mendoza. ` +
+      `Arreglo: ${floraSeleccionada?.codigo || 'N/A'}. ` +
+      `Cantidad: ${cantidadArreglos}. ` +
+      `Precio unitario: $${floraSeleccionada?.precio?.toFixed(2) || '0'}. ` +
+      `Total: $${total}. ` +
+      `Destinatario: ${nombrePersonaFallecida}. ` +
+      `He realizado la transferencia/depósito. Por favor confirmen la recepción del comprobante.`
+    );
+    window.open(`https://wa.me/${numeroWhatsApp.replace(/\D/g, '')}?text=${mensaje}`, '_blank');
   };
 
   if (loading) {
@@ -145,6 +178,7 @@ function Floristerias({ usuario, onBack }) {
   }
 
   if (floraSeleccionada) {
+    // Pantalla final - Pedido confirmado
     if (pedidoConfirmado) {
       return (
         <div className="flor-modal-view">
@@ -153,12 +187,13 @@ function Floristerias({ usuario, onBack }) {
           </button>
           <div className="pedido-confirmado">
             <div className="confirmacion-icono">✅</div>
-            <h2>¡Pedido Confirmado!</h2>
-            <p>Tu pedido ha sido registrado exitosamente.</p>
+            <h2>¡Pedido Realizado!</h2>
+            <p>Tu pedido ha sido registrado exitosamente. Ahora debes completar el pago.</p>
+            
             <div className="resumen-pedido">
               <h3>Resumen del Pedido</h3>
               <div className="resumen-item">
-                <span>Código:</span>
+                <span>Arreglo:</span>
                 <strong>{floraSeleccionada.codigo}</strong>
               </div>
               <div className="resumen-item">
@@ -166,17 +201,42 @@ function Floristerias({ usuario, onBack }) {
                 <strong>{floraSeleccionada.descripcion}</strong>
               </div>
               <div className="resumen-item">
+                <span>Cantidad:</span>
+                <strong>{cantidadArreglos}</strong>
+              </div>
+              <div className="resumen-item">
+                <span>Precio Unitario:</span>
+                <strong>${floraSeleccionada.precio.toFixed(2)}</strong>
+              </div>
+              <div className="resumen-item">
                 <span>Destinatario:</span>
                 <strong>{nombrePersonaFallecida}</strong>
               </div>
               <div className="resumen-item">
-                <span>Precio:</span>
-                <strong>${floraSeleccionada.precio.toFixed(2)}</strong>
+                <span>Total a Pagar:</span>
+                <strong className="monto-destaque">${(pedidoCreado?.total || floraSeleccionada.precio * cantidadArreglos).toFixed(2)}</strong>
               </div>
             </div>
-            <p className="instrucciones">
-              El administrador recibirá tu pedido y se comunicará contigo pronto con los detalles de entrega.
-            </p>
+
+            <div className="instrucciones-pago">
+              <div className="instruccion-paso">
+                <span className="numero-paso">1</span>
+                <p><strong>Realiza el depósito o transferencia</strong> a una de las cuentas mostradas anteriormente</p>
+              </div>
+              <div className="instruccion-paso">
+                <span className="numero-paso">2</span>
+                <p><strong>Toma foto del comprobante</strong> de tu transferencia</p>
+              </div>
+              <div className="instruccion-paso">
+                <span className="numero-paso">3</span>
+                <p><strong>Envía el comprobante por WhatsApp</strong> al número del negocio</p>
+              </div>
+            </div>
+
+            <button className="btn-whatsapp" onClick={abrirWhatsApp}>
+              📲 Enviar Comprobante por WhatsApp
+            </button>
+
             <button className="btn-primary" onClick={cerrarDetalle}>
               Volver a Floristerías
             </button>
@@ -185,6 +245,7 @@ function Floristerias({ usuario, onBack }) {
       );
     }
 
+    // Pantalla 2 - Mostrar cuentas bancarias
     if (mostrarCuentas) {
       return (
         <div className="flor-modal-view">
@@ -193,42 +254,70 @@ function Floristerias({ usuario, onBack }) {
           </button>
           <div className="cuentas-panel">
             <h2>💳 Cuentas Bancarias para el Pago</h2>
+            <p className="pago-instruccion">
+              📝 Para realizar tu pedido, debes hacer un depósito o transferencia a una de nuestras cuentas:
+            </p>
+            
             <div className="cuentas-lista">
               {cuentasBancarias.length === 0 ? (
-                <p>No hay cuentas bancarias disponibles</p>
+                <p className="no-cuentas">No hay cuentas bancarias disponibles</p>
               ) : (
                 cuentasBancarias.map((cuenta) => (
                   <div key={cuenta._id} className="cuenta-card">
-                    <div className="cuenta-info">
+                    <div className="cuenta-header">
                       <h4>{cuenta.banco}</h4>
-                      <p><strong>Número de Cuenta:</strong> {cuenta.numeroCuenta}</p>
-                      <p><strong>Tipo de Cuenta:</strong> {cuenta.tipoCuenta}</p>
-                      <p><strong>Titular:</strong> {cuenta.nombreTitular}</p>
+                      <span className="tipo-cuenta">{cuenta.tipoCuenta}</span>
+                    </div>
+                    <div className="cuenta-body">
+                      <div className="info-item">
+                        <label>Número de Cuenta:</label>
+                        <p className="numero-cuenta">{cuenta.numeroCuenta}</p>
+                      </div>
+                      <div className="info-item">
+                        <label>Titular:</label>
+                        <p>{cuenta.nombreTitular}</p>
+                      </div>
                     </div>
                   </div>
                 ))
               )}
             </div>
+
             <div className="pago-info">
-              <h3>Información del Pago</h3>
-              <p>Selecciona una de las cuentas bancarias anteriores para realizar el depósito de:</p>
-              <div className="monto-total">
-                <strong>${floraSeleccionada.precio.toFixed(2)}</strong>
+              <h3>Detalle del Pago:</h3>
+              <div className="pago-detalle">
+                <div className="pago-linea">
+                  <span>Precio Unitario:</span>
+                  <strong>${floraSeleccionada.precio.toFixed(2)}</strong>
+                </div>
+                <div className="pago-linea">
+                  <span>Cantidad:</span>
+                  <strong>{cantidadArreglos}</strong>
+                </div>
               </div>
-              <p>Una vez realizado el pago, confirma tu pedido a continuación:</p>
+              <div className="monto-total">
+                <strong>Total a Transferir: ${(floraSeleccionada.precio * cantidadArreglos).toFixed(2)}</strong>
+              </div>
+              <p className="concepto">Concepto: Arreglo floral {floraSeleccionada.codigo} x {cantidadArreglos}</p>
             </div>
+
+            <div className="mensaje-whatsapp">
+              <p>📱 <strong>Después de realizar el pago,</strong> presiona el botón de abajo para enviar el comprobante por WhatsApp</p>
+            </div>
+
             <button 
               className="btn-confirm" 
               onClick={crearPedido} 
               disabled={creandoPedido}
             >
-              {creandoPedido ? 'Confirmando...' : '✓ Confirmar Pedido'}
+              {creandoPedido ? 'Creando pedido...' : '✓ Crear Pedido (Ir a WhatsApp)'}
             </button>
           </div>
         </div>
       );
     }
 
+    // Pantalla 1 - Ingreso de datos del fallecido
     if (mostrarFormPedido) {
       return (
         <div className="flor-modal-view">
@@ -237,22 +326,77 @@ function Floristerias({ usuario, onBack }) {
           </button>
           <div className="form-pedido">
             <h2>📋 Datos del Pedido</h2>
-            <form onSubmit={validarYContinuar}>
+            <p className="form-subtitulo">Completa los datos para proceder con tu pedido</p>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (!nombrePersonaFallecida.trim()) {
+                alert('Por favor ingresa el nombre de la persona fallecida');
+                return;
+              }
+              if (!cantidadArreglos || cantidadArreglos < 1) {
+                alert('Por favor selecciona una cantidad válida');
+                return;
+              }
+              fetchCuentasBancarias();
+              setMostrarCuentas(true);
+            }}>
               <div className="form-group">
                 <label htmlFor="nombreFallecido">
-                  Nombre de la persona fallecida a quien va destinado el arreglo *
+                  Nombre de la persona fallecida *
                 </label>
                 <input
                   type="text"
                   id="nombreFallecido"
                   value={nombrePersonaFallecida}
-                  onChange={handleNombreFallecidoChange}
+                  onChange={(e) => setNombrePersonaFallecida(e.target.value)}
                   placeholder="Ej: Juan Pérez García"
                   required
                 />
               </div>
+
+              <div className="form-group">
+                <label htmlFor="cantidad">
+                  Cantidad de arreglos *
+                </label>
+                <input
+                  type="number"
+                  id="cantidad"
+                  min="1"
+                  step="1"
+                  value={cantidadArreglos}
+                  onChange={(e) => {
+                    const valor = parseInt(e.target.value);
+                    if (!isNaN(valor) && valor >= 1) {
+                      setCantidadArreglos(valor);
+                    }
+                  }}
+                  placeholder="Ej: 1"
+                  required
+                />
+              </div>
+
+              <div className="resumen-arreglo">
+                <h3>Información del Arreglo</h3>
+                <div className="resumen-item">
+                  <span>Código:</span>
+                  <strong>{floraSeleccionada.codigo}</strong>
+                </div>
+                <div className="resumen-item">
+                  <span>Descripción:</span>
+                  <strong>{floraSeleccionada.descripcion}</strong>
+                </div>
+                <div className="resumen-item">
+                  <span>Precio Unitario:</span>
+                  <strong className="precio-fuerte">${floraSeleccionada.precio.toFixed(2)}</strong>
+                </div>
+                <div className="resumen-item" style={{ borderTop: '2px solid #eee', paddingTop: '10px', marginTop: '10px' }}>
+                  <span>Total:</span>
+                  <strong className="total-fuerte">${(floraSeleccionada.precio * cantidadArreglos).toFixed(2)}</strong>
+                </div>
+              </div>
+
               <button type="submit" className="btn-continue">
-                Continuar al Pago →
+                Ver Cuentas Bancarias →
               </button>
             </form>
           </div>
@@ -260,6 +404,7 @@ function Floristerias({ usuario, onBack }) {
       );
     }
 
+    // Pantalla detalle del arreglo
     return (
       <div className="flor-modal-view">
         <button className="back-button" onClick={cerrarDetalle}>
@@ -272,7 +417,6 @@ function Floristerias({ usuario, onBack }) {
         </div>
 
         <div className="flor-detail-container">
-          {/* Mostrar fotos nuevas (fotos[]) o imagen antigua (image) */}
           {Array.isArray(floraSeleccionada.fotos) && floraSeleccionada.fotos.length > 0 ? (
             <div className="flor-detail-galeria">
               {floraSeleccionada.fotos.map((foto, idx) => (
@@ -308,15 +452,45 @@ function Floristerias({ usuario, onBack }) {
                 </div>
               )}
               <div className="info-group">
-                <label>Precio:</label>
+                <label>Precio Unitario:</label>
                 <p className="price">${floraSeleccionada.precio.toFixed(2)}</p>
               </div>
             </div>
 
             <div className="detail-section cta">
-              <button className="btn-primary" onClick={iniciarPedido}>
-                💳 Pagar ${floraSeleccionada.precio.toFixed(2)}
-              </button>
+              <div className="cantidad-selector">
+                <label htmlFor="cantidadDetalle">Cantidad:</label>
+                <input
+                  type="number"
+                  id="cantidadDetalle"
+                  min="1"
+                  step="1"
+                  value={cantidadArreglos}
+                  onChange={(e) => {
+                    const valor = parseInt(e.target.value);
+                    if (!isNaN(valor) && valor >= 1) {
+                      setCantidadArreglos(valor);
+                    }
+                  }}
+                  style={{
+                    width: '80px',
+                    padding: '8px',
+                    marginLeft: '10px',
+                    fontSize: '16px',
+                    border: '2px solid #d4809d',
+                    borderRadius: '5px'
+                  }}
+                />
+              </div>
+              <div className="botones-accion" style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+                <button 
+                  className="btn-primary" 
+                  onClick={() => setMostrarFormPedido(true)}
+                  style={{ flex: '1' }}
+                >
+                  💳 Hacer Pedido
+                </button>
+              </div>
             </div>
           </div>
         </div>

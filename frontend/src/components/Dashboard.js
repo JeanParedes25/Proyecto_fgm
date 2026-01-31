@@ -1,42 +1,103 @@
 import './Dashboard.css';
+import './NotificacionesBadge.css';
 import AdminAudit from './AdminAudit';
 import AdminObituarios from './AdminObituarios';
 import AdminServicios from './AdminServicios';
 import AdminFloristerias from './AdminFloristerias';
-import AdminNotificacionesFloristerias from './AdminNotificacionesFloristerias';
+import AdminNotificaciones from './AdminNotificaciones';
 import AdminCuentasBancarias from './AdminCuentasBancarias';
 import AdminPlanes from './AdminPlanes';
+import AdminPedidos from './AdminPedidos';
 import ObituariosPublicos from './ObituariosPublicos';
 import Services from './Services';
 import Floristerias from './Floristerias';
 import PlanesUsuario from './PlanesUsuario';
 import SeguroPrevisor from './SeguroPrevisor';
+import MisPedidos from './MisPedidos';
 import { useState, useEffect } from 'react';
+import { WHATSAPP_URL } from '../constants/config';
 
 function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [stats, setStats] = useState({
     usuarios_totales: 0,
-    registros_totales: 0,
-    activos_hoy: 0,
-    sistema_operativo: 'N/A'
+    obituarios_totales: 0,
+    pedidos_florales: 0,
+    servicios_totales: 0,
+    registrados_hoy: 0
   });
-  const [loadingStats, setLoadingStats] = useState(true);
+  const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0);
+  const [usuariosAdmin, setUsuariosAdmin] = useState([]);
+  const [loadingUsuarios, setLoadingUsuarios] = useState(false);
+  const [errorUsuarios, setErrorUsuarios] = useState('');
+  const [successUsuarios, setSuccessUsuarios] = useState('');
+  const [nuevoUsuario, setNuevoUsuario] = useState({
+    nombre: '',
+    email: '',
+    password: '',
+    rol: 'usuario',
+    comidaFavorita: '',
+    primeraMascota: '',
+    ciudadNacimiento: ''
+  });
   const isAdmin = usuario?.rol === 'admin' || usuario?.email === 'israelmendoza18@hotmail.com';
+
+  // Cargar contador de notificaciones no leídas
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const fetchNotificacionesCount = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/notificaciones/no-leidas', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setNotificacionesNoLeidas(data.count || 0);
+        }
+      } catch (err) {
+        console.error('Error al obtener contador de notificaciones:', err);
+      }
+    };
+
+    fetchNotificacionesCount();
+    const interval = setInterval(fetchNotificacionesCount, 5000); // Actualizar cada 5 segundos
+    return () => clearInterval(interval);
+  }, [isAdmin]);
+
 
   // Cargar estadísticas en tiempo real
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/estadisticas');
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data);
+        const token = localStorage.getItem('token');
+        
+        // Obtener estadísticas generales
+        const responseStats = await fetch('http://localhost:5000/api/estadisticas', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        let estadisticas = {
+          usuarios_totales: 0,
+          obituarios_totales: 0,
+          pedidos_florales: 0,
+          servicios_totales: 0,
+          registrados_hoy: 0
+        };
+        
+        if (responseStats.ok) {
+          const dataStats = await responseStats.json();
+          estadisticas = { ...estadisticas, ...dataStats };
         }
+        
+        setStats(estadisticas);
       } catch (error) {
         console.error('Error al cargar estadísticas:', error);
-      } finally {
-        setLoadingStats(false);
       }
     };
 
@@ -47,6 +108,83 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
       return () => clearInterval(interval);
     }
   }, [isAdmin]);
+
+  const fetchUsuarios = async () => {
+    setLoadingUsuarios(true);
+    setErrorUsuarios('');
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/usuarios', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setUsuariosAdmin(data.usuarios || []);
+      } else {
+        setErrorUsuarios(data.mensaje || 'Error al cargar usuarios');
+      }
+    } catch (err) {
+      setErrorUsuarios('Error de conexión al cargar usuarios');
+    } finally {
+      setLoadingUsuarios(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAdmin && activeSection === 'users') {
+      fetchUsuarios();
+    }
+  }, [isAdmin, activeSection]);
+
+  const handleCrearUsuario = async (e) => {
+    e.preventDefault();
+    setErrorUsuarios('');
+    setSuccessUsuarios('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/usuarios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          nombre: nuevoUsuario.nombre,
+          email: nuevoUsuario.email,
+          password: nuevoUsuario.password,
+          rol: nuevoUsuario.rol,
+          preguntasSeguridad: {
+            comidaFavorita: nuevoUsuario.comidaFavorita,
+            primeraMascota: nuevoUsuario.primeraMascota,
+            ciudadNacimiento: nuevoUsuario.ciudadNacimiento
+          }
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccessUsuarios('Usuario creado exitosamente');
+        setNuevoUsuario({
+          nombre: '',
+          email: '',
+          password: '',
+          rol: 'usuario',
+          comidaFavorita: '',
+          primeraMascota: '',
+          ciudadNacimiento: ''
+        });
+        fetchUsuarios();
+      } else {
+        setErrorUsuarios(data.mensaje || 'No se pudo crear el usuario');
+      }
+    } catch (err) {
+      setErrorUsuarios('Error de conexión al crear usuario');
+    }
+  };
 
   if (isGuest) {
     return (
@@ -64,6 +202,24 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
             🔒 Estás navegando con acceso limitado. Para acceder a todas las funcionalidades, 
             inicia sesión o regístrate.
           </p>
+        </div>
+
+        <div className="guest-cards">
+          <div className="guest-card">
+            <span>🕯️</span>
+            <h4>Obituarios</h4>
+            <p>Consulta obituarios publicados y homenajes.</p>
+          </div>
+          <div className="guest-card">
+            <span>📍</span>
+            <h4>Ubicación</h4>
+            <p>España y Olmedo, Riobamba, Ecuador.</p>
+          </div>
+          <div className="guest-card">
+            <span>📞</span>
+            <h4>Contacto</h4>
+            <p>Asistencia inmediata y líneas disponibles.</p>
+          </div>
         </div>
 
         <div className="guest-nav">
@@ -167,10 +323,16 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
             🌹 Floristerías
           </button>
           <button 
-            className={activeSection === 'notificacionesFloristerias' ? 'active' : ''}
-            onClick={() => setActiveSection('notificacionesFloristerias')}
+            className={activeSection === 'pedidos' ? 'active' : ''}
+            onClick={() => setActiveSection('pedidos')}
           >
-            📬 Notificaciones Floristerías
+            📦 Pedidos
+          </button>
+          <button 
+            className={`${activeSection === 'notificaciones' ? 'active' : ''} ${notificacionesNoLeidas > 0 ? 'con-notificaciones' : ''}`}
+            onClick={() => setActiveSection('notificaciones')}
+          >
+            📬 Notificaciones {notificacionesNoLeidas > 0 && <span className="badge-notif">{notificacionesNoLeidas}</span>}
           </button>
           <button 
             className={activeSection === 'cuentasBancarias' ? 'active' : ''}
@@ -222,16 +384,20 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
                 <p>Usuarios Totales</p>
               </div>
               <div className="stat-card">
-                <h3>{stats.registros_totales}</h3>
-                <p>Registros</p>
+                <h3>{stats.obituarios_totales}</h3>
+                <p>Obituarios</p>
               </div>
               <div className="stat-card">
-                <h3>{stats.activos_hoy}</h3>
-                <p>Activos Hoy</p>
+                <h3>{stats.pedidos_florales}</h3>
+                <p>Pedidos Flores</p>
               </div>
               <div className="stat-card">
-                <h3>{stats.sistema_operativo}</h3>
-                <p>Sistema Operativo</p>
+                <h3>{stats.servicios_totales}</h3>
+                <p>Servicios</p>
+              </div>
+              <div className="stat-card">
+                <h3>{stats.registrados_hoy}</h3>
+                <p>Registros Hoy</p>
               </div>
             </div>
 
@@ -261,9 +427,111 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           <div className="admin-section">
             <h2>👥 Gestión de Usuarios</h2>
             <div className="users-management">
-              <button className="action-btn primary">➕ Crear Usuario</button>
-              <div className="users-table-placeholder">
-                <p>Aquí se mostrará la lista de usuarios registrados con opciones para editar, eliminar y gestionar permisos.</p>
+              <form className="users-form" onSubmit={handleCrearUsuario}>
+                <div className="users-form-grid">
+                  <div className="form-group">
+                    <label>Nombre</label>
+                    <input
+                      type="text"
+                      value={nuevoUsuario.nombre}
+                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, nombre: e.target.value })}
+                      required
+                      placeholder="Nombre completo"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Correo</label>
+                    <input
+                      type="email"
+                      value={nuevoUsuario.email}
+                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, email: e.target.value })}
+                      required
+                      placeholder="correo@dominio.com"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Contraseña</label>
+                    <input
+                      type="password"
+                      value={nuevoUsuario.password}
+                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, password: e.target.value })}
+                      required
+                      placeholder="••••••••"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Rol</label>
+                    <select
+                      value={nuevoUsuario.rol}
+                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, rol: e.target.value })}
+                    >
+                      <option value="admin">Administrador</option>
+                      <option value="usuario">Usuario normal</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Comida favorita</label>
+                    <input
+                      type="text"
+                      value={nuevoUsuario.comidaFavorita}
+                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, comidaFavorita: e.target.value })}
+                      required
+                      placeholder="Ej: Pizza"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Primera mascota</label>
+                    <input
+                      type="text"
+                      value={nuevoUsuario.primeraMascota}
+                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, primeraMascota: e.target.value })}
+                      required
+                      placeholder="Ej: Firulais"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Ciudad de nacimiento</label>
+                    <input
+                      type="text"
+                      value={nuevoUsuario.ciudadNacimiento}
+                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, ciudadNacimiento: e.target.value })}
+                      required
+                      placeholder="Ej: Riobamba"
+                    />
+                  </div>
+                </div>
+                {errorUsuarios && <div className="error-message">{errorUsuarios}</div>}
+                {successUsuarios && <div className="success-message">{successUsuarios}</div>}
+                <button className="action-btn primary" type="submit">
+                  ➕ Crear Usuario
+                </button>
+              </form>
+
+              <div className="users-table">
+                <div className="users-table-header">
+                  <span>Nombre</span>
+                  <span>Correo</span>
+                  <span>Rol</span>
+                  <span>Fecha</span>
+                </div>
+                {loadingUsuarios ? (
+                  <div className="users-table-placeholder">
+                    <p>Cargando usuarios...</p>
+                  </div>
+                ) : usuariosAdmin.length === 0 ? (
+                  <div className="users-table-placeholder">
+                    <p>No hay usuarios registrados.</p>
+                  </div>
+                ) : (
+                  usuariosAdmin.map((user) => (
+                    <div key={user._id} className="users-table-row">
+                      <span>{user.nombre}</span>
+                      <span>{user.email}</span>
+                      <span className={`rol-badge ${user.rol}`}>{user.rol === 'admin' ? 'Administrador' : 'Usuario'}</span>
+                      <span>{new Date(user.createdAt).toLocaleDateString('es-ES')}</span>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -281,8 +549,12 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           <AdminFloristerias />
         )}
 
-        {activeSection === 'notificacionesFloristerias' && (
-          <AdminNotificacionesFloristerias />
+        {activeSection === 'pedidos' && (
+          <AdminPedidos />
+        )}
+
+        {activeSection === 'notificaciones' && (
+          <AdminNotificaciones />
         )}
 
         {activeSection === 'cuentasBancarias' && (
@@ -359,13 +631,19 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           className={activeSection === 'services' ? 'active' : ''}
           onClick={() => setActiveSection('services')}
         >
-          🕊️ Servicios Exequiales
+          🕊️ Servicios
         </button>
         <button 
           className={activeSection === 'floristerias' ? 'active' : ''}
           onClick={() => setActiveSection('floristerias')}
         >
           🌹 Floristerías
+        </button>
+        <button 
+          className={activeSection === 'misPedidos' ? 'active' : ''}
+          onClick={() => setActiveSection('misPedidos')}
+        >
+          📦 Mis Pedidos
         </button>
         <button 
           className={activeSection === 'planes' ? 'active' : ''}
@@ -434,6 +712,10 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
         <Floristerias usuario={usuario} onBack={() => setActiveSection('dashboard')} />
       )}
 
+      {activeSection === 'misPedidos' && (
+        <MisPedidos onBack={() => setActiveSection('dashboard')} />
+      )}
+
       {activeSection === 'planes' && (
         <PlanesUsuario />
       )}
@@ -462,6 +744,30 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
             <div className="info-card">
               <h4>📍 Dirección</h4>
               <p>España y Olmedo, Riobamba, Ecuador</p>
+            </div>
+            <div className="info-card" style={{ gridColumn: '1 / -1', textAlign: 'center' }}>
+              <h4>💬 Escríbenos por WhatsApp</h4>
+              <button 
+                className="btn-whatsapp-contacto"
+                onClick={() => window.open(WHATSAPP_URL, '_blank')}
+                style={{
+                  background: 'linear-gradient(135deg, #25d366, #1ebe5d)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 30px',
+                  borderRadius: '25px',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  marginTop: '10px',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 12px rgba(37, 211, 102, 0.3)'
+                }}
+                onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
+                onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+              >
+                📱 Contactar por WhatsApp
+              </button>
             </div>
           </div>
         </div>
