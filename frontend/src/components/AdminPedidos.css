@@ -1,0 +1,251 @@
+.admin-pedidos {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
+  border-radius: 8px;
+  min-height: 80vh;
+}
+
+.pedidos-header {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #c49a6c;
+}
+
+.pedidos-header h2 {
+  color: #333;
+  font-size: 28px;
+  margin: 0 0 20px 0;
+}
+
+.filtros-estado {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filtro-btn {
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.filtro-btn:hover {
+  border-color: #c49a6c;
+  background: #f9f9f9;
+}
+
+.filtro-btn.active {
+  background: linear-gradient(135deg, #c49a6c 0%, #a77c4f 100%);
+  color: white;
+  border-color: #c49a6c;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #c49a6c;
+  font-size: 18px;
+}
+
+.no-pedidos-admin {
+  background: white;
+  padding: 60px;
+  border-radius: 12px;
+  text-align: center;
+  color: #666;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pedidos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.pedido-admin-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border-left: 5px solid #c49a6c;
+}
+
+.pedido-admin-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.pedido-admin-header {
+  background: linear-gradient(135deg, #c49a6c 0%, #a77c4f 100%);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pedido-admin-header h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.estado-badge {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.estado-pendiente {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.estado-confirmado {
+  background: #d4edda;
+  color: #155724;
+}
+
+.estado-cancelado {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.estado-entregado {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.pedido-fecha {
+  font-size: 13px;
+  opacity: 0.95;
+}
+
+.pedido-admin-body {
+  padding: 20px;
+}
+
+.cliente-info,
+.pedido-detalles {
+  margin-bottom: 20px;
+}
+
+.cliente-info h4,
+.pedido-detalles h4 {
+  margin: 0 0 10px 0;
+  color: #c49a6c;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cliente-info p,
+.pedido-detalles p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.precio-admin {
+  font-size: 18px !important;
+  color: #c49a6c !important;
+  font-weight: 700 !important;
+  margin-top: 10px !important;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.pedido-admin-actions {
+  display: flex;
+  gap: 10px;
+  padding: 15px 20px;
+  background: #f9f9f9;
+  border-top: 1px solid #eee;
+}
+
+.btn-confirmar,
+.btn-cancelar {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn-confirmar {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: white;
+}
+
+.btn-confirmar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+}
+
+.btn-cancelar {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+}
+
+.btn-cancelar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.pedido-nota-admin {
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.pedido-nota-admin.confirmado {
+  background: #d4edda;
+  color: #155724;
+  border-top: 2px solid #c3e6cb;
+}
+
+.pedido-nota-admin.cancelado {
+  background: #f8d7da;
+  color: #721c24;
+  border-top: 2px solid #f5c6cb;
+}
+
+@media (max-width: 768px) {
+  .admin-pedidos {
+    padding: 15px;
+  }
+
+  .pedidos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros-estado {
+    flex-direction: column;
+  }
+
+  .filtro-btn {
+    width: 100%;
+  }
+
+  .pedido-admin-header {
+    flex-direction: column;
+  }
+
+  .pedido-admin-actions {
+    flex-direction: column;
+  }
+}

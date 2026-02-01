@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Services.css';
+import { WHATSAPP_URL } from '../constants/config';
 
 function ContactForm() {
   const [formData, setFormData] = useState({
@@ -182,7 +183,12 @@ function Services({ usuario, onBack }) {
             <p>📞 Celular: 099 28 29 095 | 099 90 90 860</p>
             <p>📱 Oficina: 032 944 608</p>
             <p>📧 Email: israelmendoza18@hotmail.com</p>
-            <button className="contact-btn">Contáctanos Ahora</button>
+            <button 
+              className="contact-btn"
+              onClick={() => window.open(WHATSAPP_URL, '_blank')}
+            >
+              📱 Contáctanos Ahora
+            </button>
           </div>
         </div>
       </div>
@@ -211,7 +217,7 @@ function Services({ usuario, onBack }) {
       </button>
 
       <div className="services-header">
-        <h1>🕊️ Servicios Exequiales</h1>
+        <h1>🕊️ Servicios</h1>
         <p className="welcome-message">¡Bienvenido, {usuario.nombre}! 💝</p>
         <p className="description">Servicios creados por el administrador.</p>
       </div>
@@ -230,7 +236,7 @@ function Services({ usuario, onBack }) {
                 <img
                   src={(service.fotos && service.fotos[0]?.url) || '/placeholder.jpg'}
                   alt={service.nombre}
-                  style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 6 }}
+                  style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 6 }}
                 />
               </div>
               <h3>{service.nombre}</h3>

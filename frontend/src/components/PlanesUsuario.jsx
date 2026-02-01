@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './PlanesUsuario.css';
+import { WHATSAPP_URL } from '../constants/config';
 
 function PlanesUsuario() {
   const [planes, setPlanes] = useState([]);
@@ -176,8 +177,12 @@ function PlanesUsuario() {
 
               <div className="contacto-cta-card">
                 <p>Si le gustó este paquete, comuníquese con nuestro asesor.</p>
-                <button type="button" className="btn-whatsapp-placeholder">
-                  Contactar por WhatsApp
+                <button 
+                  type="button" 
+                  className="btn-whatsapp-plan"
+                  onClick={() => window.open(WHATSAPP_URL, '_blank')}
+                >
+                  📱 Contactar por WhatsApp
                 </button>
               </div>
 
@@ -347,8 +352,12 @@ function PlanesUsuario() {
                 <p className="contacto-info">
                   Si le gustó este paquete, comuníquese con nuestro asesor.
                 </p>
-                <button type="button" className="btn-whatsapp-placeholder">
-                  Contactar por WhatsApp
+                <button 
+                  type="button" 
+                  className="btn-whatsapp-plan"
+                  onClick={() => window.open(WHATSAPP_URL, '_blank')}
+                >
+                  📱 Contactar por WhatsApp
                 </button>
               </div>
             </div>

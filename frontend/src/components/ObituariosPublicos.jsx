@@ -3,12 +3,25 @@ import './ObituariosPublicos.css';
 
 function ObituariosPublicos() {
   const [obituarios, setObituarios] = useState([]);
+  const [obituariosFiltrados, setObituariosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [obituarioSeleccionado, setObituarioSeleccionado] = useState(null);
+  const [busqueda, setBusqueda] = useState('');
 
   useEffect(() => {
     fetchObituarios();
   }, []);
+
+  useEffect(() => {
+    if (busqueda.trim() === '') {
+      setObituariosFiltrados(obituarios);
+    } else {
+      const filtrados = obituarios.filter(obit =>
+        obit.nombre_completo.toLowerCase().includes(busqueda.toLowerCase())
+      );
+      setObituariosFiltrados(filtrados);
+    }
+  }, [busqueda, obituarios]);
 
   const fetchObituarios = async () => {
     try {
@@ -57,15 +70,37 @@ function ObituariosPublicos() {
         <p className="obituarios-subtitle">
           En memoria de aquellos que nos dejaron. Honramos su vida y legado.
         </p>
+        <div className="buscador-obituarios">
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            className="input-busqueda"
+          />
+          {busqueda && (
+            <button 
+              className="btn-limpiar-busqueda"
+              onClick={() => setBusqueda('')}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        {busqueda && (
+          <p className="resultados-busqueda">
+            {obituariosFiltrados.length} resultado{obituariosFiltrados.length !== 1 ? 's' : ''} encontrado{obituariosFiltrados.length !== 1 ? 's' : ''}
+          </p>
+        )}
       </div>
 
-      {obituarios.length === 0 ? (
+      {obituariosFiltrados.length === 0 ? (
         <div className="no-obituarios">
-          <p>📰 No hay obituarios publicados en este momento</p>
+          <p>{busqueda ? '🔍 No se encontraron resultados para tu búsqueda' : '📰 No hay obituarios publicados en este momento'}</p>
         </div>
       ) : (
         <div className="obituarios-publicos-grid">
-          {obituarios.map(obituario => (
+          {obituariosFiltrados.map(obituario => (
             <div key={obituario.id} className="obituario-publico-card" onClick={() => abrirDetalle(obituario)}>
               <div className="obituario-publico-image">
                 <img 
@@ -114,6 +149,23 @@ function ObituariosPublicos() {
                   <h3>💐 En su memoria</h3>
                   <p>{obituarioSeleccionado.mensaje_recordatorio}</p>
                 </div>
+
+                {obituarioSeleccionado.youtube_url && (
+                  <div className="modal-video">
+                    <h3>🎥 Video Conmemorativo</h3>
+                    <div className="video-container">
+                      <iframe
+                        width="100%"
+                        height="315"
+                        src={obituarioSeleccionado.youtube_url.replace('watch?v=', 'embed/')}
+                        title="Video conmemorativo"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  </div>
+                )}
 
                 <div className="modal-arte">
                   <h3>⛪ Parte Mortuorio</h3>

@@ -1,0 +1,263 @@
+.notificaciones-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.notificaciones-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.notificaciones-header h1 {
+  font-size: 28px;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge-contador {
+  background: #e74c3c;
+  color: white;
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.notificaciones-acciones {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-marcar-todas,
+.btn-limpiar {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.btn-marcar-todas {
+  background: #3498db;
+  color: white;
+}
+
+.btn-marcar-todas:hover {
+  background: #2980b9;
+}
+
+.btn-limpiar {
+  background: #95a5a6;
+  color: white;
+}
+
+.btn-limpiar:hover {
+  background: #7f8c8d;
+}
+
+.notificaciones-filtros {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.notificaciones-filtros button {
+  padding: 10px 20px;
+  border: 2px solid #ecf0f1;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.notificaciones-filtros button:hover {
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.notificaciones-filtros button.active {
+  background: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.no-notificaciones {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f8f9fa;
+  border-radius: 12px;
+}
+
+.no-notificaciones p {
+  font-size: 18px;
+  color: #7f8c8d;
+}
+
+.notificaciones-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.notificacion-card {
+  display: flex;
+  gap: 15px;
+  padding: 20px;
+  background: white;
+  border: 2px solid #ecf0f1;
+  border-radius: 12px;
+  transition: all 0.3s;
+}
+
+.notificacion-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.notificacion-card.no-leida {
+  background: #fff9e6;
+  border-color: #f39c12;
+  border-left: 5px solid #f39c12;
+}
+
+.notificacion-icono {
+  font-size: 32px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.notificacion-contenido {
+  flex: 1;
+}
+
+.notificacion-titulo {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.badge-nueva {
+  background: #e74c3c;
+  color: white;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.notificacion-mensaje {
+  font-size: 15px;
+  color: #34495e;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.notificacion-datos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 10px 0;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.notificacion-datos span {
+  font-size: 13px;
+  color: #555;
+}
+
+.notificacion-fecha {
+  font-size: 13px;
+  color: #95a5a6;
+  margin-top: 8px;
+}
+
+.notificacion-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-marcar,
+.btn-eliminar {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.btn-marcar {
+  background: #27ae60;
+  color: white;
+}
+
+.btn-marcar:hover {
+  background: #229954;
+  transform: scale(1.1);
+}
+
+.btn-eliminar {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-eliminar:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .notificaciones-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .notificacion-card {
+    flex-direction: column;
+  }
+
+  .notificacion-acciones {
+    flex-direction: row;
+  }
+
+  .notificaciones-filtros {
+    overflow-x: auto;
+  }
+}

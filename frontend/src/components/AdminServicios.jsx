@@ -146,7 +146,7 @@ function AdminServicios() {
   return (
     <div className="admin-servicios">
       <div className="servicios-header">
-        <h2>🎁 Gestión de Servicios Exequiales</h2>
+        <h2>🎁 Gestión de Servicios</h2>
         <button className="btn-nuevo" onClick={() => { resetForm(); setShowForm(true); }}>
           ➕ Nuevo Servicio
         </button>

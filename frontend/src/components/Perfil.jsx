@@ -180,7 +180,7 @@ function Perfil({ usuario, onBack }) {
             <div className="perfil-field">
               <label>Rol:</label>
               <span className={`rol-badge ${perfil.rol}`}>
-                {perfil.rol === 'admin' ? 'Administrador' : 'Cliente'}
+                {perfil.rol === 'admin' ? 'Administrador' : 'Usuario'}
               </span>
             </div>
             <div className="perfil-field">

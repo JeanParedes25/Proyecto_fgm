@@ -39,6 +39,34 @@
   border: 1px solid rgba(196, 154, 108, 0.25);
 }
 
+.auth-feature-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.feature-card {
+  background: #f9f7f2;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid rgba(196, 154, 108, 0.2);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.feature-icon {
+  font-size: 22px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.feature-card p {
+  font-size: 12px;
+  color: #4d4d4d;
+  font-weight: 600;
+}
+
 .auth-card h1 {
   text-align: center;
   color: #2b2f38;
@@ -104,6 +132,32 @@
   cursor: not-allowed;
 }
 
+.secondary-button {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: #c49a6c;
+  border: 2px solid #c49a6c;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.3s ease;
+}
+
+.secondary-button:hover:not(:disabled) {
+  background: #c49a6c;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(196, 154, 108, 0.3);
+}
+
+.secondary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .error-message {
   background-color: #f4e2e2;
   color: #8c2f2f;
@@ -146,6 +200,21 @@
   box-shadow: 0 4px 12px rgba(196, 154, 108, 0.3);
 }
 
+.info-message {
+  background-color: #e8f4f8;
+  color: #2c5f7c;
+  padding: 14px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #b3d9e8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.info-message strong {
+  color: #1a4a62;
+  font-weight: 700;
+}
 
 .success-message {
   background-color: #e3f0e5;
@@ -286,6 +355,116 @@
   gap: 10px;
   margin-top: 20px;
   padding-top: 20px;
+}
+
+.auth-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.cta-outline {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 2px solid #c49a6c;
+  background: transparent;
+  color: #a77c4f;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cta-outline:hover {
+  background: #c49a6c;
+  color: white;
+}
+
+.cta-outline.secondary {
+  border-color: #667eea;
+  color: #5568d3;
+}
+
+.cta-outline.secondary:hover {
+  background: #667eea;
+  color: white;
+}
+
+.auth-info {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: #5b5b5b;
+  align-items: center;
+}
+
+.security-questions-title {
+  color: #2b2f38;
+  margin: 20px 0 15px 0;
+  font-size: 18px;
+  text-align: center;
+  border-top: 2px solid #e0e0e0;
+  padding-top: 20px;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #c8c4bb;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: #f9f7f2;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: #c49a6c;
+  box-shadow: 0 0 0 3px rgba(196, 154, 108, 0.22);
+}
+
+.form-group select option:disabled {
+  color: #999;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 16px;
+  color: #999;
+  font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+
+.google-login-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.google-login-container > div {
+  width: 100% !important;
+}
+
+.google-login-container button {
+  width: 100% !important;
+  height: 40px !important;
+}
+
+.auth-links {
   border-top: 1px solid #e0e0e0;
 }
 
@@ -296,4 +475,103 @@
 
 .guest-link:hover {
   color: #495057 !important;
+}
+
+/* Wizard Progress */
+.wizard-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+  padding: 20px 0;
+}
+
+.wizard-step {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.wizard-step.active {
+  background: #c49a6c;
+  color: white;
+  box-shadow: 0 4px 12px rgba(196, 154, 108, 0.4);
+}
+
+.wizard-step.completed {
+  background: #4caf50;
+  color: white;
+}
+
+.wizard-line {
+  width: 60px;
+  height: 3px;
+  background: #e0e0e0;
+  transition: all 0.3s;
+}
+
+.wizard-line.completed {
+  background: #4caf50;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.button-group button {
+  flex: 1;
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+.btn-secondary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Bloqueo Message */
+.bloqueo-message {
+  background: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.bloqueo-message strong {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #856404;
+}
+
+.bloqueo-message p {
+  margin: 5px 0;
+  color: #856404;
+  font-size: 14px;
 }

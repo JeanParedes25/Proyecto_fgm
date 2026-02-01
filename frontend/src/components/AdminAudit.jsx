@@ -142,8 +142,8 @@ function AdminAudit() {
             ) : (
               filteredLogs.map((log, index) => (
                 <tr key={index}>
-                  <td>{formatDate(log.timestamp)}</td>
-                  <td>{log.userName || log.userEmail}</td>
+                  <td>{formatDate(log.createdAt)}</td>
+                  <td>{log.usuario || log.email}</td>
                   <td>
                     <span 
                       className="action-badge" 
@@ -152,8 +152,8 @@ function AdminAudit() {
                       {log.action}
                     </span>
                   </td>
-                  <td>{log.description}</td>
-                  <td className="ip-address">{log.ipAddress || 'N/A'}</td>
+                  <td>{log.descripcion}</td>
+                  <td className="ip-address">{log.ip || 'N/A'}</td>
                 </tr>
               ))
             )}

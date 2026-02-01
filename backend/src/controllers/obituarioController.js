@@ -84,9 +84,9 @@ const crearObituario = async (req, res) => {
     console.log('Body recibido:', req.body);
     console.log('Archivos recibidos:', req.files);
     
-    const { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento } = req.body;
+    const { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento, youtube_url } = req.body;
     
-    console.log('Desglose:', { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento });
+    console.log('Desglose:', { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento, youtube_url });
     
     if (!nombreCompleto || !mensajeRecordatorio || !arteMortuorio || !fechaFallecimiento) {
       console.log('❌ Validación fallida: Campos faltantes');
@@ -125,7 +125,8 @@ const crearObituario = async (req, res) => {
       imagenUrl,
       fotos,
       mensajeRecordatorio,
-      arteMortuorio
+      arteMortuorio,
+      youtube_url: youtube_url || null
     });
     
     console.log('✅ Obituario creado exitosamente con ID:', obituarioId);
@@ -151,7 +152,7 @@ const crearObituario = async (req, res) => {
 const actualizarObituario = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento, fotosExistentes } = req.body;
+    const { nombreCompleto, mensajeRecordatorio, arteMortuorio, fechaFallecimiento, fotosExistentes, youtube_url } = req.body;
     
     const obituarioExistente = await Obituario.obtenerPorId(id);
     if (!obituarioExistente) {
@@ -167,6 +168,7 @@ const actualizarObituario = async (req, res) => {
     if (mensajeRecordatorio) datosActualizar.mensajeRecordatorio = mensajeRecordatorio;
     if (arteMortuorio) datosActualizar.arteMortuorio = arteMortuorio;
     if (fechaFallecimiento) datosActualizar.fechaFallecimiento = fechaFallecimiento;
+    if (youtube_url !== undefined) datosActualizar.youtube_url = youtube_url || null;
     
     // Procesar fotos
     let fotos = [];

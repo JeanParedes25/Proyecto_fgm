@@ -10,6 +10,14 @@ const pedidoFloristeriasSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  emailCliente: {
+    type: String,
+    default: ''
+  },
+  telefonoCliente: {
+    type: String,
+    default: ''
+  },
   codigoArreglo: {
     type: String,
     required: true
@@ -21,24 +29,42 @@ const pedidoFloristeriasSchema = new mongoose.Schema({
   },
   descripcionArreglo: {
     type: String,
-    required: true
+    default: 'Sin descripción'
   },
   nombrePersonaFallecida: {
     type: String,
     required: true
   },
-  precio: {
+  precioUnitario: {
+    type: Number,
+    required: true
+  },
+  cantidad: {
+    type: Number,
+    required: true,
+    min: 1,
+    default: 1
+  },
+  total: {
     type: Number,
     required: true
   },
   estado: {
     type: String,
-    enum: ['pendiente', 'confirmado', 'entregado'],
+    enum: ['pendiente', 'confirmado', 'entregado', 'cancelado', 'cancelado_admin', 'cancelado_usuario'],
     default: 'pendiente'
+  },
+  notificacionEnviada: {
+    type: Boolean,
+    default: false
   },
   observaciones: {
     type: String,
     default: ''
+  },
+  fechaPedido: {
+    type: Date,
+    default: Date.now
   },
   createdAt: {
     type: Date,
@@ -48,6 +74,6 @@ const pedidoFloristeriasSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
-});
+}, { collection: 'pedidos_flores' });
 
 module.exports = mongoose.model('PedidoFloristeria', pedidoFloristeriasSchema);

@@ -35,10 +35,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
     nombre: '',
     email: '',
     password: '',
-    rol: 'usuario',
-    comidaFavorita: '',
-    primeraMascota: '',
-    ciudadNacimiento: ''
+    rol: 'usuario'
   });
   const isAdmin = usuario?.rol === 'admin' || usuario?.email === 'israelmendoza18@hotmail.com';
 
@@ -155,12 +152,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           nombre: nuevoUsuario.nombre,
           email: nuevoUsuario.email,
           password: nuevoUsuario.password,
-          rol: nuevoUsuario.rol,
-          preguntasSeguridad: {
-            comidaFavorita: nuevoUsuario.comidaFavorita,
-            primeraMascota: nuevoUsuario.primeraMascota,
-            ciudadNacimiento: nuevoUsuario.ciudadNacimiento
-          }
+          rol: nuevoUsuario.rol
         })
       });
 
@@ -172,10 +164,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           nombre: '',
           email: '',
           password: '',
-          rol: 'usuario',
-          comidaFavorita: '',
-          primeraMascota: '',
-          ciudadNacimiento: ''
+          rol: 'usuario'
         });
         fetchUsuarios();
       } else {
@@ -468,36 +457,6 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
                       <option value="admin">Administrador</option>
                       <option value="usuario">Usuario normal</option>
                     </select>
-                  </div>
-                  <div className="form-group">
-                    <label>Comida favorita</label>
-                    <input
-                      type="text"
-                      value={nuevoUsuario.comidaFavorita}
-                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, comidaFavorita: e.target.value })}
-                      required
-                      placeholder="Ej: Pizza"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Primera mascota</label>
-                    <input
-                      type="text"
-                      value={nuevoUsuario.primeraMascota}
-                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, primeraMascota: e.target.value })}
-                      required
-                      placeholder="Ej: Firulais"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Ciudad de nacimiento</label>
-                    <input
-                      type="text"
-                      value={nuevoUsuario.ciudadNacimiento}
-                      onChange={(e) => setNuevoUsuario({ ...nuevoUsuario, ciudadNacimiento: e.target.value })}
-                      required
-                      placeholder="Ej: Riobamba"
-                    />
                   </div>
                 </div>
                 {errorUsuarios && <div className="error-message">{errorUsuarios}</div>}

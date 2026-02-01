@@ -12,6 +12,8 @@ function AdminPlanes() {
     tipoCofre: '',
     duracionVelacion: '',
     salasIncluidas: [],
+    cremacion: false,
+    detallesCremacion: [],
     procedimientos: {
       formolizacion: false,
       tanatopraxia: false,
@@ -98,6 +100,8 @@ function AdminPlanes() {
       tipoCofre: '',
       duracionVelacion: '',
       salasIncluidas: [],
+      cremacion: false,
+      detallesCremacion: [],
       procedimientos: {
         formolizacion: false,
         tanatopraxia: false,
@@ -166,10 +170,10 @@ function AdminPlanes() {
     const method = editingId ? 'PUT' : 'POST';
 
     try {
-      // Validar y convertir precio a Number
+      // Validar y convertir precio a Number (opcional)
       const datosEnvio = {
         ...form,
-        precio: parseFloat(form.precio) || 0,
+        precio: form.precio ? parseFloat(form.precio) : undefined,
         obituariosDomiciliarios: {
           ...form.obituariosDomiciliarios,
           cantidad: parseInt(form.obituariosDomiciliarios.cantidad) || 0
@@ -222,6 +226,8 @@ function AdminPlanes() {
       tipoCofre: plan.tipoCofre || '',
       duracionVelacion: plan.duracionVelacion || '',
       salasIncluidas: plan.salasIncluidas || [],
+      cremacion: plan.cremacion || false,
+      detallesCremacion: plan.detallesCremacion || [],
       procedimientos: plan.procedimientos || {
         formolizacion: false,
         tanatopraxia: false,
@@ -327,6 +333,48 @@ function AdminPlanes() {
     }));
   };
 
+  // Funciones para manejar detalles de cremación
+  const [nuevoDetalleCremacion, setNuevoDetalleCremacion] = useState('');
+
+  const agregarDetalleCremacion = () => {
+    if (nuevoDetalleCremacion.trim()) {
+      setForm(prev => ({
+        ...prev,
+        detallesCremacion: [...prev.detallesCremacion, nuevoDetalleCremacion.trim()]
+      }));
+      setNuevoDetalleCremacion('');
+    }
+  };
+
+  const eliminarDetalleCremacion = (index) => {
+    setForm(prev => ({
+      ...prev,
+      detallesCremacion: prev.detallesCremacion.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleCremacionChange = (checked) => {
+    if (checked && form.detallesCremacion.length === 0) {
+      // Agregar ítems por defecto si se marca cremación
+      setForm(prev => ({
+        ...prev,
+        cremacion: true,
+        detallesCremacion: [
+          'Derecho al uso del horno crematorio',
+          'Urna para restos cenízaros',
+          'Sala de espera',
+          'Transporte de Riobamba a la crematoria'
+        ]
+      }));
+    } else {
+      setForm(prev => ({
+        ...prev,
+        cremacion: checked
+      }));
+    }
+  };
+
+
   if (loading) return <div className="loading">Cargando planes...</div>;
 
   return (
@@ -358,13 +406,12 @@ function AdminPlanes() {
                 />
               </label>
               <label>
-                Precio *
+                Precio (opcional)
                 <input
                   type="number"
                   step="0.01"
                   value={form.precio}
                   onChange={(e) => setForm({ ...form, precio: e.target.value })}
-                  required
                 />
               </label>
             </div>
@@ -436,6 +483,46 @@ function AdminPlanes() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Cremación */}
+          <div className="form-section">
+            <h4>Cremación</h4>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={form.cremacion}
+                onChange={(e) => handleCremacionChange(e.target.checked)}
+              />
+              Incluye Cremación
+            </label>
+            
+            {form.cremacion && (
+              <>
+                <div className="salas-input-group">
+                  <input
+                    type="text"
+                    value={nuevoDetalleCremacion}
+                    onChange={(e) => setNuevoDetalleCremacion(e.target.value)}
+                    placeholder="Detalle de cremación"
+                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), agregarDetalleCremacion())}
+                  />
+                  <button type="button" onClick={agregarDetalleCremacion} className="btn-agregar-sala">
+                    + Agregar
+                  </button>
+                </div>
+                <div className="salas-list">
+                  {form.detallesCremacion.map((detalle, idx) => (
+                    <div key={idx} className="sala-item">
+                      <span>{detalle}</span>
+                      <button type="button" onClick={() => eliminarDetalleCremacion(idx)} className="btn-eliminar-sala">
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Procedimientos */}

@@ -10,7 +10,8 @@ function AdminObituarios() {
     nombreCompleto: '',
     mensajeRecordatorio: '',
     arteMortuorio: '',
-    fechaFallecimiento: ''
+    fechaFallecimiento: '',
+    youtube_url: ''
   });
   const [fotos, setFotos] = useState([]);
   const [fotosParaSubir, setFotosParaSubir] = useState([]);
@@ -85,6 +86,9 @@ function AdminObituarios() {
     formDataToSend.append('mensajeRecordatorio', formData.mensajeRecordatorio);
     formDataToSend.append('arteMortuorio', formData.arteMortuorio);
     formDataToSend.append('fechaFallecimiento', formData.fechaFallecimiento);
+    if (formData.youtube_url) {
+      formDataToSend.append('youtube_url', formData.youtube_url);
+    }
     
     // Agregar fotos existentes
     if (fotos.length > 0) {
@@ -132,7 +136,8 @@ function AdminObituarios() {
       nombreCompleto: obituario.nombre_completo,
       mensajeRecordatorio: obituario.mensaje_recordatorio,
       arteMortuorio: obituario.arte_mortuorio,
-      fechaFallecimiento: obituario.fecha_fallecimiento.split('T')[0]
+      fechaFallecimiento: obituario.fecha_fallecimiento.split('T')[0],
+      youtube_url: obituario.youtube_url || ''
     });
     setFotos(obituario.fotos || []);
     setFotosParaSubir([]);
@@ -169,7 +174,8 @@ function AdminObituarios() {
       nombreCompleto: '',
       mensajeRecordatorio: '',
       arteMortuorio: '',
-      fechaFallecimiento: ''
+      fechaFallecimiento: '',
+      youtube_url: ''
     });
     setFotos([]);
     setFotosParaSubir([]);
@@ -331,6 +337,19 @@ function AdminObituarios() {
                 required
                 placeholder="Ej: PARTE MORTUORIO ENTREGÓ SU ALMA AL CREADOR QUIEN EN VIDA"
               />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="youtube_url">URL de YouTube (opcional)</label>
+              <input
+                type="url"
+                id="youtube_url"
+                name="youtube_url"
+                value={formData.youtube_url}
+                onChange={handleInputChange}
+                placeholder="https://www.youtube.com/watch?v=..."
+              />
+              <small style={{ color: '#666', fontSize: '12px' }}>Si tienes un video del obituario en YouTube, pega aquí el enlace</small>
             </div>
 
             <div className="form-actions">

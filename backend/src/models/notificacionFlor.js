@@ -20,7 +20,7 @@ const notificacionFloristeriasSchema = new mongoose.Schema({
   },
   descripcionArreglo: {
     type: String,
-    required: true
+    default: 'Sin descripción'
   },
   precio: {
     type: Number,

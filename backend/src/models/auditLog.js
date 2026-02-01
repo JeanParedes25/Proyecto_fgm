@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const auditLogSchema = new mongoose.Schema({
   action: {
     type: String,
-    enum: ['login', 'logout', 'create', 'update', 'delete'],
+    enum: ['login', 'logout', 'create', 'update', 'delete', 'solicitud', 'pedido', 'pago', 'configuracion'],
     required: true
   },
   usuario: {
@@ -20,7 +20,7 @@ const auditLogSchema = new mongoose.Schema({
   },
   entidad: {
     type: String,
-    enum: ['cliente', 'obituario', 'usuario'],
+    enum: ['cliente', 'obituario', 'usuario', 'servicio', 'plan', 'pedido', 'floreria', 'notificacion', 'cuenta_bancaria', 'seguro'],
     required: true
   },
   entidadId: {

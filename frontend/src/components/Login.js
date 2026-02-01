@@ -1,7 +1,8 @@
 import { useState } from 'react';
+import { GoogleLogin } from '@react-oauth/google';
 import './Auth.css';
 
-function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onNeedVerification, onForgotPassword }) {
+function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onForgotPassword }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -43,15 +44,7 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onNeedVerifi
       } else {
         const errorMsg = data.error || 'Error en el login';
         setError(errorMsg);
-        
-        // Si necesita verificación, redirigir
-        if (data.needsVerification) {
-          setTimeout(() => {
-            onNeedVerification(email);
-          }, 2000);
-        } else {
-          setShowRegisterPrompt(true);
-        }
+        setShowRegisterPrompt(true);
       }
     } catch (err) {
       setError('Error de conexión: ' + err.message);
@@ -66,10 +59,57 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onNeedVerifi
     onSwitchToRegister();
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: credentialResponse.credential })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        onLoginSuccess(data.usuario);
+      } else {
+        setError(data.error || 'Error en el login con Google');
+      }
+    } catch (err) {
+      setError('Error de conexión: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setError('Error al iniciar sesión con Google');
+  };
+
   return (
     <div className="auth-container" style={containerStyle}>
       <div className="auth-card">
         <h1>Inicio de Sesión</h1>
+        <div className="auth-feature-cards">
+          <div className="feature-card">
+            <span className="feature-icon">🕊️</span>
+            <p>Accede a servicios y planes funerarios</p>
+          </div>
+          <div className="feature-card">
+            <span className="feature-icon">🌹</span>
+            <p>Gestiona pedidos florales con facilidad</p>
+          </div>
+          <div className="feature-card">
+            <span className="feature-icon">📬</span>
+            <p>Recibe notificaciones en tiempo real</p>
+          </div>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Correo Electrónico:</label>
@@ -123,6 +163,23 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onNeedVerifi
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
+
+        <div className="divider">
+          <span>o</span>
+        </div>
+
+        <div className="google-login-container">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+            useOneTap={false}
+            theme="outline"
+            size="large"
+            text="signin_with"
+            locale="es"
+          />
+        </div>
+
         <div className="auth-links">
           <button 
             type="button" 
@@ -131,20 +188,14 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onNeedVerifi
           >
             ¿Olvidaste tu contraseña?
           </button>
-          <button 
-            type="button" 
-            className="link-button"
-            onClick={onSwitchToRegister}
-          >
-            ¿No tienes cuenta? Regístrate
+        </div>
+        <div className="auth-cta">
+          <button type="button" className="cta-outline" onClick={onSwitchToRegister}>
+             Crear cuenta nueva
           </button>
           {onGuestAccess && (
-            <button 
-              type="button" 
-              className="link-button guest-link"
-              onClick={onGuestAccess}
-            >
-              Continuar como invitado
+            <button type="button" className="cta-outline secondary" onClick={onGuestAccess}>
+               Explorar como invitado
             </button>
           )}
         </div>

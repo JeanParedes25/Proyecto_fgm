@@ -45,7 +45,7 @@ const ejecutarSeeding = async () => {
       },
       {
         nombre: 'Usuario Prueba',
-        email: 'usuario@gmail.com',
+        email: 'user@gmail.com',
         celular: '988888888',
         password: 'user123',
         rol: 'cliente',
@@ -71,7 +71,7 @@ const ejecutarSeeding = async () => {
     console.log('\n🌱 Seeding completado exitosamente');
     console.log('📝 Usuarios de prueba disponibles:');
     console.log('   Admin: admin@gmail.com / admin123');
-    console.log('   Usuario: usuario@gmail.com / user123');
+    console.log('   Usuario: user@gmail.com / user123');
 
     await mongoose.disconnect();
     console.log('\n✅ Desconexión completada');

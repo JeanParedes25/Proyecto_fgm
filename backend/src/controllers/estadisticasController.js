@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const Cliente = require('../models/cliente');
-const AuditLog = require('../models/auditLog');
+const Usuario = require('../models/usuario');
+const PedidoFloristeria = require('../models/pedidoFlor');
+const Servicio = require('../models/servicio');
 
 // Obtener estadísticas del sistema
 const obtenerEstadisticas = async (req, res) => {
@@ -11,14 +12,14 @@ const obtenerEstadisticas = async (req, res) => {
     const collections = await mongoose.connection.db.listCollections().toArray();
     console.log('Colecciones disponibles:', collections.map(c => c.name));
     
-    // Obtener total de usuarios (clientes registrados)
-    const usuariosTotales = await Cliente.countDocuments();
+    // Obtener total de usuarios
+    const usuariosTotales = await Usuario.countDocuments();
     console.log('Usuarios totales encontrados:', usuariosTotales);
     
     // Obtener total de obituarios desde la colección
     const obituariosCollection = mongoose.connection.collection('obituarios');
-    const registrosTotales = await obituariosCollection.countDocuments();
-    console.log('Registros de obituarios encontrados:', registrosTotales);
+    const obituariosTotales = await obituariosCollection.countDocuments();
+    console.log('Registros de obituarios encontrados:', obituariosTotales);
     
     // Obtener usuarios activos hoy (creados hoy)
     const hoy = new Date();
@@ -26,46 +27,28 @@ const obtenerEstadisticas = async (req, res) => {
     const mañana = new Date(hoy);
     mañana.setDate(mañana.getDate() + 1);
     
-    const activosHoy = await Cliente.countDocuments({
+    const activosHoy = await Usuario.countDocuments({
       createdAt: { $gte: hoy, $lt: mañana }
     });
-    
-    // Obtener estadísticas de auditoría
-    const loginsHoy = await AuditLog.countDocuments({
-      action: 'login',
-      createdAt: { $gte: hoy, $lt: mañana }
-    });
-    
-    const registrosCreados = await AuditLog.countDocuments({ action: 'create' });
-    const actualizaciones = await AuditLog.countDocuments({ action: 'update' });
-    const eliminaciones = await AuditLog.countDocuments({ action: 'delete' });
-    
-    // Estado del sistema
-    const sistemaOperativo = '100%';
-    
+
+    const pedidosFlorales = await PedidoFloristeria.countDocuments();
+    const serviciosTotales = await Servicio.countDocuments();
+
     console.log('Estadísticas obtenidas:', {
       usuariosTotales,
-      registrosTotales,
-      activosHoy,
-      loginsHoy,
-      registrosCreados,
-      actualizaciones,
-      eliminaciones,
-      sistemaOperativo
+      obituariosTotales,
+      pedidosFlorales,
+      serviciosTotales,
+      activosHoy
     });
     
     res.json({
       success: true,
       usuarios_totales: usuariosTotales,
-      registros_totales: registrosTotales,
-      activos_hoy: activosHoy,
-      sistema_operativo: sistemaOperativo,
-      auditoria: {
-        logins_hoy: loginsHoy,
-        registros_creados: registrosCreados,
-        actualizaciones: actualizaciones,
-        eliminaciones: eliminaciones
-      }
+      obituarios_totales: obituariosTotales,
+      pedidos_florales: pedidosFlorales,
+      servicios_totales: serviciosTotales,
+      registrados_hoy: activosHoy
     });
   } catch (error) {
     console.error('Error al obtener estadísticas:', error);
@@ -124,10 +107,10 @@ const obtenerUsuarios = async (req, res) => {
   try {
     console.log('=== OBTENER USUARIOS ===');
     
-    const usuarios = await Cliente.find({}, 'nombre email createdAt').sort({ createdAt: -1 });
+    const usuarios = await Usuario.find({}, 'nombre email createdAt rol').sort({ createdAt: -1 });
     const totalPorRol = {
-      admin: 1,
-      usuario: usuarios.length - 1
+      admin: usuarios.filter((u) => u.rol === 'admin').length,
+      usuario: usuarios.filter((u) => u.rol === 'usuario').length
     };
     
     res.json({

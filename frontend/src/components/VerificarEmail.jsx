@@ -23,7 +23,7 @@ function VerificarEmail({ email, onVerificationSuccess, onBackToLogin }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verificar-email', {
+      const response = await fetch('http://localhost:5000/api/auth/verificar-codigo-correo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -54,7 +54,7 @@ function VerificarEmail({ email, onVerificationSuccess, onBackToLogin }) {
     setResending(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/reenviar-codigo', {
+      const response = await fetch('http://localhost:5000/api/auth/reenviar-codigo-verificacion', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -81,7 +81,7 @@ function VerificarEmail({ email, onVerificationSuccess, onBackToLogin }) {
       <div className="auth-card">
         <h1>Verificar Email</h1>
         <p className="verification-info">
-          Hemos enviado un código de verificación de 6 dígitos a:
+          Hemos enviado un código de verificación de 5 dígitos a:
           <br />
           <strong>{email}</strong>
         </p>
@@ -94,9 +94,9 @@ function VerificarEmail({ email, onVerificationSuccess, onBackToLogin }) {
               value={codigo}
               onChange={(e) => setCodigo(e.target.value)}
               required
-              placeholder="000000"
-              maxLength="6"
-              pattern="\d{6}"
+              placeholder="00000"
+              maxLength="5"
+              pattern="\d{5}"
               autoFocus
             />
           </div>
@@ -105,24 +105,22 @@ function VerificarEmail({ email, onVerificationSuccess, onBackToLogin }) {
           <button type="submit" disabled={loading}>
             {loading ? 'Verificando...' : 'Verificar'}
           </button>
-        </form>
-        <div className="verification-actions">
           <button 
             type="button"
-            className="link-button"
+            className="secondary-button"
             onClick={handleReenviarCodigo}
             disabled={resending}
           >
-            {resending ? 'Reenviando...' : '¿No recibiste el código? Reenviar'}
+            {resending ? 'Reenviando...' : 'Reenviar Código'}
           </button>
           <button 
             type="button" 
-            className="link-button"
+            className="secondary-button"
             onClick={onBackToLogin}
           >
-            Volver al inicio de sesión
+            Volver al Inicio
           </button>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ const planSchema = new mongoose.Schema({
   },
   precio: {
     type: Number,
-    required: true,
+    required: false,
     min: 0
   },
   tipoCofre: {
@@ -16,6 +16,14 @@ const planSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  cremacion: {
+    type: Boolean,
+    default: false
+  },
+  detallesCremacion: [{
+    type: String,
+    trim: true
+  }],
   duracionVelacion: {
     type: String,
     required: true,

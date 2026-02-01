@@ -1,57 +1,128 @@
 const PedidoFloristeria = require('../models/pedidoFlor');
 const NotificacionFloristeria = require('../models/notificacionFlor');
+const { crearNotificacion } = require('./notificacionController');
+const { registrarEvento } = require('./auditController');
 
-// Crear pedido de floristerías
+// Crear pedido de floristerías con cantidad y validación de total
 const crearPedido = async (req, res) => {
   try {
-    const { codigoArreglo, arregloId, descripcionArreglo, nombrePersonaFallecida, precio } = req.body;
-    const clienteId = req.user.id;
-    const nombreCliente = req.user.nombre;
+    const { 
+      codigoArreglo, 
+      arregloId, 
+      descripcionArreglo, 
+      nombrePersonaFallecida, 
+      precioUnitario,
+      cantidad
+    } = req.body;
+    const clienteId = req.usuario.id;
+    const nombreCliente = req.usuario.nombre;
+    const emailCliente = req.usuario.email || '';
+    const telefonoCliente = req.usuario.celular || '';
 
-    if (!codigoArreglo || !arregloId || !nombrePersonaFallecida || !precio) {
+    console.log('📦 Datos recibidos del pedido:', {
+      codigoArreglo,
+      arregloId,
+      descripcionArreglo,
+      nombrePersonaFallecida,
+      precioUnitario,
+      cantidad,
+      clienteId,
+      nombreCliente
+    });
+
+    // Validación de campos requeridos
+    if (!codigoArreglo || !arregloId || !nombrePersonaFallecida || !precioUnitario || !cantidad) {
+      console.error('❌ Faltan campos requeridos');
       return res.status(400).json({
         success: false,
         mensaje: 'Faltan campos requeridos'
       });
     }
 
+    // Validar cantidad
+    const cantidadNum = Number(cantidad);
+    if (!Number.isInteger(cantidadNum) || cantidadNum < 1) {
+      console.error('❌ Cantidad inválida');
+      return res.status(400).json({
+        success: false,
+        mensaje: 'La cantidad debe ser un número entero mayor a 0'
+      });
+    }
+
+    // Validar precio unitario
+    const precioNum = parseFloat(precioUnitario);
+    if (isNaN(precioNum) || precioNum < 0) {
+      console.error('❌ Precio inválido');
+      return res.status(400).json({
+        success: false,
+        mensaje: 'El precio unitario es inválido'
+      });
+    }
+
+    // Calcular total en el backend (evitar manipulación desde frontend)
+    const total = precioNum * cantidadNum;
+
     const nuevoPedido = new PedidoFloristeria({
       clienteId,
       nombreCliente,
+      emailCliente,
+      telefonoCliente,
       codigoArreglo,
       arregloId,
-      descripcionArreglo,
+      descripcionArreglo: descripcionArreglo || 'Sin descripción',
       nombrePersonaFallecida,
-      precio,
-      estado: 'pendiente'
+      precioUnitario: precioNum,
+      cantidad: cantidadNum,
+      total: total,
+      estado: 'pendiente',
+      notificacionEnviada: false,
+      fechaPedido: new Date()
     });
 
+    console.log('💾 Intentando guardar pedido...');
     await nuevoPedido.save();
+    console.log('✅ Pedido guardado exitosamente:', nuevoPedido._id);
 
-    // Crear notificación para el administrador
-    const mensaje = `${nombreCliente} pidió el arreglo floral código ${codigoArreglo} para ${nombrePersonaFallecida}`;
+    // Crear notificación general para el administrador
+    const mensajeNotificacion = `Nuevo pedido de arreglo floral código ${codigoArreglo} para ${nombrePersonaFallecida}. Cantidad: ${cantidadNum}. Precio unitario: $${precioNum.toFixed(2)}. Total: $${total.toFixed(2)}`;
     
-    const notificacion = new NotificacionFloristeria({
-      pedidoId: nuevoPedido._id,
-      nombreCliente,
-      codigoArreglo,
-      nombrePersonaFallecida,
-      descripcionArreglo,
-      precio,
-      mensaje,
-      leida: false
-    });
+    await crearNotificacion(
+      'floristeria',
+      '🌹 Nuevo Pedido de Floristería',
+      mensajeNotificacion,
+      {
+        pedidoId: nuevoPedido._id,
+        nombreCliente,
+        emailCliente,
+        telefonoCliente,
+        codigoArreglo,
+        nombrePersonaFallecida,
+        descripcionArreglo: descripcionArreglo || 'Sin descripción',
+        precioUnitario: precioNum,
+        cantidad: cantidadNum,
+        total: total
+      }
+    );
+    console.log('✅ Notificación general creada exitosamente');
 
-    await notificacion.save();
+    // Registrar en auditoría
+    await registrarEvento(
+      'pedido',
+      nombreCliente,
+      emailCliente,
+      `Pedido de arreglo floral ${codigoArreglo} para ${nombrePersonaFallecida}. Cantidad: ${cantidadNum}. Precio unitario: $${precioNum.toFixed(2)}. Total: $${total.toFixed(2)}`,
+      'pedido',
+      nuevoPedido._id.toString()
+    );
 
     res.status(201).json({
       success: true,
-      mensaje: 'Pedido creado exitosamente',
-      pedido: nuevoPedido,
-      notificacion
+      mensaje: 'Pedido creado exitosamente. Por favor confirma el pago en WhatsApp.',
+      pedido: nuevoPedido
     });
   } catch (error) {
-    console.error('Error al crear pedido:', error);
+    console.error('❌ Error al crear pedido:', error);
+    console.error('Stack trace:', error.stack);
     res.status(500).json({
       success: false,
       mensaje: 'Error al crear el pedido',
@@ -63,7 +134,7 @@ const crearPedido = async (req, res) => {
 // Obtener pedidos del usuario
 const obtenerMisPedidos = async (req, res) => {
   try {
-    const clienteId = req.user.id;
+    const clienteId = req.usuario.id;
     const pedidos = await PedidoFloristeria.find({ clienteId }).sort({ createdAt: -1 });
 
     res.json({
@@ -107,7 +178,7 @@ const actualizarEstadoPedido = async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
 
-    if (!['pendiente', 'confirmado', 'entregado'].includes(estado)) {
+    if (!['pendiente', 'confirmado', 'entregado', 'cancelado'].includes(estado)) {
       return res.status(400).json({
         success: false,
         mensaje: 'Estado inválido'

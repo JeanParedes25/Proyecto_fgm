@@ -75,6 +75,11 @@
   color: white;
 }
 
+.rol-badge.usuario {
+  background: #3498db;
+  color: white;
+}
+
 .perfil-actions {
   display: flex;
   flex-direction: column;

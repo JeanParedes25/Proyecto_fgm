@@ -27,6 +27,68 @@
   font-style: italic;
 }
 
+.buscador-obituarios {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.input-busqueda {
+  width: 100%;
+  padding: 14px 45px 14px 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.input-busqueda:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.input-busqueda::placeholder {
+  color: #999;
+}
+
+.btn-limpiar-busqueda {
+  position: absolute;
+  right: 15px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.btn-limpiar-busqueda:hover {
+  background: #c0392b;
+  transform: scale(1.1);
+}
+
+.resultados-busqueda {
+  margin-top: 15px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
 .obituarios-publicos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -242,7 +304,8 @@
 }
 
 .modal-mensaje h3,
-.modal-arte h3 {
+.modal-arte h3,
+.modal-video h3 {
   color: #667eea;
   font-size: 18px;
   margin: 0 0 12px 0;
@@ -255,6 +318,28 @@
   line-height: 1.7;
   font-size: 15px;
   margin: 0;
+}
+
+.modal-video {
+  margin: 20px 0;
+}
+
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
 }
 
 .modal-mensaje p {

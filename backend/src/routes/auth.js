@@ -3,18 +3,22 @@ const authController = require('../controllers/authController');
 const auth = require('../middleware/auth');
 const router = express.Router();
 
-// Registro y verificación
+// Registro
 router.post('/register', authController.register);
-router.post('/verificar-email', authController.verificarEmail);
-router.post('/reenviar-codigo', authController.reenviarCodigoVerificacion);
+
+// Verificación de correo (después del registro)
+router.post('/verificar-codigo-correo', authController.verificarCodigoCorreo);
+router.post('/reenviar-codigo-verificacion', authController.reenviarCodigoVerificacion);
 
 // Login
 router.post('/login', authController.login);
 
-// Recuperación de contraseña
-router.post('/solicitar-recuperacion', authController.solicitarRecuperacion);
-router.post('/verificar-codigo-recuperacion', authController.verificarCodigoRecuperacion);
-router.post('/restablecer-password', authController.restablecerPassword);
+// Google OAuth
+router.post('/google', authController.googleLogin);
+
+// Recuperación de contraseña SOLO con código por correo
+router.post('/enviar-codigo-recuperacion', authController.enviarCodigoRecuperacionPassword);
+router.post('/verificar-codigo-recuperacion', authController.verificarCodigoRecuperacionPassword);
 
 // Perfil (rutas protegidas)
 router.get('/perfil', auth, authController.obtenerPerfil);

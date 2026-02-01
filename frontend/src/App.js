@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import Login from './components/Login';
 import Register from './components/Register';
-import VerificarEmail from './components/VerificarEmail';
 import RecuperarPassword from './components/RecuperarPassword';
 import Dashboard from './components/Dashboard';
 import Perfil from './components/Perfil';
@@ -12,7 +12,6 @@ function App() {
   const [usuario, setUsuario] = useState(null);
   const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [emailToVerify, setEmailToVerify] = useState('');
 
   // Verificar si hay usuario guardado en localStorage
   useEffect(() => {
@@ -33,15 +32,6 @@ function App() {
   const handleLoginSuccess = (usuarioData) => {
     setUsuario(usuarioData);
     setCurrentPage('dashboard');
-  };
-
-  const handleNeedVerification = (email) => {
-    setEmailToVerify(email);
-    setCurrentPage('verificar-email');
-  };
-
-  const handleVerificationSuccess = () => {
-    setCurrentPage('login');
   };
 
   const handleForgotPassword = () => {
@@ -88,51 +78,44 @@ function App() {
   }
 
   return (
-    <div className="App">
-      {currentPage === 'login' && !usuario && !isGuest && (
-        <Login 
-          onLoginSuccess={handleLoginSuccess}
-          onSwitchToRegister={handleSwitchToRegister}
-          onGuestAccess={handleGuestAccess}
-          onNeedVerification={handleNeedVerification}
-          onForgotPassword={handleForgotPassword}
-        />
-      )}
-      {currentPage === 'register' && !usuario && !isGuest && (
-        <Register 
-          onSwitchToLogin={handleSwitchToLogin}
-          onNeedVerification={handleNeedVerification}
-        />
-      )}
-      {currentPage === 'verificar-email' && (
-        <VerificarEmail 
-          email={emailToVerify}
-          onVerificationSuccess={handleVerificationSuccess}
-          onBackToLogin={handleSwitchToLogin}
-        />
-      )}
-      {currentPage === 'recuperar-password' && (
-        <RecuperarPassword 
-          onBackToLogin={handleSwitchToLogin}
-          onRecoverySuccess={handleRecoverySuccess}
-        />
-      )}
-      {currentPage === 'perfil' && usuario && (
-        <Perfil 
-          usuario={usuario}
-          onLogout={handleLogout}
-          onBack={handleBackToDashboard}
-        />
-      )}
-      {(usuario || isGuest) && currentPage === 'dashboard' && (
-        <Dashboard 
-          usuario={usuario}
-          isGuest={isGuest}
-          onLogout={handleLogout}
-          onGoToPerfil={handleGoToPerfil}
-        />
-      )}
-    </div>
+    <GoogleOAuthProvider clientId="60783193197-6k6ssrnefi3bfav9em1ov04i9aspekvk.apps.googleusercontent.com">
+      <div className="App">
+        {currentPage === 'login' && !usuario && !isGuest && (
+          <Login 
+            onLoginSuccess={handleLoginSuccess}
+            onSwitchToRegister={handleSwitchToRegister}
+            onGuestAccess={handleGuestAccess}
+            onForgotPassword={handleForgotPassword}
+          />
+        )}
+        {currentPage === 'register' && !usuario && !isGuest && (
+          <Register 
+            onSwitchToLogin={handleSwitchToLogin}
+          />
+        )}
+        {currentPage === 'recuperar-password' && (
+          <RecuperarPassword 
+            onBackToLogin={handleSwitchToLogin}
+            onRecoverySuccess={handleRecoverySuccess}
+          />
+        )}
+        {currentPage === 'perfil' && usuario && (
+          <Perfil 
+            usuario={usuario}
+            onLogout={handleLogout}
+            onBack={handleBackToDashboard}
+          />
+        )}
+        {(usuario || isGuest) && currentPage === 'dashboard' && (
+          <Dashboard 
+            usuario={usuario}
+            isGuest={isGuest}
+            onLogout={handleLogout}
+            onGoToPerfil={handleGoToPerfil}
+          />
+        )}
+      </div>
+    </GoogleOAuthProvider>
   );
 }
 

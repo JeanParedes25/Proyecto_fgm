@@ -31,6 +31,10 @@ const obituarioSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  youtube_url: {
+    type: String,
+    default: null
+  },
   created_at: {
     type: Date,
     default: Date.now
