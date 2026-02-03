@@ -1,4 +1,5 @@
 const Plan = require('../models/plan');
+const { registrarEvento } = require('./auditController');
 
 // Obtener todos los planes
 exports.obtenerPlanes = async (req, res) => {
@@ -58,6 +59,17 @@ exports.crearPlan = async (req, res) => {
     const nuevoPlan = new Plan(datosValidados);
     const planGuardado = await nuevoPlan.save();
     console.log('Plan guardado exitosamente:', planGuardado._id);
+
+    await registrarEvento({
+      usuarioId: req.usuario?.id || null,
+      nombreUsuario: req.usuario?.nombre || 'Sistema',
+      rol: req.usuario?.rol || 'admin',
+      accion: 'CREATE',
+      modulo: 'Planes',
+      descripcion: `Creación de plan funerario ${planGuardado.nombre || planGuardado._id}`,
+      ip: req.ip || null
+    });
+
     res.status(201).json(planGuardado);
   } catch (error) {
     console.error('❌ Error al crear plan:', error);
@@ -98,6 +110,17 @@ exports.actualizarPlan = async (req, res) => {
     }
     
     console.log('Plan actualizado exitosamente:', planActualizado._id);
+
+    await registrarEvento({
+      usuarioId: req.usuario?.id || null,
+      nombreUsuario: req.usuario?.nombre || 'Sistema',
+      rol: req.usuario?.rol || 'admin',
+      accion: 'UPDATE',
+      modulo: 'Planes',
+      descripcion: `Edición de plan funerario ${planActualizado.nombre || planActualizado._id}`,
+      ip: req.ip || null
+    });
+
     res.json(planActualizado);
   } catch (error) {
     console.error('❌ Error al actualizar plan:', error);
@@ -121,6 +144,16 @@ exports.eliminarPlan = async (req, res) => {
     if (!plan) {
       return res.status(404).json({ mensaje: 'Plan no encontrado' });
     }
+
+    await registrarEvento({
+      usuarioId: req.usuario?.id || null,
+      nombreUsuario: req.usuario?.nombre || 'Sistema',
+      rol: req.usuario?.rol || 'admin',
+      accion: 'DELETE',
+      modulo: 'Planes',
+      descripcion: `Eliminación de plan funerario ${plan.nombre || plan._id}`,
+      ip: req.ip || null
+    });
     
     res.json({ mensaje: 'Plan eliminado correctamente', plan });
   } catch (error) {
@@ -137,6 +170,16 @@ exports.eliminarPlanPermanente = async (req, res) => {
     if (!plan) {
       return res.status(404).json({ mensaje: 'Plan no encontrado' });
     }
+
+    await registrarEvento({
+      usuarioId: req.usuario?.id || null,
+      nombreUsuario: req.usuario?.nombre || 'Sistema',
+      rol: req.usuario?.rol || 'admin',
+      accion: 'DELETE',
+      modulo: 'Planes',
+      descripcion: `Eliminación permanente de plan funerario ${plan.nombre || plan._id}`,
+      ip: req.ip || null
+    });
     
     res.json({ mensaje: 'Plan eliminado permanentemente' });
   } catch (error) {
@@ -156,6 +199,16 @@ exports.toggleDestacado = async (req, res) => {
     
     plan.destacado = !plan.destacado;
     await plan.save();
+
+    await registrarEvento({
+      usuarioId: req.usuario?.id || null,
+      nombreUsuario: req.usuario?.nombre || 'Sistema',
+      rol: req.usuario?.rol || 'admin',
+      accion: 'UPDATE',
+      modulo: 'Planes',
+      descripcion: `Cambio de destacado en plan funerario ${plan.nombre || plan._id}`,
+      ip: req.ip || null
+    });
     
     res.json(plan);
   } catch (error) {

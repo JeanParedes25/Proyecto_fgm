@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Usuario = require('../models/usuario');
 const PedidoFloristeria = require('../models/pedidoFlor');
 const Servicio = require('../models/servicio');
+const AuditLog = require('../models/auditLog');
 
 // Obtener estadísticas del sistema
 const obtenerEstadisticas = async (req, res) => {
@@ -64,23 +65,20 @@ const obtenerLogsAuditoria = async (req, res) => {
   try {
     console.log('=== OBTENER LOGS AUDITORÍA ===');
     
-    const { action, limit = 20, skip = 0 } = req.query;
+    const { action, accion, limit = 20, skip = 0 } = req.query;
     
     let filtro = {};
-    if (action && action !== 'all') {
-      filtro.action = action;
+    const filtroAccion = accion || action;
+    if (filtroAccion && filtroAccion.toString().toLowerCase() !== 'all') {
+      filtro.accion = filtroAccion.toString().trim().toUpperCase();
     }
-    
-    const obituariosCollection = mongoose.connection.collection('obituarios');
-    
-    const logs = await obituariosCollection
-      .find(filtro)
-      .sort({ created_at: -1 })
+
+    const logs = await AuditLog.find(filtro)
+      .sort({ fecha: -1 })
       .limit(parseInt(limit))
-      .skip(parseInt(skip))
-      .toArray();
+      .skip(parseInt(skip));
     
-    const total = await obituariosCollection.countDocuments(filtro);
+    const total = await AuditLog.countDocuments(filtro);
     
     console.log('Logs obtenidos:', logs.length);
     

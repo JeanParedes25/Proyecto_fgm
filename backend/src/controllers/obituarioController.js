@@ -1,6 +1,7 @@
 const Obituario = require('../models/obituario');
 const path = require('path');
 const fs = require('fs');
+const { registrarEvento } = require('./auditController');
 
 // Obtener todos los obituarios
 const obtenerObituarios = async (req, res) => {
@@ -131,6 +132,16 @@ const crearObituario = async (req, res) => {
     
     console.log('✅ Obituario creado exitosamente con ID:', obituarioId);
     console.log('=====================================\n');
+
+    await registrarEvento({
+      usuarioId: req.usuario?.id || null,
+      nombreUsuario: req.usuario?.nombre || 'Publico',
+      rol: req.usuario?.rol || 'usuario',
+      accion: 'CREATE',
+      modulo: 'Obituarios',
+      descripcion: `Creación de obituario para ${nombreCompleto}`,
+      ip: req.ip || null
+    });
     
     res.status(201).json({ 
       success: true, 
@@ -195,6 +206,16 @@ const actualizarObituario = async (req, res) => {
     const actualizado = await Obituario.actualizar(id, datosActualizar);
     
     if (actualizado) {
+      await registrarEvento({
+        usuarioId: req.usuario?.id || null,
+        nombreUsuario: req.usuario?.nombre || 'Publico',
+        rol: req.usuario?.rol || 'usuario',
+        accion: 'UPDATE',
+        modulo: 'Obituarios',
+        descripcion: `Edición de obituario ${id}`,
+        ip: req.ip || null
+      });
+
       res.json({ 
         success: true, 
         mensaje: 'Obituario actualizado exitosamente' 
@@ -252,6 +273,16 @@ const eliminarObituario = async (req, res) => {
     const eliminado = await Obituario.eliminar(id);
     
     if (eliminado) {
+      await registrarEvento({
+        usuarioId: req.usuario?.id || null,
+        nombreUsuario: req.usuario?.nombre || 'Publico',
+        rol: req.usuario?.rol || 'usuario',
+        accion: 'DELETE',
+        modulo: 'Obituarios',
+        descripcion: `Eliminación de obituario ${id}`,
+        ip: req.ip || null
+      });
+
       res.json({ 
         success: true, 
         mensaje: 'Obituario eliminado exitosamente' 

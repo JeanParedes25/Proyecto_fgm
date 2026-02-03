@@ -379,7 +379,6 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
               <div className="admin-badge">ADMINISTRADOR</div>
               <div className="user-info">
                 <p><strong>Email:</strong> {usuario.email}</p>
-                <p><strong>ID:</strong> {usuario.id}</p>
                 <p><strong>Rol:</strong> Administrador</p>
               </div>
             </div>
@@ -720,7 +719,6 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
             <p className="welcome-subtitle">Gracias por confiar en Funerales Gonzalo Mendoza</p>
             <div className="user-info">
               <p><strong>Email:</strong> {usuario.email}</p>
-              <p><strong>ID:</strong> {usuario.id}</p>
             </div>
           </div>
 

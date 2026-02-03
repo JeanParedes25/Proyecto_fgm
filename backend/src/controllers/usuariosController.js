@@ -44,14 +44,15 @@ const crearUsuario = async (req, res) => {
     await nuevoUsuario.save();
 
     // Registrar evento en auditoría
-    await registrarEvento(
-      'create',
-      req.usuario.nombre,
-      req.usuario.email,
-      `Usuario ${email} creado con rol ${rol}`,
-      'usuario',
-      nuevoUsuario._id.toString()
-    );
+    await registrarEvento({
+      usuarioId: req.usuario.id,
+      nombreUsuario: req.usuario.nombre,
+      rol: req.usuario.rol,
+      accion: 'CREATE',
+      modulo: 'Usuarios',
+      descripcion: `Usuario ${email} creado con rol ${rol}`,
+      ip: req.ip || null
+    });
 
     res.status(201).json({
       success: true,

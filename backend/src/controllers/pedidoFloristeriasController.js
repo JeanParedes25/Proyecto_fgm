@@ -106,14 +106,15 @@ const crearPedido = async (req, res) => {
     console.log('✅ Notificación general creada exitosamente');
 
     // Registrar en auditoría
-    await registrarEvento(
-      'pedido',
-      nombreCliente,
-      emailCliente,
-      `Pedido de arreglo floral ${codigoArreglo} para ${nombrePersonaFallecida}. Cantidad: ${cantidadNum}. Precio unitario: $${precioNum.toFixed(2)}. Total: $${total.toFixed(2)}`,
-      'pedido',
-      nuevoPedido._id.toString()
-    );
+    await registrarEvento({
+      usuarioId: clienteId,
+      nombreUsuario: nombreCliente,
+      rol: req.usuario?.rol || 'usuario',
+      accion: 'CREATE',
+      modulo: 'Pedidos',
+      descripcion: `Creación de pedido floral ${codigoArreglo} para ${nombrePersonaFallecida}. Cantidad: ${cantidadNum}. Total: $${total.toFixed(2)}`,
+      ip: req.ip || null
+    });
 
     res.status(201).json({
       success: true,
@@ -197,6 +198,22 @@ const actualizarEstadoPedido = async (req, res) => {
         mensaje: 'Pedido no encontrado'
       });
     }
+
+    const descripcionAuditoria = estado === 'confirmado'
+      ? `Confirmación de pedido floral ${pedido._id}`
+      : estado === 'cancelado'
+        ? `Cancelación de pedido floral ${pedido._id}`
+        : `Cambio de estado de pedido floral ${pedido._id} a ${estado}`;
+
+    await registrarEvento({
+      usuarioId: req.usuario.id,
+      nombreUsuario: req.usuario.nombre,
+      rol: req.usuario.rol,
+      accion: 'UPDATE',
+      modulo: 'Pedidos',
+      descripcion: descripcionAuditoria,
+      ip: req.ip || null
+    });
 
     res.json({
       success: true,

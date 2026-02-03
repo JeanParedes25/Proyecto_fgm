@@ -1,4 +1,5 @@
 const Empresa = require('../models/empresa');
+const { registrarEvento } = require('./auditController');
 
 // Obtener información de la empresa
 const obtenerEmpresa = async (req, res) => {
@@ -96,6 +97,17 @@ const actualizarEmpresa = async (req, res) => {
     );
     
     console.log('✅ Información de la empresa actualizada');
+
+    await registrarEvento({
+      usuarioId: req.usuario?.id || null,
+      nombreUsuario: req.usuario?.nombre || 'Sistema',
+      rol: req.usuario?.rol || 'admin',
+      accion: 'UPDATE',
+      modulo: 'Empresa',
+      descripcion: 'Edición de información de la empresa',
+      ip: req.ip || null
+    });
+
     res.json({
       success: true,
       mensaje: 'Información de la empresa actualizada correctamente',

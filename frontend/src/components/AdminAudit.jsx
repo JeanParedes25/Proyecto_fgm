@@ -4,7 +4,7 @@ import './AdminAudit.css';
 function AdminAudit() {
   const [auditLogs, setAuditLogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('ALL');
 
   useEffect(() => {
     fetchAuditLogs();
@@ -30,8 +30,8 @@ function AdminAudit() {
   };
 
   const filteredLogs = auditLogs.filter(log => {
-    if (filter === 'all') return true;
-    return log.action === filter;
+    if (filter === 'ALL') return true;
+    return (log.accion || '').toString().toUpperCase() === filter;
   });
 
   const formatDate = (dateString) => {
@@ -47,13 +47,12 @@ function AdminAudit() {
 
   const getActionColor = (action) => {
     const colors = {
-      'login': '#4CAF50',
-      'logout': '#9E9E9E',
-      'create': '#2196F3',
-      'update': '#FF9800',
-      'delete': '#F44336'
+      'LOGIN': '#4CAF50',
+      'CREATE': '#2196F3',
+      'UPDATE': '#FF9800',
+      'DELETE': '#F44336'
     };
-    return colors[action] || '#757575';
+    return colors[(action || '').toString().toUpperCase()] || '#757575';
   };
 
   if (loading) {
@@ -70,32 +69,32 @@ function AdminAudit() {
         <h2>📋 Auditoría del Sistema</h2>
         <div className="audit-filters">
           <button 
-            className={filter === 'all' ? 'active' : ''} 
-            onClick={() => setFilter('all')}
+            className={filter === 'ALL' ? 'active' : ''} 
+            onClick={() => setFilter('ALL')}
           >
             Todas
           </button>
           <button 
-            className={filter === 'login' ? 'active' : ''} 
-            onClick={() => setFilter('login')}
+            className={filter === 'LOGIN' ? 'active' : ''} 
+            onClick={() => setFilter('LOGIN')}
           >
             Inicios de sesión
           </button>
           <button 
-            className={filter === 'create' ? 'active' : ''} 
-            onClick={() => setFilter('create')}
+            className={filter === 'CREATE' ? 'active' : ''} 
+            onClick={() => setFilter('CREATE')}
           >
             Creaciones
           </button>
           <button 
-            className={filter === 'update' ? 'active' : ''} 
-            onClick={() => setFilter('update')}
+            className={filter === 'UPDATE' ? 'active' : ''} 
+            onClick={() => setFilter('UPDATE')}
           >
             Actualizaciones
           </button>
           <button 
-            className={filter === 'delete' ? 'active' : ''} 
-            onClick={() => setFilter('delete')}
+            className={filter === 'DELETE' ? 'active' : ''} 
+            onClick={() => setFilter('DELETE')}
           >
             Eliminaciones
           </button>
@@ -104,19 +103,19 @@ function AdminAudit() {
 
       <div className="audit-stats">
         <div className="stat-card">
-          <h3>{auditLogs.filter(l => l.action === 'login').length}</h3>
+          <h3>{auditLogs.filter(l => (l.accion || '').toString().toUpperCase() === 'LOGIN').length}</h3>
           <p>Inicios de sesión</p>
         </div>
         <div className="stat-card">
-          <h3>{auditLogs.filter(l => l.action === 'create').length}</h3>
+          <h3>{auditLogs.filter(l => (l.accion || '').toString().toUpperCase() === 'CREATE').length}</h3>
           <p>Registros creados</p>
         </div>
         <div className="stat-card">
-          <h3>{auditLogs.filter(l => l.action === 'update').length}</h3>
+          <h3>{auditLogs.filter(l => (l.accion || '').toString().toUpperCase() === 'UPDATE').length}</h3>
           <p>Actualizaciones</p>
         </div>
         <div className="stat-card">
-          <h3>{auditLogs.filter(l => l.action === 'delete').length}</h3>
+          <h3>{auditLogs.filter(l => (l.accion || '').toString().toUpperCase() === 'DELETE').length}</h3>
           <p>Eliminaciones</p>
         </div>
       </div>
@@ -136,20 +135,20 @@ function AdminAudit() {
             {filteredLogs.length === 0 ? (
               <tr>
                 <td colSpan="5" className="no-data">
-                  No hay registros de auditoría
+                  No existen registros para esta categoría
                 </td>
               </tr>
             ) : (
               filteredLogs.map((log, index) => (
                 <tr key={index}>
-                  <td>{formatDate(log.createdAt)}</td>
-                  <td>{log.usuario || log.email}</td>
+                  <td>{formatDate(log.fecha || log.createdAt)}</td>
+                  <td>{log.nombreUsuario ? `${log.nombreUsuario} (${log.rol || 'usuario'})` : 'Sistema'}</td>
                   <td>
                     <span 
                       className="action-badge" 
-                      style={{ backgroundColor: getActionColor(log.action) }}
+                      style={{ backgroundColor: getActionColor(log.accion) }}
                     >
-                      {log.action}
+                      {(log.accion || '').toString().toUpperCase()}
                     </span>
                   </td>
                   <td>{log.descripcion}</td>

@@ -1,36 +1,41 @@
 const mongoose = require('mongoose');
 
 const auditLogSchema = new mongoose.Schema({
-  action: {
-    type: String,
-    enum: ['login', 'logout', 'create', 'update', 'delete', 'solicitud', 'pedido', 'pago', 'configuracion'],
-    required: true
-  },
-  usuario: {
-    type: String,
-    default: 'Sistema'
-  },
-  email: {
+  usuarioId: {
     type: String,
     default: null
+  },
+  nombreUsuario: {
+    type: String,
+    required: true
+  },
+  rol: {
+    type: String,
+    enum: ['usuario', 'admin'],
+    required: true
+  },
+  accion: {
+    type: String,
+    enum: ['LOGIN', 'CREATE', 'UPDATE', 'DELETE'],
+    required: true
+  },
+  modulo: {
+    type: String,
+    enum: ['Usuarios', 'Pedidos', 'Planes', 'Empresa', 'Obituarios'],
+    required: true
   },
   descripcion: {
     type: String,
     required: true
   },
-  entidad: {
-    type: String,
-    enum: ['cliente', 'obituario', 'usuario', 'servicio', 'plan', 'pedido', 'floreria', 'notificacion', 'cuenta_bancaria', 'seguro'],
-    required: true
-  },
-  entidadId: {
+  ip: {
     type: String,
     default: null
   },
-  createdAt: {
+  fecha: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = mongoose.model('AuditLog', auditLogSchema);
+module.exports = mongoose.model('AuditLog', auditLogSchema, 'auditoria');

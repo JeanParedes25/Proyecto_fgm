@@ -88,6 +88,17 @@ exports.register = async (req, res) => {
 
     await nuevoUsuario.save();
 
+    // Registrar creación de usuario en auditoría
+    await registrarEvento({
+      usuarioId: nuevoUsuario._id.toString(),
+      nombreUsuario: nuevoUsuario.nombre,
+      rol: nuevoUsuario.rol,
+      accion: 'CREATE',
+      modulo: 'Usuarios',
+      descripcion: `Registro de usuario ${nuevoUsuario.email}`,
+      ip: req.ip || null
+    });
+
     // Enviar código por correo
     await enviarCodigoVerificacion(
       nuevoUsuario.email,
@@ -176,14 +187,15 @@ exports.login = async (req, res) => {
     );
 
     // Registrar login en auditoría
-    await registrarEvento(
-      'login',
-      usuario.nombre,
-      usuario.email,
-      `Login exitoso desde ${req.ip || 'IP desconocida'}`,
-      'usuario',
-      usuario._id.toString()
-    );
+    await registrarEvento({
+      usuarioId: usuario._id.toString(),
+      nombreUsuario: usuario.nombre,
+      rol: usuario.rol,
+      accion: 'LOGIN',
+      modulo: 'Usuarios',
+      descripcion: `Login exitoso desde ${req.ip || 'IP desconocida'}`,
+      ip: req.ip || null
+    });
 
     // Respuesta exitosa
     res.json({
@@ -392,9 +404,13 @@ exports.googleLogin = async (req, res) => {
 
     // Registrar evento de auditoría
     await registrarEvento({
-      usuarioId: usuario._id,
-      accion: 'LOGIN_GOOGLE',
-      detalles: `Login con Google (${email})`
+      usuarioId: usuario._id.toString(),
+      nombreUsuario: usuario.nombre,
+      rol: usuario.rol,
+      accion: 'LOGIN',
+      modulo: 'Usuarios',
+      descripcion: `Login con Google (${email}) desde ${req.ip || 'IP desconocida'}`,
+      ip: req.ip || null
     });
 
     res.json({
