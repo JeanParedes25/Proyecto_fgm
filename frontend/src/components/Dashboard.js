@@ -1,5 +1,6 @@
 import './Dashboard.css';
 import './NotificacionesBadge.css';
+import Footer from './Footer';
 import AdminAudit from './AdminAudit';
 import AdminObituarios from './AdminObituarios';
 import AdminServicios from './AdminServicios';
@@ -16,6 +17,27 @@ import SeguroPrevisor from './SeguroPrevisor';
 import MisPedidos from './MisPedidos';
 import { useState, useEffect } from 'react';
 import { WHATSAPP_URL } from '../constants/config';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+} from 'chart.js';
+import { Bar, Pie } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
 function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
   const [activeSection, setActiveSection] = useState('dashboard');
@@ -258,6 +280,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
             </div>
           </>
         )}
+        <Footer />
       </div>
     );
   }
@@ -347,12 +370,6 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           >
             📋 Auditoría
           </button>
-          <button 
-            className={activeSection === 'settings' ? 'active' : ''}
-            onClick={() => setActiveSection('settings')}
-          >
-            ⚙️ Configuración
-          </button>
         </nav>
 
         {activeSection === 'dashboard' && (
@@ -387,6 +404,98 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
               <div className="stat-card">
                 <h3>{stats.registrados_hoy}</h3>
                 <p>Registros Hoy</p>
+              </div>
+            </div>
+
+            <div className="charts-section" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '30px' }}>
+              <div style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
+                <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>📊 Estadísticas Generales</h3>
+                <Bar
+                  data={{
+                    labels: ['Usuarios', 'Obituarios', 'Flores', 'Servicios', 'Hoy'],
+                    datasets: [
+                      {
+                        label: 'Cantidad',
+                        data: [
+                          stats.usuarios_totales,
+                          stats.obituarios_totales,
+                          stats.pedidos_florales,
+                          stats.servicios_totales,
+                          stats.registrados_hoy
+                        ],
+                        backgroundColor: [
+                          'rgba(54, 162, 235, 0.8)',
+                          'rgba(153, 102, 255, 0.8)',
+                          'rgba(255, 99, 132, 0.8)',
+                          'rgba(255, 159, 64, 0.8)',
+                          'rgba(75, 192, 75, 0.8)'
+                        ],
+                        borderColor: [
+                          'rgb(54, 162, 235)',
+                          'rgb(153, 102, 255)',
+                          'rgb(255, 99, 132)',
+                          'rgb(255, 159, 64)',
+                          'rgb(75, 192, 75)'
+                        ],
+                        borderWidth: 1
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        display: false
+                      }
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }}
+                />
+              </div>
+
+              <div style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px' }}>
+                <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>🥧 Distribución de Servicios</h3>
+                <Pie
+                  data={{
+                    labels: ['Usuarios', 'Obituarios', 'Flores', 'Servicios'],
+                    datasets: [
+                      {
+                        label: 'Cantidad',
+                        data: [
+                          stats.usuarios_totales || 1,
+                          stats.obituarios_totales || 1,
+                          stats.pedidos_florales || 1,
+                          stats.servicios_totales || 1
+                        ],
+                        backgroundColor: [
+                          'rgba(54, 162, 235, 0.8)',
+                          'rgba(153, 102, 255, 0.8)',
+                          'rgba(255, 99, 132, 0.8)',
+                          'rgba(255, 159, 64, 0.8)'
+                        ],
+                        borderColor: [
+                          'rgb(54, 162, 235)',
+                          'rgb(153, 102, 255)',
+                          'rgb(255, 99, 132)',
+                          'rgb(255, 159, 64)'
+                        ],
+                        borderWidth: 2
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        position: 'bottom'
+                      }
+                    }
+                  }}
+                />
               </div>
             </div>
 
@@ -531,33 +640,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
         {activeSection === 'audit' && (
           <AdminAudit />
         )}
-
-        {activeSection === 'settings' && (
-          <div className="admin-section">
-            <h2>⚙️ Configuración del Sistema</h2>
-            <div className="settings-panel">
-              <div className="setting-group">
-                <h3>General</h3>
-                <label>
-                  <input type="checkbox" defaultChecked /> Permitir registro de nuevos usuarios
-                </label>
-                <label>
-                  <input type="checkbox" defaultChecked /> Modo mantenimiento
-                </label>
-              </div>
-              <div className="setting-group">
-                <h3>Notificaciones</h3>
-                <label>
-                  <input type="checkbox" defaultChecked /> Enviar emails de confirmación
-                </label>
-                <label>
-                  <input type="checkbox" /> Notificaciones push
-                </label>
-              </div>
-              <button className="action-btn primary">💾 Guardar Cambios</button>
-            </div>
-          </div>
-        )}
+        <Footer />
       </div>
     );
   }
@@ -731,6 +814,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 }

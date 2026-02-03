@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const planController = require('../controllers/planController');
 const auth = require('../middleware/auth');
-const isAdmin = require('../middleware/isAdmin');
+const { isAdmin } = require('../middleware/auth');
 
 // Rutas públicas (para usuarios)
 router.get('/', planController.obtenerPlanes);

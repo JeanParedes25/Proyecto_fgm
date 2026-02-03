@@ -15,26 +15,29 @@ app.use(express.json());
 // Servir archivos estáticos (imágenes de obituarios)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Conexión a MongoDB
+// Conexión a MongoDB Atlas
 mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/proyecto_fgm')
   .then(() => {
-    console.log("✅ Conectado a MongoDB");
+    console.log("MongoDB Atlas conectado");
     
-    // Ejecutar seeding de datos temporales
+    // Ejecutar seeding de datos iniciales
     const seedearClientes = require('./scripts/seedClientes');
+    const seedearEmpresa = require('./scripts/seedEmpresa');
+    
     seedearClientes();
+    seedearEmpresa();
   })
-  .catch(err => console.error("❌ Error de conexión:", err));
+  .catch(err => console.error(" Error de conexión a MongoDB Atlas:", err));
 
 // Inicializar colección de obituarios en MongoDB
 const Obituario = require('./models/obituario');
 Obituario.crearTabla()
-  .then(() => console.log("✅ Colección de obituarios lista en MongoDB"))
-  .catch(err => console.error("❌ Error al inicializar colección de obituarios:", err));
+  .then(() => console.log(" Colección de obituarios lista en MongoDB"))
+  .catch(err => console.error(" Error al inicializar colección de obituarios:", err));
 
 // Ruta de prueba
 app.get('/api/test', (req, res) => {
-  res.json({ message: 'Servidor funcionando 🚀' });
+  res.json({ message: 'Servidor funcionando ' });
 });
 
 // Ruta de prueba POST para validar JSON
@@ -42,7 +45,7 @@ app.post('/api/test-post', (req, res) => {
   console.log('\n=== TEST POST ===');
   console.log('Datos recibidos:', JSON.stringify(req.body, null, 2));
   res.json({ 
-    message: 'POST funcionando ✅',
+    message: 'POST funcionando ',
     datosRecibidos: req.body
   });
 });
@@ -106,6 +109,15 @@ app.use('/api/seguros', segurosRouter);
 // Importar rutas de asistencia prepago
 const asistenciaPrepagoRouter = require('./routes/asistenciaPrepago');
 app.use('/api/asistencia-prepago', asistenciaPrepagoRouter);
+
+// Importar rutas de configuración
+const configuracionRouter = require('./routes/configuracion');
+app.use('/api/configuracion', configuracionRouter);
+
+// Importar rutas de empresa
+const empresaRouter = require('./routes/empresa');
+app.use('/api/empresa', empresaRouter);
+app.use('/empresa', empresaRouter);
 
 // Puerto
 const PORT = process.env.PORT || 5000;

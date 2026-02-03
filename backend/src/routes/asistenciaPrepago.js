@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const isAdmin = require('../middleware/isAdmin');
+const { isAdmin } = require('../middleware/auth');
 const asistenciaPrepagoController = require('../controllers/asistenciaPrepagoController');
 
 // Rutas públicas (usuarios)

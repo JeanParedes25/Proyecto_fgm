@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import './PlanesUsuario.css';
-import { WHATSAPP_URL } from '../constants/config';
+import { API_BASE_URL, buildWhatsAppUrl } from '../constants/config';
+import { useEmpresa } from '../hooks/useEmpresa';
 
 function PlanesUsuario() {
   const [planes, setPlanes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [planSeleccionado, setPlanSeleccionado] = useState(null);
+  const { empresa } = useEmpresa();
 
   useEffect(() => {
     fetchPlanes();
@@ -13,7 +15,7 @@ function PlanesUsuario() {
 
   const fetchPlanes = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/planes');
+      const res = await fetch(`${API_BASE_URL}/api/planes`);
       if (res.ok) {
         const data = await res.json();
         setPlanes(Array.isArray(data) ? data : []);
@@ -180,7 +182,10 @@ function PlanesUsuario() {
                 <button 
                   type="button" 
                   className="btn-whatsapp-plan"
-                  onClick={() => window.open(WHATSAPP_URL, '_blank')}
+                  onClick={() => {
+                    const url = buildWhatsAppUrl(empresa?.telefonos?.[0]);
+                    if (url) window.open(url, '_blank');
+                  }}
                 >
                   📱 Contactar por WhatsApp
                 </button>
@@ -355,7 +360,10 @@ function PlanesUsuario() {
                 <button 
                   type="button" 
                   className="btn-whatsapp-plan"
-                  onClick={() => window.open(WHATSAPP_URL, '_blank')}
+                  onClick={() => {
+                    const url = buildWhatsAppUrl(empresa?.telefonos?.[0]);
+                    if (url) window.open(url, '_blank');
+                  }}
                 >
                   📱 Contactar por WhatsApp
                 </button>

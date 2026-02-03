@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import './ObituariosPublicos.css';
+import { API_BASE_URL } from '../constants/config';
+import { useEmpresa } from '../hooks/useEmpresa';
 
 function ObituariosPublicos() {
   const [obituarios, setObituarios] = useState([]);
@@ -7,6 +9,7 @@ function ObituariosPublicos() {
   const [loading, setLoading] = useState(true);
   const [obituarioSeleccionado, setObituarioSeleccionado] = useState(null);
   const [busqueda, setBusqueda] = useState('');
+  const { empresa } = useEmpresa();
 
   useEffect(() => {
     fetchObituarios();
@@ -25,7 +28,7 @@ function ObituariosPublicos() {
 
   const fetchObituarios = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/obituarios');
+      const response = await fetch(`${API_BASE_URL}/api/obituarios`);
       
       if (response.ok) {
         const data = await response.json();
@@ -176,7 +179,7 @@ function ObituariosPublicos() {
                   <p className="descanse-paz">🕯️ Que descanse en paz 🕯️</p>
                   <p className="contacto-info">
                     Para más información contactar: <br/>
-                    📞 099 28 29 095 | 099 90 90 860
+                    📞 {empresa?.telefonos?.join(' | ') || 'Información no disponible'}
                   </p>
                 </div>
               </div>

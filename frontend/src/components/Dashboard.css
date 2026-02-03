@@ -2,6 +2,8 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f2ed 0%, #ebe5dc 100%);
   padding: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .dashboard-header {
@@ -450,6 +452,43 @@
   color: #c49a6c;
 }
 
+/* Estilos para los gráficos */
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.chart-box {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 2px solid rgba(196, 154, 108, 0.3);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.chart-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.chart-box h3 {
+  color: #2b2f38;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #c49a6c;
+}
+
+.chart-box canvas {
+  max-height: 350px;
+}
+
 .admin-section {
   background: rgba(245, 242, 237, 0.95);
   padding: 30px;
@@ -507,25 +546,94 @@
 
 .setting-group {
   margin-bottom: 30px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.setting-group:last-of-type {
+  border-bottom: none;
 }
 
 .setting-group h3 {
   color: #2b2f38;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.setting-group label {
+/* Checkbox removido: solo información de empresa */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
   display: block;
-  margin-bottom: 12px;
   color: #2b2f38;
-  cursor: pointer;
-  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
 }
 
-.setting-group input[type="checkbox"] {
-  margin-right: 10px;
-  cursor: pointer;
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #c49a6c;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.alert {
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.action-btn.primary:disabled {
+  background: linear-gradient(135deg, #999 0%, #666 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 @media (max-width: 768px) {

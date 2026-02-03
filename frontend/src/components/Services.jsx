@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Services.css';
-import { WHATSAPP_URL } from '../constants/config';
+import { API_BASE_URL, buildWhatsAppUrl } from '../constants/config';
+import { useEmpresa } from '../hooks/useEmpresa';
 
 function ContactForm() {
   const [formData, setFormData] = useState({
@@ -116,6 +117,7 @@ function Services({ usuario, onBack }) {
   const [selectedService, setSelectedService] = useState(null);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { empresa } = useEmpresa();
 
   useEffect(() => {
     fetchServicios();
@@ -123,7 +125,7 @@ function Services({ usuario, onBack }) {
 
   const fetchServicios = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/servicios', {
+      const response = await fetch(`${API_BASE_URL}/api/servicios`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -180,12 +182,20 @@ function Services({ usuario, onBack }) {
 
           <div className="detail-section cta">
             <h3>¿Desea más información?</h3>
-            <p>📞 Celular: 099 28 29 095 | 099 90 90 860</p>
-            <p>📱 Oficina: 032 944 608</p>
-            <p>📧 Email: israelmendoza18@hotmail.com</p>
+            {empresa && empresa.telefonos && (
+              <p>📞 Teléfonos: {empresa.telefonos.join(' | ')}</p>
+            )}
+            {empresa && (
+              <>
+                <p>📧 Email: {empresa.correo}</p>
+              </>
+            )}
             <button 
               className="contact-btn"
-              onClick={() => window.open(WHATSAPP_URL, '_blank')}
+              onClick={() => {
+                const url = buildWhatsAppUrl(empresa?.telefonos?.[0]);
+                if (url) window.open(url, '_blank');
+              }}
             >
               📱 Contáctanos Ahora
             </button>
@@ -251,7 +261,7 @@ function Services({ usuario, onBack }) {
       </div>
 
       <div className="services-footer">
-        <p>🕊️ En Funerales Gonzalo Mendoza tu confianza es nuestro compromiso 🕊️</p>
+        <p>🕊️ En {empresa?.nombreEmpresa || 'nuestra empresa'} tu confianza es nuestro compromiso 🕊️</p>
       </div>
     </div>
   );

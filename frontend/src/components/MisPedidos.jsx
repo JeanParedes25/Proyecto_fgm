@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
-import { WHATSAPP_NUMBER } from '../constants/config';
+import { API_BASE_URL, buildWhatsAppUrl } from '../constants/config';
+import { useEmpresa } from '../hooks/useEmpresa';
 import './MisPedidos.css';
 
 function MisPedidos({ onBack }) {
@@ -8,6 +9,7 @@ function MisPedidos({ onBack }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [pedidoSeleccionado, setPedidoSeleccionado] = useState(null);
+  const { empresa } = useEmpresa();
 
   useEffect(() => {
     fetchPedidos();
@@ -16,7 +18,7 @@ function MisPedidos({ onBack }) {
   const fetchPedidos = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/pedidos-floristerias/mis-pedidos', {
+      const response = await fetch(`${API_BASE_URL}/api/pedidos-floristerias/mis-pedidos`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -94,11 +96,12 @@ function MisPedidos({ onBack }) {
   const cerrarComprobante = () => setPedidoSeleccionado(null);
 
   const abrirWhatsAppCancelacion = () => {
-    const numeroWhatsApp = WHATSAPP_NUMBER || '+593998794800';
+    const baseUrl = buildWhatsAppUrl(empresa?.telefonos?.[0]);
+    if (!baseUrl) return;
     const mensaje = encodeURIComponent(
       'Hola, se canceló mi pedido y necesito más información, por favor.'
     );
-    window.open(`https://wa.me/${numeroWhatsApp.replace(/\D/g, '')}?text=${mensaje}`, '_blank');
+    window.open(`${baseUrl}?text=${mensaje}`, '_blank');
   };
 
   // Función para generar PDF con jsPDF directamente en nueva pestaña
@@ -396,8 +399,9 @@ function MisPedidos({ onBack }) {
     if (!pedidoSeleccionado) return;
     const numeroComprobante = generarNumeroComprobante(pedidoSeleccionado);
     const mensaje = `Hola, adjunto mi comprobante de servicio.\nNúmero de comprobante: ${numeroComprobante}\nGracias por su atención.`;
-    const numeroFormato = WHATSAPP_NUMBER.replace(/\D/g, '');
-    const urlWhatsApp = `https://wa.me/${numeroFormato}?text=${encodeURIComponent(mensaje)}`;
+    const baseUrl = buildWhatsAppUrl(empresa?.telefonos?.[0]);
+    if (!baseUrl) return;
+    const urlWhatsApp = `${baseUrl}?text=${encodeURIComponent(mensaje)}`;
     window.open(urlWhatsApp, '_blank');
   };
 

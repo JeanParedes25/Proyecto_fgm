@@ -1,6 +1,6 @@
 const express = require('express');
 const auth = require('../middleware/auth');
-const isAdmin = require('../middleware/isAdmin');
+const { isAdmin } = require('../middleware/auth');
 const {
   obtenerNotificacionesNoLeidas,
   obtenerTodasNotificaciones,

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Floristerias.css';
+import { API_BASE_URL, buildWhatsAppUrl } from '../constants/config';
+import { useEmpresa } from '../hooks/useEmpresa';
 
 function Floristerias({ usuario, onBack }) {
   const [flores, setFlores] = useState([]);
@@ -13,6 +15,7 @@ function Floristerias({ usuario, onBack }) {
   const [pedidoConfirmado, setPedidoConfirmado] = useState(false);
   const [creandoPedido, setCreandoPedido] = useState(false);
   const [pedidoCreado, setPedidoCreado] = useState(null);
+  const { empresa } = useEmpresa();
 
   useEffect(() => {
     fetchFlores();
@@ -20,7 +23,7 @@ function Floristerias({ usuario, onBack }) {
 
   const fetchFlores = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/floristerias', {
+      const response = await fetch(`${API_BASE_URL}/api/floristerias`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -39,7 +42,7 @@ function Floristerias({ usuario, onBack }) {
 
   const fetchCuentasBancarias = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/cuentas-bancarias', {
+      const response = await fetch(`${API_BASE_URL}/api/cuentas-bancarias`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -114,7 +117,7 @@ function Floristerias({ usuario, onBack }) {
       const precioUnitario = floraSeleccionada.precio;
       const total = precioUnitario * cantidadArreglos;
 
-      const response = await fetch('http://localhost:5000/api/pedidos-floristerias', {
+      const response = await fetch(`${API_BASE_URL}/api/pedidos-floristerias`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,12 +151,13 @@ function Floristerias({ usuario, onBack }) {
     }
   };
 
-  // Abrir WhatsApp con número predefinido
+  // Abrir WhatsApp con número de empresa
   const abrirWhatsApp = () => {
-    const numeroWhatsApp = '+593998794800';
+    const baseUrl = buildWhatsAppUrl(empresa?.telefonos?.[0]);
+    if (!baseUrl) return;
     const total = (pedidoCreado?.total || floraSeleccionada?.precio * cantidadArreglos).toFixed(2);
     const mensaje = encodeURIComponent(
-      `Hola, acabo de realizar un pedido de flores en Funerales Gonzalo Mendoza. ` +
+      `Hola, acabo de realizar un pedido de flores en ${empresa?.nombreEmpresa || 'nuestra empresa'}. ` +
       `Arreglo: ${floraSeleccionada?.codigo || 'N/A'}. ` +
       `Cantidad: ${cantidadArreglos}. ` +
       `Precio unitario: $${floraSeleccionada?.precio?.toFixed(2) || '0'}. ` +
@@ -161,7 +165,7 @@ function Floristerias({ usuario, onBack }) {
       `Destinatario: ${nombrePersonaFallecida}. ` +
       `He realizado la transferencia/depósito. Por favor confirmen la recepción del comprobante.`
     );
-    window.open(`https://wa.me/${numeroWhatsApp.replace(/\D/g, '')}?text=${mensaje}`, '_blank');
+    window.open(`${baseUrl}?text=${mensaje}`, '_blank');
   };
 
   if (loading) {
@@ -554,7 +558,7 @@ function Floristerias({ usuario, onBack }) {
       </div>
 
       <div className="floristerias-footer">
-        <p>🌹 En Funerales Gonzalo Mendoza cuidamos cada detalle 🌹</p>
+        <p>🌹 En {empresa?.nombreEmpresa || 'nuestra empresa'} cuidamos cada detalle 🌹</p>
       </div>
     </div>
   );
