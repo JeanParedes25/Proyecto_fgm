@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
+import { API_BASE_URL } from '../constants/config';
 import VerificarEmail from './VerificarEmail';
 import './Auth.css';
 
@@ -33,7 +34,7 @@ function Register({ onSwitchToLogin }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -68,7 +69,7 @@ function Register({ onSwitchToLogin }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/google', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

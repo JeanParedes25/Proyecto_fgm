@@ -129,7 +129,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
 
     const fetchCambiosPedidos = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/pedidos-floristerias/cambios-no-leidos', {
+        const response = await fetch(`${API_BASE_URL}/api/pedidos-floristerias/cambios-no-leidos`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -155,7 +155,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
 
     const marcarComoVistos = async () => {
       try {
-        await fetch('http://localhost:5000/api/pedidos-floristerias/cambios-como-vistos', {
+        await fetch(`${API_BASE_URL}/api/pedidos-floristerias/cambios-como-vistos`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -176,7 +176,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
 
     const marcarComoRevisados = async () => {
       try {
-        await fetch('http://localhost:5000/api/pedidos-floristerias/admin/marcar-revisados', {
+        await fetch(`${API_BASE_URL}/api/pedidos-floristerias/admin/marcar-revisados`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -199,7 +199,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
       try {
         setLoadingPedidosUsuario(true);
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/pedidos-floristerias/mis-pedidos', {
+        const response = await fetch(`${API_BASE_URL}/api/pedidos-floristerias/mis-pedidos`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -236,7 +236,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
         const token = localStorage.getItem('token');
         
         // Obtener estadísticas generales
-        const responseStats = await fetch('http://localhost:5000/api/estadisticas', {
+        const responseStats = await fetch(`${API_BASE_URL}/api/estadisticas`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -277,7 +277,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
       try {
         setLoadingPedidosFlores(true);
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5000/api/estadisticas/admin/pedidos-flores', {
+        const response = await fetch(`${API_BASE_URL}/api/estadisticas/admin/pedidos-flores`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -309,7 +309,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
     setErrorUsuarios('');
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/usuarios', {
+      const response = await fetch(`${API_BASE_URL}/api/usuarios`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -340,7 +340,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/usuarios', {
+      const response = await fetch(`${API_BASE_URL}/api/usuarios`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
