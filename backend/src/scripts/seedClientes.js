@@ -11,64 +11,39 @@ const seedearClientes = async () => {
       return;
     }
 
-    console.log('🌱 Iniciando seeding de usuarios de prueba...');
+    console.log('🌱 Iniciando configuración de usuario administrador...');
 
-    // Datos de usuarios temporales
-    const usuariosTemporales = [
-      {
-        nombre: 'Administrador',
-        email: 'admin@gmail.com',
-        celular: '999999999',
-        password: 'admin123',
-        rol: 'admin',
-        preguntasSeguridad: {
-          comidaFavorita: 'no_aplica',
-          primeraMascota: 'no_aplica',
-          ciudadNacimiento: 'no_aplica'
-        },
-        proveedor: 'local'
-      },
-      {
-        nombre: 'Usuario Prueba',
-        email: 'user@gmail.com',
-        celular: '988888888',
-        password: 'user123',
-        rol: 'usuario',
-        preguntasSeguridad: {
-          comidaFavorita: 'pizza',
-          primeraMascota: 'firulais',
-          ciudadNacimiento: 'riobamba'
-        },
-        proveedor: 'local'
-      }
-    ];
-
-    // Hashear contraseñas y crear usuarios
-    for (const usuario of usuariosTemporales) {
-      // Verificar si el usuario ya existe por email (por si acaso)
-      const usuarioExistente = await Usuario.findOne({ email: usuario.email });
+    // Solo crear el administrador principal
+    const adminEmail = 'fgmtransmisiones@gmail.com';
+    const usuarioExistente = await Usuario.findOne({ email: adminEmail });
+    
+    if (!usuarioExistente) {
+      // Hashear la contraseña
+      const passwordHash = await bcrypt.hash('FGM2024!Admin', 10);
       
-      if (!usuarioExistente) {
-        // Hashear la contraseña
-        const passwordHash = await bcrypt.hash(usuario.password, 10);
-        
-        // Crear el usuario con la contraseña hasheada
-        const nuevoUsuario = new Usuario({
-          ...usuario,
-          password: passwordHash
-        });
-        
-        await nuevoUsuario.save();
-        console.log(`✅ Usuario creado: ${usuario.email} (${usuario.rol})`);
-      } else {
-        console.log(`⏭️  Usuario ya existe: ${usuario.email}`);
-      }
+      // Crear el usuario administrador
+      const adminUsuario = new Usuario({
+        nombre: 'FGM Transmisiones',
+        email: adminEmail,
+        celular: '0999999999',
+        password: passwordHash,
+        rol: 'admin',
+        verificadoCorreo: true,
+        proveedor: 'local',
+        createdAt: new Date()
+      });
+      
+      await adminUsuario.save();
+      console.log(`✅ Administrador creado: ${adminEmail}`);
+    } else {
+      console.log(`⏭️  Administrador ya existe: ${adminEmail}`);
     }
 
-    console.log('🌱 Seeding completado exitosamente');
-    console.log('📝 Usuarios de prueba disponibles:');
-    console.log('   Admin: admin@gmail.com / admin123');
-    console.log('   Usuario: user@gmail.com / user123');
+    console.log('🌱 Configuración completada exitosamente');
+    console.log('📝 Credenciales del administrador:');
+    console.log('   Email: fgmtransmisiones@gmail.com');
+    console.log('   Contraseña: FGM2024!Admin');
+    console.log('   ⚠️  Cambiar esta contraseña después del primer login');
 
   } catch (error) {
     console.error('❌ Error en seeding:', error.message);

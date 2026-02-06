@@ -33,22 +33,15 @@ const ejecutarSeeding = async () => {
 
     console.log('🌱 Iniciando seeding de usuarios de prueba...');
 
-    // Datos de usuarios temporales
+    // Datos de usuario administrador
+    const adminPassword = process.env.FGM_ADMIN_PASSWORD || 'FGM2024!Admin';
     const usuariosTemporales = [
       {
-        nombre: 'Administrador',
-        email: 'admin@gmail.com',
-        celular: '999999999',
-        password: 'admin123',
+        nombre: 'FGM Transmisiones',
+        email: 'fgmtransmisiones@gmail.com',
+        celular: '0999999999',
+        password: adminPassword,
         rol: 'admin',
-        isVerified: true
-      },
-      {
-        nombre: 'Usuario Prueba',
-        email: 'user@gmail.com',
-        celular: '988888888',
-        password: 'user123',
-        rol: 'cliente',
         isVerified: true
       }
     ];
@@ -69,9 +62,9 @@ const ejecutarSeeding = async () => {
     }
 
     console.log('\n🌱 Seeding completado exitosamente');
-    console.log('📝 Usuarios de prueba disponibles:');
-    console.log('   Admin: admin@gmail.com / admin123');
-    console.log('   Usuario: user@gmail.com / user123');
+    console.log('📝 Usuario administrador creado:');
+    console.log('   Admin: fgmtransmisiones@gmail.com');
+    console.log('   ⚠️  Cambia la contraseña después del primer login');
 
     await mongoose.disconnect();
     console.log('\n✅ Desconexión completada');

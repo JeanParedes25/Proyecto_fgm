@@ -8,6 +8,8 @@
   },
   "scripts": {
     "start": "node src/server.js",
+    "limpiar-db": "node src/scripts/limpiarBaseDatos.js",
+    "limpiar-admin": "node src/scripts/limpiarAdminPreexistente.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -16,7 +16,7 @@ import PlanesUsuario from './PlanesUsuario';
 import SeguroPrevisor from './SeguroPrevisor';
 import MisPedidos from './MisPedidos';
 import { useState, useEffect } from 'react';
-import { WHATSAPP_URL } from '../constants/config';
+import { WHATSAPP_URL, API_BASE_URL } from '../constants/config';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -69,7 +69,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
     password: '',
     rol: 'usuario'
   });
-  const isAdmin = usuario?.rol === 'admin' || usuario?.email === 'israelmendoza18@hotmail.com';
+  const isAdmin = usuario?.rol === 'admin';
 
   // Cargar contador de notificaciones no leídas
   useEffect(() => {
@@ -77,7 +77,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
 
     const fetchNotificacionesCount = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/notificaciones/no-leidas', {
+        const response = await fetch(`${API_BASE_URL}/api/notificaciones/no-leidas`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
@@ -103,7 +103,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
 
     const fetchPedidosNuevos = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/pedidos-floristerias/admin/nuevos-count', {
+        const response = await fetch(`${API_BASE_URL}/api/pedidos-floristerias/admin/nuevos-count`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }

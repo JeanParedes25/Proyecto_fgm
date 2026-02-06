@@ -1,7 +1,6 @@
 const Usuario = require('../models/usuario');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { crearAdministrador } = require('../scripts/crearAdmin');
 const { registrarEvento } = require('./auditController');
 const { enviarCodigoVerificacion, enviarCodigoRecuperacion } = require('../services/emailService');
 
@@ -10,6 +9,7 @@ const MAX_LOGIN_ATTEMPTS = 5;
 const LOCK_TIME = 15 * 60 * 1000; // 15 minutos
 const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_funeraria_2024';
 const CODIGO_VERIFICACION_TIEMPO = 10 * 60 * 1000; // 10 minutos
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'fgmtransmisiones@gmail.com').toLowerCase();
 
 // Función para generar código numérico de 5 dígitos
 const generarCodigoVerificacion = () => {
@@ -70,12 +70,14 @@ exports.register = async (req, res) => {
     // Hashear contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const emailNormalizado = email.toLowerCase();
     const nuevoUsuario = new Usuario({
       nombre,
-      email: email.toLowerCase(),
+      email: emailNormalizado,
       celular,
       password: hashedPassword,
-      rol: 'usuario'
+      rol: emailNormalizado === ADMIN_EMAIL ? 'admin' : 'usuario',
+      activo: true
     });
 
     // Generar código de verificación
@@ -128,14 +130,17 @@ exports.login = async (req, res) => {
       return res.status(400).json({ error: 'Email y contraseña son requeridos' });
     }
 
-    // Intentar crear administrador si no existe
-    await crearAdministrador();
-
     // Buscar cliente
-    const usuario = await Usuario.findOne({ email: email.toLowerCase() });
+    const emailNormalizado = email.toLowerCase();
+    const usuario = await Usuario.findOne({ email: emailNormalizado });
     
     if (!usuario) {
       return res.status(401).json({ error: 'Email o contraseña incorrectos' });
+    }
+
+    // Verificar si la cuenta está inactiva
+    if (usuario.activo === false) {
+      return res.status(403).json({ error: 'Usuario inactivo. Contacta al administrador' });
     }
 
     // Verificar si la cuenta está bloqueada
@@ -145,6 +150,7 @@ exports.login = async (req, res) => {
         error: `Cuenta bloqueada por múltiples intentos fallidos. Intenta en ${minutosRestantes} minutos` 
       });
     }
+
 
     // Verificar contraseña
     const contraseñaValida = await bcrypt.compare(password, usuario.password);
@@ -171,6 +177,16 @@ exports.login = async (req, res) => {
     if (usuario.loginAttempts > 0 || usuario.lockUntil) {
       usuario.loginAttempts = 0;
       usuario.lockUntil = null;
+      await usuario.save();
+    }
+
+    // Forzar regla de administrador unico
+    if (emailNormalizado === ADMIN_EMAIL && usuario.rol !== 'admin') {
+      usuario.rol = 'admin';
+      await usuario.save();
+    }
+    if (emailNormalizado !== ADMIN_EMAIL && usuario.rol === 'admin') {
+      usuario.rol = 'usuario';
       await usuario.save();
     }
 
@@ -366,29 +382,32 @@ exports.googleLogin = async (req, res) => {
     }
 
     // Buscar o crear usuario
-    let usuario = await Usuario.findOne({ email: email.toLowerCase() });
+    const emailNormalizado = email.toLowerCase();
+    let usuario = await Usuario.findOne({ email: emailNormalizado });
 
-    if (usuario) {
-      // Usuario ya existe - actualizar información si viene de Google
-      if (usuario.proveedor === 'google') {
-        usuario.fotoGoogle = picture || usuario.fotoGoogle;
-        if (name) usuario.nombre = name;
-        await usuario.save();
-      }
-    } else {
-      // Crear nuevo usuario con Google
-      usuario = new Usuario({
-        nombre: name || email.split('@')[0],
-        email: email.toLowerCase(),
-        proveedor: 'google',
-        googleId,
-        fotoGoogle: picture,
-        rol: 'usuario',
-        celular: null,
-        password: null
-      });
-      await usuario.save();
+    if (!usuario) {
+      return res.status(403).json({ error: 'Acceso denegado. Usuario no registrado' });
     }
+
+    if (usuario.activo === false) {
+      return res.status(403).json({ error: 'Usuario inactivo. Contacta al administrador' });
+    }
+
+    // Usuario ya existe - actualizar información si viene de Google
+    if (usuario.proveedor === 'google') {
+      usuario.fotoGoogle = picture || usuario.fotoGoogle;
+      if (name) usuario.nombre = name;
+    }
+
+    // Forzar regla de administrador unico
+    if (emailNormalizado === ADMIN_EMAIL && usuario.rol !== 'admin') {
+      usuario.rol = 'admin';
+    }
+    if (emailNormalizado !== ADMIN_EMAIL && usuario.rol === 'admin') {
+      usuario.rol = 'usuario';
+    }
+
+    await usuario.save();
 
     // Generar JWT
     const jwtToken = jwt.sign(
@@ -409,7 +428,7 @@ exports.googleLogin = async (req, res) => {
       rol: usuario.rol,
       accion: 'LOGIN',
       modulo: 'Usuarios',
-      descripcion: `Login con Google (${email}) desde ${req.ip || 'IP desconocida'}`,
+      descripcion: `Login con Google (${emailNormalizado}) desde ${req.ip || 'IP desconocida'}`,
       ip: req.ip || null
     });
 

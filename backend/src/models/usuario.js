@@ -73,6 +73,11 @@ const usuarioSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  activo: {
+    type: Boolean,
+    required: true,
+    default: true
+  },
   createdAt: {
     type: Date,
     default: Date.now

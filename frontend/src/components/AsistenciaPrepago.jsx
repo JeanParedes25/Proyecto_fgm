@@ -76,7 +76,7 @@ function AsistenciaPrepago({ onVolver }) {
 
   useEffect(() => {
     const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
-    const esAdmin = usuario?.rol === 'admin' || usuario?.email === 'israelmendoza18@hotmail.com';
+    const esAdmin = usuario?.rol === 'admin';
     setIsAdmin(esAdmin);
     fetchPlanes(esAdmin);
   }, []);
