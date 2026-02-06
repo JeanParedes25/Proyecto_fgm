@@ -14,6 +14,6 @@ export const EMPRESA_INFO = {
   direccion: 'España y Olmedo, Riobamba, Ecuador'
 };
 
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://proyecto-fgm.onrender.com';
 
 export const buildWhatsAppUrl = () => `https://wa.me/${WHATSAPP_NUMBER}`;

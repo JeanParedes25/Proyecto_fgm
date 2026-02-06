@@ -8,8 +8,20 @@ require('dotenv').config();
 
 const app = express();
 
+// Configurar CORS para permitir solicitudes desde Vercel y localhost
+const corsOptions = {
+  origin: [
+    'https://proyecto-fgm-frontend.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:5000'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
 // Middlewares
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Servir archivos estáticos (imágenes de obituarios)
