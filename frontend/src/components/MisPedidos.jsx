@@ -42,10 +42,8 @@ function MisPedidos({ onBack }) {
     const estados = {
       'pendiente': { texto: 'Pendiente', clase: 'estado-pendiente', icono: '⏳' },
       'confirmado': { texto: 'Confirmado', clase: 'estado-confirmado', icono: '✅' },
-      'cancelado': { texto: 'Cancelado', clase: 'estado-cancelado', icono: '❌' },
       'cancelado_admin': { texto: 'Cancelado', clase: 'estado-cancelado', icono: '❌' },
-      'cancelado_usuario': { texto: 'Cancelado', clase: 'estado-cancelado', icono: '❌' },
-      'entregado': { texto: 'Entregado', clase: 'estado-entregado', icono: '📦' }
+      'cancelado_usuario': { texto: 'Cancelado', clase: 'estado-cancelado', icono: '❌' }
     };
     return estados[estado] || estados['pendiente'];
   };

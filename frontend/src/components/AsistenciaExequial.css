@@ -306,6 +306,34 @@
   gap: 8px;
 }
 
+.telefonos-categoria {
+  margin-bottom: 15px;
+}
+
+.telefonos-categoria:last-child {
+  margin-bottom: 0;
+}
+
+.telefono-tipo {
+  font-weight: 600;
+  color: #2b2f38;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.telefonos-categoria .telefonos-lista {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.separador-telefono {
+  color: #8b7355;
+  font-weight: 600;
+}
+
 .telefono-link {
   padding: 8px 16px;
   background: white;
@@ -316,6 +344,46 @@
 .telefono-link:hover {
   background: #c49a6c;
   color: white !important;
+}
+
+.email-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background: white;
+  border-radius: 20px;
+  transition: all 0.3s;
+  color: #8b7355;
+  font-weight: 600;
+}
+
+.email-link:hover {
+  background: #c49a6c;
+  color: white !important;
+}
+
+.contacto-imagen-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  grid-column: span 2;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.contacto-imagen-item:hover {
+  transform: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.contacto-imagen-institucional {
+  max-width: 100%;
+  width: 80%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 /* CTA Section */

@@ -81,6 +81,11 @@
   color: #c49a6c;
 }
 
+.footer-link {
+  display: inline-block;
+  transition: all 0.2s;
+}
+
 .footer-divider {
   height: 1px;
   background: linear-gradient(to right, transparent, #c49a6c, transparent);

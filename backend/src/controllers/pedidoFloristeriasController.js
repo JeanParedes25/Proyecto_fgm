@@ -76,6 +76,7 @@ const crearPedido = async (req, res) => {
       total: total,
       estado: 'pendiente',
       notificacionEnviada: false,
+      visto_admin: false,
       fechaPedido: new Date()
     });
 
@@ -153,6 +154,52 @@ const obtenerMisPedidos = async (req, res) => {
   }
 };
 
+// Obtener conteo de cambios no leídos en pedidos
+const obtenerCambiosNoLeidos = async (req, res) => {
+  try {
+    const clienteId = req.usuario.id;
+    const cambiosNoLeidos = await PedidoFloristeria.countDocuments({ 
+      clienteId,
+      visto: false 
+    });
+
+    res.json({
+      success: true,
+      count: cambiosNoLeidos
+    });
+  } catch (error) {
+    console.error('Error al obtener cambios no leídos:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al obtener cambios no leídos',
+      error: error.message
+    });
+  }
+};
+
+// Marcar cambios como vistos
+const marcarCambiosComoVistos = async (req, res) => {
+  try {
+    const clienteId = req.usuario.id;
+    await PedidoFloristeria.updateMany(
+      { clienteId, visto: false },
+      { visto: true }
+    );
+
+    res.json({
+      success: true,
+      mensaje: 'Cambios marcados como vistos'
+    });
+  } catch (error) {
+    console.error('Error al marcar cambios como vistos:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al marcar cambios como vistos',
+      error: error.message
+    });
+  }
+};
+
 // Obtener todos los pedidos (admin)
 const obtenerTodosPedidos = async (req, res) => {
   try {
@@ -179,16 +226,25 @@ const actualizarEstadoPedido = async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
 
-    if (!['pendiente', 'confirmado', 'entregado', 'cancelado'].includes(estado)) {
+    if (!['pendiente', 'confirmado', 'cancelado_admin', 'cancelado_usuario'].includes(estado)) {
       return res.status(400).json({
         success: false,
         mensaje: 'Estado inválido'
       });
     }
 
+    // Obtener el pedido anterior para preservar el estado visto si no es cambio importante
+    const pedidoAnterior = await PedidoFloristeria.findById(id);
+
     const pedido = await PedidoFloristeria.findByIdAndUpdate(
       id,
-      { estado, updatedAt: Date.now() },
+      { 
+        estado, 
+        updatedAt: Date.now(),
+        visto: estado === 'confirmado' || estado === 'cancelado_admin' || estado === 'cancelado_usuario'
+          ? false
+          : pedidoAnterior?.visto
+      },
       { new: true }
     );
 
@@ -201,8 +257,10 @@ const actualizarEstadoPedido = async (req, res) => {
 
     const descripcionAuditoria = estado === 'confirmado'
       ? `Confirmación de pedido floral ${pedido._id}`
-      : estado === 'cancelado'
-        ? `Cancelación de pedido floral ${pedido._id}`
+      : estado === 'cancelado_admin'
+        ? `Cancelación de pedido floral ${pedido._id} por administrador`
+        : estado === 'cancelado_usuario'
+        ? `Cancelación de pedido floral ${pedido._id} por usuario`
         : `Cambio de estado de pedido floral ${pedido._id} a ${estado}`;
 
     await registrarEvento({
@@ -230,9 +288,68 @@ const actualizarEstadoPedido = async (req, res) => {
   }
 };
 
+// Obtener conteo de pedidos nuevos (sin revisar por admin)
+const obtenerPedidosNuevosCount = async (req, res) => {
+  try {
+    const pedidosNuevos = await PedidoFloristeria.countDocuments({ 
+      estado: 'pendiente',
+      visto_admin: false
+    });
+
+    console.log('📦 Conteo de pedidos nuevos para admin:', pedidosNuevos);
+
+    res.json({
+      success: true,
+      count: pedidosNuevos
+    });
+  } catch (error) {
+    console.error('Error al obtener pedidos nuevos:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al obtener pedidos nuevos',
+      error: error.message
+    });
+  }
+};
+
+// Marcar pedidos como revisados por admin
+const marcarPedidosComoRevisados = async (req, res) => {
+  try {
+    const resultado = await PedidoFloristeria.updateMany(
+      { 
+        estado: 'pendiente',
+        visto_admin: false
+      },
+      { 
+        visto_admin: true,
+        updatedAt: new Date()
+      }
+    );
+
+    console.log('✅ Pedidos marcados como vistos por admin:', resultado.modifiedCount);
+
+    res.json({
+      success: true,
+      mensaje: 'Pedidos marcados como vistos',
+      actualizados: resultado.modifiedCount
+    });
+  } catch (error) {
+    console.error('Error al marcar pedidos como vistos:', error);
+    res.status(500).json({
+      success: false,
+      mensaje: 'Error al marcar pedidos como vistos',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   crearPedido,
   obtenerMisPedidos,
   obtenerTodosPedidos,
-  actualizarEstadoPedido
+  actualizarEstadoPedido,
+  obtenerCambiosNoLeidos,
+  marcarCambiosComoVistos,
+  obtenerPedidosNuevosCount,
+  marcarPedidosComoRevisados
 };

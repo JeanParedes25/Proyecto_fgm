@@ -49,12 +49,20 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
     registrados_hoy: 0
   });
   const [notificacionesNoLeidas, setNotificacionesNoLeidas] = useState(0);
+  const [cambioPedidosNoLeidos, setCambioPedidosNoLeidos] = useState(0);
+  const [pedidosNuevosAdmin, setPedidosNuevosAdmin] = useState(0);
   const [usuariosAdmin, setUsuariosAdmin] = useState([]);
   const [loadingUsuarios, setLoadingUsuarios] = useState(false);
   const [errorUsuarios, setErrorUsuarios] = useState('');
   const [successUsuarios, setSuccessUsuarios] = useState('');
+  const [pedidosUsuario, setPedidosUsuario] = useState([]);
+  const [loadingPedidosUsuario, setLoadingPedidosUsuario] = useState(false);
   const [pedidosFloresData, setPedidosFloresData] = useState([]);
   const [loadingPedidosFlores, setLoadingPedidosFlores] = useState(true);
+  const [estadisticasUsuario, setEstadisticasUsuario] = useState({
+    totalPedidos: 0,
+    articulosEnviados: 0
+  });
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: '',
     email: '',
@@ -89,6 +97,137 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
     return () => clearInterval(interval);
   }, [isAdmin]);
 
+  // Cargar conteo de pedidos nuevos para admin
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const fetchPedidosNuevos = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/pedidos-floristerias/admin/nuevos-count', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setPedidosNuevosAdmin(data.count || 0);
+        }
+      } catch (err) {
+        console.error('Error al obtener conteo de pedidos nuevos:', err);
+      }
+    };
+
+    fetchPedidosNuevos();
+    const interval = setInterval(fetchPedidosNuevos, 5000); // Actualizar cada 5 segundos
+    return () => clearInterval(interval);
+  }, [isAdmin]);
+
+  // Cargar cambios de pedidos no leídos para usuarios normales
+  useEffect(() => {
+    if (isAdmin) return;
+
+    const fetchCambiosPedidos = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/pedidos-floristerias/cambios-no-leidos', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setCambioPedidosNoLeidos(data.count || 0);
+        }
+      } catch (err) {
+        console.error('Error al obtener cambios de pedidos:', err);
+      }
+    };
+
+    fetchCambiosPedidos();
+    const interval = setInterval(fetchCambiosPedidos, 5000); // Actualizar cada 5 segundos
+    return () => clearInterval(interval);
+  }, [isAdmin]);
+
+  // Marcar cambios de pedidos como vistos cuando accede a la sección
+  useEffect(() => {
+    if (isAdmin || activeSection !== 'misPedidos') return;
+
+    const marcarComoVistos = async () => {
+      try {
+        await fetch('http://localhost:5000/api/pedidos-floristerias/cambios-como-vistos', {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setCambioPedidosNoLeidos(0);
+      } catch (err) {
+        console.error('Error al marcar cambios como vistos:', err);
+      }
+    };
+
+    marcarComoVistos();
+  }, [activeSection, isAdmin]);
+
+  // Marcar pedidos como revisados cuando admin accede a la sección
+  useEffect(() => {
+    if (!isAdmin || activeSection !== 'pedidos') return;
+
+    const marcarComoRevisados = async () => {
+      try {
+        await fetch('http://localhost:5000/api/pedidos-floristerias/admin/marcar-revisados', {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setPedidosNuevosAdmin(0);
+      } catch (err) {
+        console.error('Error al marcar pedidos como revisados:', err);
+      }
+    };
+
+    marcarComoRevisados();
+  }, [activeSection, isAdmin]);
+
+  // Cargar pedidos y estadísticas del usuario
+  useEffect(() => {
+    if (isAdmin) return;
+
+    const fetchPedidosUsuario = async () => {
+      try {
+        setLoadingPedidosUsuario(true);
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:5000/api/pedidos-floristerias/mis-pedidos', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const pedidos = data.pedidos || [];
+          setPedidosUsuario(pedidos);
+          
+          // Calcular estadísticas
+          const totalPedidos = pedidos.length;
+          const articulosEnviados = pedidos.reduce((sum, p) => sum + (p.cantidad || 0), 0);
+          
+          setEstadisticasUsuario({
+            totalPedidos,
+            articulosEnviados
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar pedidos del usuario:', error);
+      } finally {
+        setLoadingPedidosUsuario(false);
+      }
+    };
+
+    fetchPedidosUsuario();
+  }, [isAdmin]);
 
   // Cargar estadísticas en tiempo real
   useEffect(() => {
@@ -375,7 +514,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
             className={activeSection === 'pedidos' ? 'active' : ''}
             onClick={() => setActiveSection('pedidos')}
           >
-            📦 Pedidos
+            📦 Pedidos {pedidosNuevosAdmin > 0 && <span className="badge-notif">{pedidosNuevosAdmin}</span>}
           </button>
           <button 
             className={`${activeSection === 'notificaciones' ? 'active' : ''} ${notificacionesNoLeidas > 0 ? 'con-notificaciones' : ''}`}
@@ -415,7 +554,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
               <h2>¡Bienvenido, {usuario.nombre}! 🎉</h2>
               <div className="admin-badge">ADMINISTRADOR</div>
               <div className="user-info">
-                <p><strong>Email:</strong> {usuario.email}</p>
+                <p><strong>Email:</strong> <a href={`mailto:${usuario.email}`} style={{color: '#8b7355', textDecoration: 'none', fontWeight: '600'}}>{usuario.email}</a></p>
                 <p><strong>Rol:</strong> Administrador</p>
               </div>
             </div>
@@ -769,7 +908,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           className={activeSection === 'misPedidos' ? 'active' : ''}
           onClick={() => setActiveSection('misPedidos')}
         >
-          📦 Mis Pedidos
+          📦 Mis Pedidos {cambioPedidosNoLeidos > 0 && <span className="badge-notif">{cambioPedidosNoLeidos}</span>}
         </button>
         <button 
           className={activeSection === 'planes' ? 'active' : ''}
@@ -802,29 +941,116 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           <div className="welcome-section user-welcome">
             <h2>¡Bienvenido, {usuario.nombre}! 💐</h2>
             <p className="welcome-subtitle">Gracias por confiar en Funerales Gonzalo Mendoza</p>
-            <div className="user-info">
-              <p><strong>Email:</strong> {usuario.email}</p>
+            <div className="welcome-message-institutional">
+              <p>🕊️ Estamos aquí para acompañarte en los momentos más importantes de tu vida, brindándote servicios con respeto, dignidad y dedicación.</p>
             </div>
           </div>
 
-          <div className="content-section">
-            <h3>📖 Información de la Empresa</h3>
-            <div className="public-content">
-              <div className="info-card">
-                <h4>🏢 Sobre Nosotros</h4>
-                <p>Funerales «Gonzalo Mendoza», Servicios funerarios de calidad, nuestra misión es acompañar a las familias durante los momentos más difíciles y ofrecer la mejor despedida a sus seres queridos.</p>
+          {/* Estadísticas Personales */}
+          <div className="personal-stats-section">
+            <h3>📊 Tus Estadísticas</h3>
+            <div className="stats-grid">
+              <div className="stat-box">
+                <span className="stat-icon">📦</span>
+                <h4>{estadisticasUsuario.totalPedidos}</h4>
+                <p>Pedidos Realizados</p>
               </div>
-              <div className="info-card">
-                <h4>📞 Contacto</h4>
-                <p>Celular: 099 28 29 095 | 099 90 90 860</p>
-                <p>Oficina: 032 944 608</p>
-                <p>Correo: israelmendoza18@hotmail.com</p>
-              </div>
-              <div className="info-card">
-                <h4>📍 Ubicación</h4>
-                <p>España y Olmedo, Riobamba, Ecuador</p>
+              <div className="stat-box">
+                <span className="stat-icon">🌹</span>
+                <h4>{estadisticasUsuario.articulosEnviados}</h4>
+                <p>Artículos Enviados</p>
               </div>
             </div>
+          </div>
+
+          {/* Último Pedido */}
+          {pedidosUsuario.length > 0 && (
+            <div className="last-order-section">
+              <h3>📦 Estado del Último Pedido</h3>
+              {(() => {
+                const ultimoPedido = pedidosUsuario[0];
+                const estados = {
+                  'pendiente': { icon: '⏳', color: '#ffa500', descripcion: 'Tu pedido está siendo procesado. Nos comunicaremos contigo pronto.' },
+                  'confirmado': { icon: '✅', color: '#4caf50', descripcion: 'Tu pedido ha sido confirmado y está en preparación.' },
+                  'cancelado_admin': { icon: '❌', color: '#f44336', descripcion: 'Tu pedido fue cancelado por el administrador.' },
+                  'cancelado_usuario': { icon: '❌', color: '#f44336', descripcion: 'Tu pedido fue cancelado por ti.' }
+                };
+                const estadoInfo = estados[ultimoPedido.estado] || estados['pendiente'];
+                const codigoPedido = ultimoPedido?._id ? ultimoPedido._id.slice(-6) : '------';
+                
+                return (
+                  <div className="order-card">
+                    <div className="order-header">
+                      <div className="order-status" style={{ borderLeft: `4px solid ${estadoInfo.color}` }}>
+                        <span className="status-icon">{estadoInfo.icon}</span>
+                        <h4>{ultimoPedido.estado.toUpperCase()}</h4>
+                        <span className="order-code">Pedido #{codigoPedido}</span>
+                      </div>
+                      <div className="order-date">
+                        <span>{new Date(ultimoPedido.createdAt).toLocaleDateString('es-ES')}</span>
+                      </div>
+                    </div>
+                    <div className="order-info">
+                      <p><strong>Dirección:</strong> {ultimoPedido.direccionEntrega || 'No disponible'}</p>
+                      <p><strong>Total:</strong> ${Number(ultimoPedido.total || 0).toFixed(2)}</p>
+                    </div>
+                    <div className="order-what-now">
+                      <h5>¿Qué sucede ahora?</h5>
+                      <p>{estadoInfo.descripcion}</p>
+                    </div>
+                    <div className="order-progress">
+                      <div className="progress-track">
+                        <div className={`progress-step ${['pendiente', 'confirmado'].includes(ultimoPedido.estado) ? 'active' : ''}`}>
+                          <span>📋</span>
+                          <p>Pendiente</p>
+                        </div>
+                        <div className={`progress-step ${ultimoPedido.estado === 'confirmado' ? 'active' : ''}`}>
+                          <span>📦</span>
+                          <p>Confirmado</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* Historial de Pedidos Recientes */}
+          {pedidosUsuario.length > 1 && (
+            <div className="recent-orders-section">
+              <h3>📋 Historial de Pedidos Recientes</h3>
+              <div className="orders-timeline">
+                {pedidosUsuario.slice(0, 5).map((pedido, index) => (
+                  <div key={pedido._id} className="timeline-item">
+                    <div className="timeline-marker">
+                      <span className="marker-number">{index + 1}</span>
+                    </div>
+                    <div className="timeline-content">
+                      <div className="order-summary">
+                        <h5>Pedido #{pedido._id ? pedido._id.slice(-6) : '------'}</h5>
+                        <span className={`status-badge status-${pedido.estado}`}>{pedido.estado}</span>
+                      </div>
+                      <p className="order-date">{new Date(pedido.createdAt).toLocaleDateString('es-ES')}</p>
+                      <p className="order-amount">${Number(pedido.total || 0).toFixed(2)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Mensaje Motivacional / Acompañamiento */}
+          <div className="accompaniment-message">
+            <div className="message-box">
+              <h4>💝 Nuestro Compromiso Contigo</h4>
+              <p>En Funerales Gonzalo Mendoza, creemos que cada momento requiere respeto, dedicación y acompañamiento genuino. Ya sea ordenando flores, utilizando nuestros servicios o confiándonos sus momentos especiales, queremos que sepa que estamos aquí para usted y su familia.</p>
+              <p className="message-footer">Porque en los momentos que importan, la calidad y el cuidado marcan la diferencia.</p>
+            </div>
+          </div>
+
+          <div className="user-info-compact">
+            <p><strong>Email:</strong> <a href={`mailto:${usuario.email}`} style={{color: '#8b7355', textDecoration: 'none', fontWeight: '600'}}>{usuario.email}</a></p>
           </div>
         </>
       )}
@@ -859,12 +1085,18 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           <div className="public-content">
             <div className="info-card">
               <h4>📞 Teléfonos</h4>
-              <p>Celular: 099 28 29 095 | 099 90 90 860</p>
-              <p>Oficina: 032 944 608</p>
+              <p>
+                Celular: <a href="tel:+593992829095" style={{color: '#8b7355', textDecoration: 'none', fontWeight: '600'}}>099 28 29 095</a> | <a href="tel:+593999090860" style={{color: '#8b7355', textDecoration: 'none', fontWeight: '600'}}>099 90 90 860</a>
+              </p>
+              <p>
+                Oficina: <a href="tel:+59332944608" style={{color: '#8b7355', textDecoration: 'none', fontWeight: '600'}}>032 944 608</a>
+              </p>
             </div>
             <div className="info-card">
               <h4>📧 Email</h4>
-              <p>israelmendoza18@hotmail.com</p>
+              <p>
+                <a href="mailto:israelmendoza18@hotmail.com" style={{color: '#8b7355', textDecoration: 'none', fontWeight: '600'}}>israelmendoza18@hotmail.com</a>
+              </p>
             </div>
             <div className="info-card">
               <h4>📍 Dirección</h4>

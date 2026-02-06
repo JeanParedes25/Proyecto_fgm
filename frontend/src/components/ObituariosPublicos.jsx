@@ -176,10 +176,6 @@ function ObituariosPublicos() {
 
                 <div className="modal-footer">
                   <p className="descanse-paz">🕯️ Que descanse en paz 🕯️</p>
-                  <p className="contacto-info">
-                    Para más información contactar: <br/>
-                    📞 {empresa?.telefonos?.join(' | ') || 'Información no disponible'}
-                  </p>
                 </div>
               </div>
             </div>

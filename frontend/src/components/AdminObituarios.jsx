@@ -97,7 +97,7 @@ function AdminObituarios() {
     
     // Agregar nuevas fotos
     fotosParaSubir.forEach((foto, index) => {
-      formDataToSend.append(`fotos[${index}][file]`, foto.file);
+      formDataToSend.append('fotos[]', foto.file);
       formDataToSend.append(`fotos[${index}][descripcion]`, foto.descripcion);
     });
 

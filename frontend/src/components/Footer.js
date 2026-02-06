@@ -26,9 +26,15 @@ function Footer() {
             <span className="icon">📞</span>
             <p>
               <strong>Teléfonos:</strong><br />
-              {EMPRESA_INFO.telefonos.celular1}<br />
-              {EMPRESA_INFO.telefonos.celular2}<br />
-              {EMPRESA_INFO.telefonos.oficina}
+              <a href="tel:+593992829095" className="footer-link">
+                {EMPRESA_INFO.telefonos.celular1}
+              </a><br />
+              <a href="tel:+593999090860" className="footer-link">
+                {EMPRESA_INFO.telefonos.celular2}
+              </a><br />
+              <a href="tel:+59332944608" className="footer-link">
+                {EMPRESA_INFO.telefonos.oficina}
+              </a>
             </p>
           </div>
 

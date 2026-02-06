@@ -8,12 +8,9 @@ exports.obtenerEstadisticasFlores = async (req, res) => {
       return res.status(401).json({ error: 'Token requerido' });
     }
 
-    // Obtener todos los pedidos confirmados o entregados
+    // Obtener todos los pedidos confirmados
     const pedidos = await PedidoFloristeria.find({
-      $or: [
-        { estado: 'confirmado' },
-        { estado: 'entregado' }
-      ]
+      estado: 'confirmado'
     })
       .select('codigoArreglo cantidad descripcionArreglo precioUnitario total')
       .lean();
@@ -79,10 +76,7 @@ exports.obtenerEstadisticasPorPeriodo = async (req, res) => {
     const { fechaInicio, fechaFin } = req.query;
 
     const filtro = {
-      $or: [
-        { estado: 'confirmado' },
-        { estado: 'entregado' }
-      ]
+      estado: 'confirmado'
     };
 
     if (fechaInicio || fechaFin) {

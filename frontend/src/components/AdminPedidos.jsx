@@ -46,28 +46,28 @@ function AdminPedidos() {
         alert(`Pedido ${nuevoEstado === 'confirmado' ? 'confirmado' : 'cancelado'} exitosamente`);
         fetchPedidos();
       } else {
-        alert('Error al actualizar el estado del pedido');
+        const errorData = await response.json();
+        console.error('Error del servidor:', errorData);
+        alert(`Error: ${errorData.mensaje || 'No se pudo actualizar el pedido'}`);
       }
     } catch (err) {
       console.error('Error al actualizar pedido:', err);
-      alert('Error de conexión');
+      alert('Error de conexión al servidor');
     }
   };
 
-  const pedidosFiltrados = filtroEstado === 'todos' 
-    ? pedidos 
+  const pedidosFiltrados = filtroEstado === 'todos'
+    ? pedidos
     : filtroEstado === 'cancelado'
-      ? pedidos.filter(p => p.estado === 'cancelado' || p.estado === 'cancelado_admin' || p.estado === 'cancelado_usuario')
+      ? pedidos.filter(p => p.estado === 'cancelado_admin' || p.estado === 'cancelado_usuario')
       : pedidos.filter(p => p.estado === filtroEstado);
 
   const getEstadoBadge = (estado) => {
     const estados = {
       'pendiente': { texto: 'Pendiente', clase: 'estado-pendiente', icono: '⏳' },
       'confirmado': { texto: 'Confirmado', clase: 'estado-confirmado', icono: '✅' },
-      'cancelado': { texto: 'Cancelado', clase: 'estado-cancelado', icono: '❌' },
       'cancelado_admin': { texto: 'Cancelado por Admin', clase: 'estado-cancelado', icono: '❌' },
-      'cancelado_usuario': { texto: 'Cancelado por Usuario', clase: 'estado-cancelado', icono: '❌' },
-      'entregado': { texto: 'Entregado', clase: 'estado-entregado', icono: '📦' }
+      'cancelado_usuario': { texto: 'Cancelado por Usuario', clase: 'estado-cancelado', icono: '❌' }
     };
     return estados[estado] || estados['pendiente'];
   };
@@ -112,13 +112,13 @@ function AdminPedidos() {
             className={filtroEstado === 'confirmado' ? 'filtro-btn active' : 'filtro-btn'}
             onClick={() => setFiltroEstado('confirmado')}
           >
-            ❌ Cancelados ({pedidos.filter(p => p.estado === 'cancelado' || p.estado === 'cancelado_admin' || p.estado === 'cancelado_usuario').length})
+            ✅ Confirmados ({pedidos.filter(p => p.estado === 'confirmado').length})
           </button>
           <button 
             className={filtroEstado === 'cancelado' ? 'filtro-btn active' : 'filtro-btn'}
             onClick={() => setFiltroEstado('cancelado')}
           >
-            ❌ Cancelados ({pedidos.filter(p => p.estado === 'cancelado' || p.estado === 'cancelado_admin' || p.estado === 'cancelado_usuario').length})
+            ❌ Cancelados ({pedidos.filter(p => p.estado === 'cancelado_admin' || p.estado === 'cancelado_usuario').length})
           </button>
         </div>
       </div>
@@ -197,7 +197,7 @@ function AdminPedidos() {
                   </div>
                 )}
 
-                {(pedido.estado === 'cancelado' || pedido.estado === 'cancelado_admin') && (
+                {pedido.estado === 'cancelado_admin' && (
                   <div className="pedido-nota-admin cancelado">
                     ❌ Este pedido fue cancelado por el administrador
                   </div>

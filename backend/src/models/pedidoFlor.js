@@ -51,7 +51,7 @@ const pedidoFloristeriasSchema = new mongoose.Schema({
   },
   estado: {
     type: String,
-    enum: ['pendiente', 'confirmado', 'entregado', 'cancelado', 'cancelado_admin', 'cancelado_usuario'],
+    enum: ['pendiente', 'confirmado', 'cancelado_admin', 'cancelado_usuario'],
     default: 'pendiente'
   },
   notificacionEnviada: {
@@ -73,6 +73,14 @@ const pedidoFloristeriasSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now
+  },
+  visto: {
+    type: Boolean,
+    default: true
+  },
+  visto_admin: {
+    type: Boolean,
+    default: false
   }
 }, { collection: 'pedidos_flores' });
 
