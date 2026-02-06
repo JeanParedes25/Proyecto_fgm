@@ -8,9 +8,10 @@ require('dotenv').config();
 
 const app = express();
 
-// Configurar CORS para permitir solicitudes desde Vercel y localhost
+// Configurar CORS para permitir solicitudes desde Render, Vercel y localhost
 const corsOptions = {
   origin: [
+    'https://proyecto-fgm-frontend.onrender.com',
     'https://proyecto-fgm-frontend.vercel.app',
     'http://localhost:3000',
     'http://localhost:5000'
