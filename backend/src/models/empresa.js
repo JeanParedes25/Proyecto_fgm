@@ -54,15 +54,13 @@ const empresaSchema = new mongoose.Schema({
 }, { collection: 'empresa' });
 
 // Middleware para actualizar fechaActualizacion antes de guardar
-empresaSchema.pre('save', function(next) {
+empresaSchema.pre('save', function() {
   this.fechaActualizacion = Date.now();
-  next();
 });
 
 // Middleware para actualizar fechaActualizacion antes de updateOne
-empresaSchema.pre('findOneAndUpdate', function(next) {
+empresaSchema.pre('findOneAndUpdate', function() {
   this.set({ fechaActualizacion: Date.now() });
-  next();
 });
 
 module.exports = mongoose.model('Empresa', empresaSchema);

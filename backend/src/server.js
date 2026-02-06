@@ -117,7 +117,6 @@ app.use('/api/configuracion', configuracionRouter);
 // Importar rutas de empresa
 const empresaRouter = require('./routes/empresa');
 app.use('/api/empresa', empresaRouter);
-app.use('/empresa', empresaRouter);
 
 // Puerto
 const PORT = process.env.PORT || 5000;
