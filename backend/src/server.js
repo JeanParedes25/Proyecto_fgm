@@ -35,6 +35,23 @@ Obituario.crearTabla()
   .then(() => console.log(" Colección de obituarios lista en MongoDB"))
   .catch(err => console.error(" Error al inicializar colección de obituarios:", err));
 
+// Ruta raíz
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'API funcionando correctamente',
+    version: '1.0.0',
+    nombre: 'Funerales Gonzalo Mendoza',
+    descripcion: 'Sistema de gestión funeraria',
+    endpoints: {
+      test: '/api/test',
+      auth: '/api/auth',
+      empresa: '/api/empresa',
+      servicios: '/api/servicios',
+      floristerias: '/api/floristerias'
+    }
+  });
+});
+
 // Ruta de prueba
 app.get('/api/test', (req, res) => {
   res.json({ message: 'Servidor funcionando ' });
