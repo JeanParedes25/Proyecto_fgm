@@ -117,81 +117,81 @@ function Register({ onSwitchToLogin }) {
       <div className="auth-card">
         <h1>Registro</h1>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="nombre">Nombre Completo:</label>
+          <div className="form-group floating-label-group">
             <input
               type="text"
               id="nombre"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
               required
-              placeholder="Tu nombre completo"
+              className={nombre ? 'has-value' : ''}
             />
+            <label htmlFor="nombre">👤 Nombre Completo</label>
           </div>
-          <div className="form-group">
-            <label htmlFor="email">Correo Electrónico:</label>
+          <div className="form-group floating-label-group">
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="tu@email.com"
+              className={email ? 'has-value' : ''}
             />
+            <label htmlFor="email">✉️ Correo Electrónico</label>
           </div>
-          <div className="form-group">
-            <label htmlFor="celular">Número de Celular:</label>
+          <div className="form-group floating-label-group">
             <input
               type="tel"
               id="celular"
               value={celular}
               onChange={(e) => setCelular(e.target.value)}
               required
-              placeholder="999999999"
+              className={celular ? 'has-value' : ''}
             />
+            <label htmlFor="celular">📱 Número de Celular</label>
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Contraseña:</label>
-            <div className="password-input-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? '🙈' : '👁️'}
-              </button>
-            </div>
-            <small className="password-hint">
-              Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (!@#$%^&*)
-            </small>
+          <div className="form-group floating-label-group">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className={password ? 'has-value' : ''}
+            />
+            <label htmlFor="password">🔒 Contraseña</label>
           </div>
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Repetir Contraseña:</label>
-            <div className="password-input-container">
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showConfirmPassword ? '🙈' : '👁️'}
-              </button>
-            </div>
+          <div className="show-password-container">
+            <input
+              type="checkbox"
+              id="showPasswordCheck"
+              checked={showPassword}
+              onChange={(e) => setShowPassword(e.target.checked)}
+            />
+            <label htmlFor="showPasswordCheck">Mostrar contraseña</label>
+          </div>
+          <small className="password-hint">
+            Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (!@#$%^&*)
+          </small>
+          <div className="form-group floating-label-group">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              className={confirmPassword ? 'has-value' : ''}
+            />
+            <label htmlFor="confirmPassword">🔐 Repetir Contraseña</label>
+          </div>
+          <div className="show-password-container">
+            <input
+              type="checkbox"
+              id="showConfirmPasswordCheck"
+              checked={showConfirmPassword}
+              onChange={(e) => setShowConfirmPassword(e.target.checked)}
+            />
+            <label htmlFor="showConfirmPasswordCheck">Mostrar contraseña</label>
           </div>
           {error && <div className="error-message">{error}</div>}
           {success && <div className="success-message">{success}</div>}

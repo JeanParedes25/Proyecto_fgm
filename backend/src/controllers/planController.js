@@ -88,14 +88,36 @@ exports.actualizarPlan = async (req, res) => {
     console.log('ID del plan:', req.params.id);
     console.log('Datos recibidos (req.body):', JSON.stringify(req.body, null, 2));
     
-    // Validar y convertir tipos de datos
-    const datosValidados = {
-      ...req.body,
-      precio: Number(req.body.precio),
-      salasIncluidas: Array.isArray(req.body.salasIncluidas) ? req.body.salasIncluidas : [],
-      activo: req.body.activo !== undefined ? req.body.activo : true,
-      destacado: req.body.destacado !== undefined ? req.body.destacado : false
-    };
+    // Validar y convertir tipos de datos, omitiendo undefined
+    const datosValidados = {};
+    
+    // Copiar todos los campos excepto los que necesitan validación especial
+    Object.keys(req.body).forEach(key => {
+      if (req.body[key] !== undefined && req.body[key] !== null && req.body[key] !== '') {
+        datosValidados[key] = req.body[key];
+      }
+    });
+    
+    // Procesar campos específicos
+    if (req.body.precio !== undefined) {
+      // Convertir a null si está vacío, es "0" o es 0
+      const precioValue = req.body.precio === '' || req.body.precio === '0' || Number(req.body.precio) === 0 
+        ? null 
+        : Number(req.body.precio);
+      datosValidados.precio = precioValue;
+    }
+    
+    if (req.body.salasIncluidas !== undefined) {
+      datosValidados.salasIncluidas = Array.isArray(req.body.salasIncluidas) ? req.body.salasIncluidas : [];
+    }
+    
+    if (req.body.activo !== undefined) {
+      datosValidados.activo = req.body.activo;
+    }
+    
+    if (req.body.destacado !== undefined) {
+      datosValidados.destacado = req.body.destacado;
+    }
 
     console.log('Datos validados:', JSON.stringify(datosValidados, null, 2));
 
@@ -109,7 +131,7 @@ exports.actualizarPlan = async (req, res) => {
       return res.status(404).json({ mensaje: 'Plan no encontrado' });
     }
     
-    console.log('Plan actualizado exitosamente:', planActualizado._id);
+    console.log('✅ Plan actualizado exitosamente:', planActualizado._id);
 
     await registrarEvento({
       usuarioId: req.usuario?.id || null,
@@ -124,6 +146,8 @@ exports.actualizarPlan = async (req, res) => {
     res.json(planActualizado);
   } catch (error) {
     console.error('❌ Error al actualizar plan:', error);
+    console.error('Error details:', error.message);
+    console.error('Validation errors:', error.errors);
     res.status(400).json({ 
       mensaje: 'Error al actualizar el plan', 
       error: error.message,

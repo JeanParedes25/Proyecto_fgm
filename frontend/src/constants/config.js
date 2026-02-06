@@ -16,8 +16,4 @@ export const EMPRESA_INFO = {
 
 export const API_BASE_URL = 'http://localhost:5000';
 
-export const buildWhatsAppUrl = (telefono) => {
-  if (!telefono) return WHATSAPP_URL;
-  const numero = telefono.replace(/\D/g, '');
-  return `https://wa.me/${numero}`;
-};
+export const buildWhatsAppUrl = () => `https://wa.me/${WHATSAPP_NUMBER}`;

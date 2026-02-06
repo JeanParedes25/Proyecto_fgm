@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './AsistenciaPrepago.css';
+import { WHATSAPP_NUMBER } from '../constants/config';
 
 function AsistenciaPrepago({ onVolver }) {
   const [planes, setPlanes] = useState([]);
@@ -7,6 +8,7 @@ function AsistenciaPrepago({ onVolver }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [planExpandido, setPlanExpandido] = useState(null);
   const [form, setForm] = useState({
     nombre: '',
     precio: '',
@@ -340,6 +342,17 @@ function AsistenciaPrepago({ onVolver }) {
     }));
   };
 
+  const togglePlan = (planId) => {
+    setPlanExpandido(planExpandido === planId ? null : planId);
+  };
+
+  const contactarWhatsApp = (plan) => {
+    const telefono = WHATSAPP_NUMBER;
+    const mensaje = `Hola, estoy interesado en el plan de Asistencia Prepago ${plan.nombre}, quisiera más información.`;
+    const url = `https://wa.me/${telefono.replace(/\D/g, '')}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+  };
+
   if (loading) {
     return (
       <div className="prepago-loading">
@@ -455,9 +468,9 @@ function AsistenciaPrepago({ onVolver }) {
               </div>
             </div>
 
-            {/* Salas Incluidas */}
+            {/* Acondicionamiento de la sala */}
             <div className="form-section-prepago">
-              <h4>Salas Incluidas</h4>
+              <h4>Acondicionamiento de la sala</h4>
               <div className="beneficios-input-group">
                 <input
                   type="text"
@@ -897,57 +910,240 @@ function AsistenciaPrepago({ onVolver }) {
           </div>
         ) : (
           <div className="planes-prepago-grid">
-            {planes.map(plan => (
-              <div key={plan._id} className={`plan-prepago-card ${!plan.activo ? 'plan-inactivo' : ''}`}>
-                <div className="plan-prepago-header">
-                  <h3>{plan.nombre}</h3>
-                  <div className="badges-container">
-                    {plan.destacado && <span className="badge-destacado">⭐ Destacado</span>}
-                    {!plan.activo && <span className="badge-inactivo">❌ Inactivo</span>}
-                  </div>
+            {planes.map(plan => {
+              const expandido = planExpandido === plan._id;
+              const nombrePlan = plan.nombre || '';
+              const tituloPlan = nombrePlan.toUpperCase().startsWith('PLAN ')
+                ? nombrePlan
+                : `PLAN ${nombrePlan}`.trim();
+              
+              return (
+                <div key={plan._id} className={`plan-prepago-card ${!plan.activo ? 'plan-inactivo' : ''} ${expandido ? 'expandido' : ''}`}>
+                  
+                  {/* Vista compacta */}
+                  {!isAdmin && (
+                    <div className="plan-prepago-compact-header" onClick={() => togglePlan(plan._id)}>
+                      <div className="plan-prepago-header-layout">
+                        <div className="plan-prepago-imagen-container">
+                          <img src={`${process.env.PUBLIC_URL}/logo_fgm.png`} alt="Asistencia Prepago" className="plan-prepago-imagen" />
+                        </div>
+                        <div className="plan-prepago-info">
+                          <div className="plan-prepago-header">
+                            <h3>{tituloPlan}</h3>
+                            {plan.destacado && <span className="badge-destacado-compact">★ Destacado</span>}
+                          </div>
+                          
+                          {plan.descripcion && (
+                            <p className="plan-descripcion-breve">
+                              {plan.descripcion.length > 100 
+                                ? plan.descripcion.substring(0, 100) + '...' 
+                                : plan.descripcion}
+                            </p>
+                          )}
+                          
+                          <button 
+                            type="button"
+                            className="btn-ver-mas-prepago"
+                          >
+                            {expandido ? 'Ocultar' : 'Ver más detalles'}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Vista completa para admin o cuando está expandido */}
+                  {(isAdmin || expandido) && (
+                    <div className={`plan-prepago-detalles ${!isAdmin ? 'usuario-expandido' : ''}`}>
+                      {isAdmin && (
+                        <>
+                          <div className="plan-prepago-header">
+                            <h3>{plan.nombre}</h3>
+                            <div className="badges-container">
+                              {plan.destacado && <span className="badge-destacado">⭐ Destacado</span>}
+                              {!plan.activo && <span className="badge-inactivo">❌ Inactivo</span>}
+                            </div>
+                          </div>
+                          
+                          <div className="plan-prepago-precio">
+                            {plan.precio ? `$${plan.precio.toFixed(2)}` : 'Consultar precio'}
+                          </div>
+                        </>
+                      )}
+
+                      {plan.descripcion && (
+                        <div className="plan-prepago-descripcion">
+                          <h4>Descripción</h4>
+                          <p>{plan.descripcion}</p>
+                        </div>
+                      )}
+
+                      {plan.beneficios && plan.beneficios.length > 0 && (
+                        <div className="plan-prepago-beneficios">
+                          <h4>Beneficios:</h4>
+                          <ul>
+                            {plan.beneficios.map((beneficio, idx) => (
+                              <li key={idx}>✓ {beneficio}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {plan.salasIncluidas && plan.salasIncluidas.length > 0 && (
+                        <div className="plan-prepago-salas">
+                          <h4>Acondicionamiento de la sala:</h4>
+                          <ul>
+                            {plan.salasIncluidas.map((sala, idx) => (
+                              <li key={idx}>✓ {sala}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {(plan.procedimientos?.formolizacion || plan.procedimientos?.tanatopraxia || plan.procedimientos?.otros) && (
+                        <div className="plan-prepago-seccion">
+                          <h4>🔬 Procedimientos</h4>
+                          <ul>
+                            {plan.procedimientos.formolizacion && <li>✓ Formolización</li>}
+                            {plan.procedimientos.tanatopraxia && <li>✓ Tanatopraxia</li>}
+                            {plan.procedimientos.otros && <li>✓ {plan.procedimientos.otros}</li>}
+                          </ul>
+                        </div>
+                      )}
+
+                      {plan.transporte?.autocarroza && (
+                        <div className="plan-prepago-seccion">
+                          <h4>🚗 Transporte</h4>
+                          <p>✓ Autocarroza incluida</p>
+                          {plan.transporte.detalles && <p className="detalles-texto">{plan.transporte.detalles}</p>}
+                        </div>
+                      )}
+
+                      {plan.arregloFloral?.incluido && (
+                        <div className="plan-prepago-seccion">
+                          <h4>💐 Arreglo Floral</h4>
+                          <p>✓ Incluido</p>
+                          {plan.arregloFloral.descripcion && <p className="detalles-texto">{plan.arregloFloral.descripcion}</p>}
+                        </div>
+                      )}
+
+                      {plan.tramitesLegales?.incluido && (
+                        <div className="plan-prepago-seccion">
+                          <h4>📄 Trámites Legales</h4>
+                          <p>✓ Incluido</p>
+                          {plan.tramitesLegales.descripcion && <p className="detalles-texto">{plan.tramitesLegales.descripcion}</p>}
+                        </div>
+                      )}
+
+                      {plan.mediosComunicacion?.incluido && (
+                        <div className="plan-prepago-seccion">
+                          <h4>📰 Medios de Comunicación</h4>
+                          <p>✓ Incluido</p>
+                          {plan.mediosComunicacion.descripcion && <p className="detalles-texto">{plan.mediosComunicacion.descripcion}</p>}
+                        </div>
+                      )}
+
+                      {plan.obituariosDomiciliarios?.incluido && (
+                        <div className="plan-prepago-seccion">
+                          <h4>📰 Obituarios Domiciliarios</h4>
+                          <p>✓ {plan.obituariosDomiciliarios.cantidad} obituarios incluidos</p>
+                        </div>
+                      )}
+
+                      {(plan.cafeteria?.bebidas || plan.cafeteria?.vasosTermicos) && (
+                        <div className="plan-prepago-seccion">
+                          <h4>☕ Cafetería</h4>
+                          <ul>
+                            {plan.cafeteria.bebidas && <li>✓ Bebidas</li>}
+                            {plan.cafeteria.vasosTermicos && <li>✓ Vasos térmicos</li>}
+                          </ul>
+                          {plan.cafeteria.descripcion && <p className="detalles-texto">{plan.cafeteria.descripcion}</p>}
+                        </div>
+                      )}
+
+                      {plan.insumosSala?.incluido && (
+                        <div className="plan-prepago-seccion">
+                          <h4>🛋️ Insumos de Sala</h4>
+                          <p>✓ Incluido</p>
+                          {plan.insumosSala.descripcion && <p className="detalles-texto">{plan.insumosSala.descripcion}</p>}
+                        </div>
+                      )}
+
+                      {plan.serviciosReligiosos?.incluido && (
+                        <div className="plan-prepago-seccion">
+                          <h4>⛪ Servicios Religiosos</h4>
+                          <p>✓ Incluido</p>
+                          {plan.serviciosReligiosos.descripcion && <p className="detalles-texto">{plan.serviciosReligiosos.descripcion}</p>}
+                        </div>
+                      )}
+
+                      {(plan.mediosDigitales?.videoHomenaje || plan.mediosDigitales?.facebookLive || plan.mediosDigitales?.otros) && (
+                        <div className="plan-prepago-seccion">
+                          <h4>📱 Medios Digitales</h4>
+                          <ul>
+                            {plan.mediosDigitales.videoHomenaje && <li>✓ Video homenaje</li>}
+                            {plan.mediosDigitales.facebookLive && <li>✓ Facebook Live</li>}
+                            {plan.mediosDigitales.otros && <li>✓ {plan.mediosDigitales.otros}</li>}
+                          </ul>
+                        </div>
+                      )}
+
+                      {plan.infraestructura?.incluido && (
+                        <div className="plan-prepago-seccion">
+                          <h4>🏢 Infraestructura</h4>
+                          <p>✓ Incluido</p>
+                          {plan.infraestructura.descripcion && <p className="detalles-texto">{plan.infraestructura.descripcion}</p>}
+                        </div>
+                      )}
+
+                      {plan.equipoFuneraria?.incluido && (
+                        <div className="plan-prepago-seccion">
+                          <h4>👥 Equipo de la Funeraria</h4>
+                          <p>✓ Personal profesional incluido</p>
+                          {plan.equipoFuneraria.descripcion && <p className="detalles-texto">{plan.equipoFuneraria.descripcion}</p>}
+                        </div>
+                      )}
+
+                      {/* Botón WhatsApp para usuarios cuando está expandido */}
+                      {!isAdmin && expandido && (
+                        <div className="plan-prepago-footer">
+                          <p className="contacto-mensaje-prepago">¿Le interesa este plan? Contáctenos para más información</p>
+                          <button 
+                            type="button"
+                            className="btn-whatsapp-prepago"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              contactarWhatsApp(plan);
+                            }}
+                          >
+                            📲 Contactar por WhatsApp
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Botones Admin: Editar y Eliminar */}
+                      {isAdmin && (
+                        <div className="plan-actions-prepago">
+                          <button onClick={() => editarPlan(plan)} className="btn-edit-prepago">
+                            Editar
+                          </button>
+                          <button 
+                            onClick={() => toggleDestacado(plan._id)} 
+                            className={`btn-toggle-prepago ${plan.destacado ? 'destacado' : ''}`}
+                            title={plan.destacado ? 'Quitar destacado' : 'Marcar como destacado'}
+                          >
+                            {plan.destacado ? '⭐' : '☆'}
+                          </button>
+                          <button onClick={() => eliminarPlan(plan._id)} className="btn-delete-prepago">
+                            Eliminar
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-                
-                <div className="plan-prepago-precio">
-                  {plan.precio ? `$${plan.precio.toFixed(2)}` : 'Consultar precio'}
-                </div>
-
-                {plan.descripcion && (
-                  <div className="plan-prepago-descripcion">
-                    <p>{plan.descripcion}</p>
-                  </div>
-                )}
-
-                {plan.beneficios && plan.beneficios.length > 0 && (
-                  <div className="plan-prepago-beneficios">
-                    <h4>Beneficios:</h4>
-                    <ul>
-                      {plan.beneficios.map((beneficio, idx) => (
-                        <li key={idx}>✓ {beneficio}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Botones Admin: Editar y Eliminar */}
-                {isAdmin && (
-                  <div className="plan-actions-prepago">
-                    <button onClick={() => editarPlan(plan)} className="btn-edit-prepago">
-                      Editar
-                    </button>
-                    <button 
-                      onClick={() => toggleDestacado(plan._id)} 
-                      className={`btn-toggle-prepago ${plan.destacado ? 'destacado' : ''}`}
-                      title={plan.destacado ? 'Quitar destacado' : 'Marcar como destacado'}
-                    >
-                      {plan.destacado ? '⭐' : '☆'}
-                    </button>
-                    <button onClick={() => eliminarPlan(plan._id)} className="btn-delete-prepago">
-                      Eliminar
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

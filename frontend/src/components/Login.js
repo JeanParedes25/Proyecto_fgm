@@ -97,36 +97,36 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onForgotPass
       <div className="auth-card">
         <h1>Inicio de Sesión</h1>
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Correo Electrónico:</label>
+          <div className="form-group floating-label-group">
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="tu@email.com"
+              className={email ? 'has-value' : ''}
             />
+            <label htmlFor="email">✉️ Correo Electrónico</label>
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Contraseña:</label>
-            <div className="password-input-container">
-              <input
-                type={showPassword ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? '🙈' : '👁️'}
-              </button>
-            </div>
+          <div className="form-group floating-label-group">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className={password ? 'has-value' : ''}
+            />
+            <label htmlFor="password">🔒 Contraseña</label>
+          </div>
+          <div className="show-password-container">
+            <input
+              type="checkbox"
+              id="showPasswordCheck"
+              checked={showPassword}
+              onChange={(e) => setShowPassword(e.target.checked)}
+            />
+            <label htmlFor="showPasswordCheck">Mostrar contraseña</label>
           </div>
           {error && (
             <div className="error-message">

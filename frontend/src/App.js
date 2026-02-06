@@ -15,6 +15,8 @@ function App() {
 
   // Verificar si hay usuario guardado en localStorage
   useEffect(() => {
+    // Comentado temporalmente para siempre iniciar en login
+    /*
     const usuarioGuardado = localStorage.getItem('usuario');
     const modoInvitado = localStorage.getItem('modoInvitado');
     const token = localStorage.getItem('token');
@@ -26,6 +28,7 @@ function App() {
       setIsGuest(true);
       setCurrentPage('dashboard');
     }
+    */
     setLoading(false);
   }, []);
 

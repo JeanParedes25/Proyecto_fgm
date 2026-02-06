@@ -170,17 +170,35 @@ function AdminPlanes() {
     const method = editingId ? 'PUT' : 'POST';
 
     try {
-      // Validar y convertir precio a Number (opcional)
+      // Validar que los campos requeridos estén completos
+      if (!form.nombre.trim()) {
+        alert('El nombre del plan es obligatorio');
+        return;
+      }
+      if (!form.tipoCofre.trim()) {
+        alert('El tipo de cofre es obligatorio');
+        return;
+      }
+      if (!form.duracionVelacion.trim()) {
+        alert('La duración de velación es obligatoria');
+        return;
+      }
+
+      // Convertir y enviar datos
       const datosEnvio = {
         ...form,
-        precio: form.precio ? parseFloat(form.precio) : undefined,
+        nombre: form.nombre.trim(),
+        tipoCofre: form.tipoCofre.trim(),
+        duracionVelacion: form.duracionVelacion.trim(),
+        precio: form.precio === '' || form.precio === '0' || Number(form.precio) === 0 ? null : Number(form.precio),
+        salasIncluidas: Array.isArray(form.salasIncluidas) ? form.salasIncluidas : [],
         obituariosDomiciliarios: {
           ...form.obituariosDomiciliarios,
-          cantidad: parseInt(form.obituariosDomiciliarios.cantidad) || 0
+          cantidad: Number(form.obituariosDomiciliarios.cantidad) || 0
         }
       };
 
-      console.log('Enviando datos al backend:', JSON.stringify(datosEnvio, null, 2));
+      console.log('✅ Enviando datos al backend:', JSON.stringify(datosEnvio, null, 2));
 
       const res = await fetch(url, {
         method,
@@ -191,11 +209,11 @@ function AdminPlanes() {
         body: JSON.stringify(datosEnvio)
       });
 
-      console.log('Respuesta del servidor - Status:', res.status);
+      console.log('📡 Respuesta del servidor - Status:', res.status);
       console.log('Content-Type:', res.headers.get('content-type'));
 
       if (res.ok) {
-        alert(editingId ? 'Plan actualizado' : 'Plan creado');
+        alert(editingId ? '✅ Plan actualizado correctamente' : '✅ Plan creado correctamente');
         resetForm();
         fetchPlanes();
       } else {
@@ -204,17 +222,17 @@ function AdminPlanes() {
         
         if (contentType && contentType.includes('application/json')) {
           error = await res.json();
-          console.error('Error JSON del servidor:', error);
-          alert('Error: ' + (error.mensaje || error.message || JSON.stringify(error)));
+          console.error('❌ Error JSON del servidor:', error);
+          alert('❌ Error: ' + (error.mensaje || error.message || JSON.stringify(error)));
         } else {
           const text = await res.text();
-          console.error('Error no-JSON del servidor:', text);
-          alert('Error: Respuesta inválida del servidor. Verifica la consola del navegador.');
+          console.error('❌ Error no-JSON del servidor:', text);
+          alert('❌ Error: Respuesta inválida del servidor. Verifica la consola del navegador.');
         }
       }
     } catch (e) {
-      console.error('Error al guardar plan:', e);
-      alert('Error al guardar plan: ' + (e.message || e));
+      console.error('❌ Error al guardar plan:', e);
+      alert('❌ Error al guardar plan: ' + (e.message || e));
     }
   };
 
@@ -458,9 +476,9 @@ function AdminPlanes() {
             </div>
           </div>
 
-          {/* Salas incluidas */}
+          {/* Acondicionamiento de la sala */}
           <div className="form-section">
-            <h4>Salas Incluidas</h4>
+            <h4>Acondicionamiento de la sala</h4>
             <div className="salas-input-group">
               <input
                 type="text"
@@ -919,7 +937,7 @@ function AdminPlanes() {
               <div key={plan._id} className={`plan-card ${!plan.activo ? 'inactivo' : ''} ${plan.destacado ? 'destacado' : ''}`}>
                 <div className="plan-header">
                   <h4>{plan.nombre}</h4>
-                  <div className="plan-precio">${parseFloat(plan.precio || 0).toFixed(2)}</div>
+                  <div className="plan-precio">{plan.precio && plan.precio > 0 ? `$${parseFloat(plan.precio).toFixed(2)}` : ''}</div>
                 </div>
                 
                 <div className="plan-details">

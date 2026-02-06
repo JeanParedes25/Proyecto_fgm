@@ -83,6 +83,53 @@
   margin-bottom: 20px;
 }
 
+.floating-label-group {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.floating-label-group input {
+  width: 100%;
+  padding: 14px 12px 10px 12px;
+  border: 1px solid #c8c4bb;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: #f9f7f2;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.floating-label-group label {
+  position: absolute;
+  top: 14px;
+  left: 12px;
+  color: #999;
+  font-weight: 500;
+  font-size: 14px;
+  pointer-events: none;
+  transition: top 0.2s, font-size 0.2s, color 0.2s;
+  background: #f9f7f2;
+  padding: 0 4px;
+  display: block;
+  margin: 0;
+}
+
+.floating-label-group input:focus ~ label,
+.floating-label-group input.has-value ~ label {
+  top: -8px;
+  font-size: 12px;
+  color: #c49a6c;
+  font-weight: 600;
+  background: #f9f7f2;
+  padding: 0 4px;
+}
+
+.floating-label-group input:focus {
+  outline: none;
+  border-color: #c49a6c;
+  box-shadow: 0 0 0 3px rgba(196, 154, 108, 0.22);
+}
+
 .form-group label {
   display: block;
   margin-bottom: 8px;
@@ -91,7 +138,7 @@
   letter-spacing: 0.2px;
 }
 
-.form-group input {
+.form-group input:not(.floating-label-group input) {
   width: 100%;
   padding: 12px;
   border: 1px solid #c8c4bb;
@@ -102,7 +149,7 @@
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.form-group input:focus {
+.form-group input:not(.floating-label-group input):focus {
   outline: none;
   border-color: #c49a6c;
   box-shadow: 0 0 0 3px rgba(196, 154, 108, 0.22);
@@ -298,16 +345,54 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 20px;
-  padding: 5px;
+  font-size: 11px;
+  padding: 4px 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform 0.2s;
+  color: #666;
+  font-weight: 500;
 }
 
 .toggle-password:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
+  color: #333;
+}
+
+.show-password-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  padding-left: 0;
+}
+
+.show-password-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.show-password-container label {
+  font-size: 13px;
+  color: #666;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+}
+
+.show-password-container label:hover {
+  color: #333;
 }
 
 .password-hint {
