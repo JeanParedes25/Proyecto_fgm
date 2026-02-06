@@ -33,7 +33,7 @@ const seedearEmpresa = async () => {
     console.log('✅ Datos de empresa insertados correctamente');
     console.log('Datos insertados:', datosEmpresa);
   } catch (error) {
-    console.error('❌ Error al ejecutar seeding de empresa:', error.message);
+    console.error('ERROR: Error al ejecutar seeding de empresa:', error.message);
   }
 };
 
