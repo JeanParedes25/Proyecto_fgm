@@ -436,7 +436,7 @@ function MisPedidos({ onBack }) {
 
       {pedidos.length === 0 ? (
         <div className="no-pedidos">
-          <div className="no-pedidos-icon">📦</div>
+
           <h2>No tienes pedidos</h2>
           <p>Tus pedidos de arreglos florales aparecerán aquí</p>
         </div>

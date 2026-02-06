@@ -116,20 +116,6 @@ function Register({ onSwitchToLogin }) {
     <div className="auth-container" style={containerStyle}>
       <div className="auth-card">
         <h1>Registro</h1>
-        <div className="auth-feature-cards">
-          <div className="feature-card">
-            <span className="feature-icon">�</span>
-            <p>Verificación segura por correo</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">📄</span>
-            <p>Accede a comprobantes y pedidos</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">💬</span>
-            <p>Atención y contacto directo</p>
-          </div>
-        </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="nombre">Nombre Completo:</label>

@@ -96,20 +96,6 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onForgotPass
     <div className="auth-container" style={containerStyle}>
       <div className="auth-card">
         <h1>Inicio de Sesión</h1>
-        <div className="auth-feature-cards">
-          <div className="feature-card">
-            <span className="feature-icon">🕊️</span>
-            <p>Accede a servicios y planes funerarios</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">🌹</span>
-            <p>Gestiona pedidos florales con facilidad</p>
-          </div>
-          <div className="feature-card">
-            <span className="feature-icon">📬</span>
-            <p>Recibe notificaciones en tiempo real</p>
-          </div>
-        </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Correo Electrónico:</label>

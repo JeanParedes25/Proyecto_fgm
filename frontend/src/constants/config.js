@@ -1,6 +1,6 @@
 // Constantes de configuración de la aplicación
 
-export const WHATSAPP_NUMBER = '593998794800';
+export const WHATSAPP_NUMBER = '593999090860';
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
 
 export const EMPRESA_INFO = {

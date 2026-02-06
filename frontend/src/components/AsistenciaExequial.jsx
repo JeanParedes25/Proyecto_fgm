@@ -88,22 +88,18 @@ function AsistenciaExequial({ onVolver }) {
         <h2>💝 ¿Por Qué Elegirnos?</h2>
         <div className="porque-grid">
           <div className="porque-card">
-            <div className="porque-icon">👨‍👩‍👧‍👦</div>
             <h3>Protección Familiar</h3>
             <p>Cuida de los que más amas en los momentos más difíciles</p>
           </div>
           <div className="porque-card">
-            <div className="porque-icon">💰</div>
             <h3>Accesible</h3>
             <p>Desde $1 mensual, adaptable a tu economía</p>
           </div>
           <div className="porque-card">
-            <div className="porque-icon">⚡</div>
             <h3>Cobertura Inmediata</h3>
             <p>Sin trámites complicados ni esperas</p>
           </div>
           <div className="porque-card">
-            <div className="porque-icon">🏆</div>
             <h3>Empresa de Confianza</h3>
             <p>Años de experiencia sirviendo a la comunidad</p>
           </div>
@@ -117,13 +113,11 @@ function AsistenciaExequial({ onVolver }) {
         
         <div className="contacto-grid">
           <div className="contacto-item">
-            <div className="contacto-icon">✉️</div>
             <h4>Correo Electrónico</h4>
             <a href={`mailto:${seguro.contacto.correo}`}>{seguro.contacto.correo}</a>
           </div>
 
           <div className="contacto-item">
-            <div className="contacto-icon">🌐</div>
             <h4>Sitio Web</h4>
             <a href={`https://${seguro.contacto.web}`} target="_blank" rel="noopener noreferrer">
               {seguro.contacto.web}
@@ -131,13 +125,11 @@ function AsistenciaExequial({ onVolver }) {
           </div>
 
           <div className="contacto-item">
-            <div className="contacto-icon">📍</div>
             <h4>Dirección</h4>
             <p>{seguro.contacto.direccion}</p>
           </div>
 
           <div className="contacto-item">
-            <div className="contacto-icon">📱</div>
             <h4>Teléfonos</h4>
             <div className="telefonos-lista">
               {seguro.contacto.telefonos.map((tel, idx) => (

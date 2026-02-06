@@ -4,6 +4,10 @@
   animation: shake 0.5s ease-in-out;
 }
 
+.admin-nav button.con-notificaciones.active {
+  color: white !important;
+}
+
 @keyframes shake {
   0%, 100% {
     transform: translateX(0);

@@ -235,7 +235,6 @@ function Services({ usuario, onBack }) {
       <div className="services-grid">
         {services.length === 0 ? (
           <div className="no-services-message">
-            <div className="construction-icon">🚧</div>
             <h2>Sin servicios disponibles</h2>
             <p>El administrador aún no ha creado servicios.</p>
           </div>

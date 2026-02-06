@@ -117,7 +117,6 @@ function ObituariosPublicos() {
               <div className="obituario-publico-info">
                 <h3>{obituario.nombre_completo}</h3>
                 <p className="obituario-fecha">
-                  <span className="fecha-icon">🕊️</span>
                   {formatDate(obituario.fecha_fallecimiento)}
                 </p>
               </div>

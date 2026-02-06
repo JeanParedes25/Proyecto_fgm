@@ -416,6 +416,10 @@
   border-color: #a77c4f;
 }
 
+.admin-nav button.con-notificaciones {
+  color: white;
+}
+
 .admin-welcome {
   background: linear-gradient(135deg, #c49a6c15 0%, #a77c4f15 100%);
   border: 2px solid #c49a6c;

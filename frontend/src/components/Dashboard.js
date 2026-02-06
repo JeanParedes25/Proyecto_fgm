@@ -53,6 +53,8 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
   const [loadingUsuarios, setLoadingUsuarios] = useState(false);
   const [errorUsuarios, setErrorUsuarios] = useState('');
   const [successUsuarios, setSuccessUsuarios] = useState('');
+  const [pedidosFloresData, setPedidosFloresData] = useState([]);
+  const [loadingPedidosFlores, setLoadingPedidosFlores] = useState(true);
   const [nuevoUsuario, setNuevoUsuario] = useState({
     nombre: '',
     email: '',
@@ -126,6 +128,41 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
       const interval = setInterval(fetchStats, 30000);
       return () => clearInterval(interval);
     }
+  }, [isAdmin]);
+
+  // Cargar estadísticas de pedidos flores para el gráfico del dashboard
+  useEffect(() => {
+    if (!isAdmin) return;
+
+    const fetchPedidosFlores = async () => {
+      try {
+        setLoadingPedidosFlores(true);
+        const token = localStorage.getItem('token');
+        const response = await fetch('http://localhost:5000/api/estadisticas/admin/pedidos-flores', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setPedidosFloresData(data.datos || []);
+        } else {
+          console.error('Error al obtener datos de pedidos flores');
+          setPedidosFloresData([]);
+        }
+      } catch (error) {
+        console.error('Error al cargar pedidos flores:', error);
+        setPedidosFloresData([]);
+      } finally {
+        setLoadingPedidosFlores(false);
+      }
+    };
+
+    fetchPedidosFlores();
+    // Recargar cada 30 segundos
+    const interval = setInterval(fetchPedidosFlores, 30000);
+    return () => clearInterval(interval);
   }, [isAdmin]);
 
   const fetchUsuarios = async () => {
@@ -375,7 +412,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
         {activeSection === 'dashboard' && (
           <>
             <div className="welcome-section admin-welcome">
-              <h2>¡Bienvenido, {usuario.nombre}! 🔐</h2>
+              <h2>¡Bienvenido, {usuario.nombre}! 🎉</h2>
               <div className="admin-badge">ADMINISTRADOR</div>
               <div className="user-info">
                 <p><strong>Email:</strong> {usuario.email}</p>
@@ -431,7 +468,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
                         ],
                         borderColor: [
                           'rgb(54, 162, 235)',
-                          'rgb(153, 102, 255)',
+                          'rgb(153, 102, 235)',
                           'rgb(255, 99, 132)',
                           'rgb(255, 159, 64)',
                           'rgb(75, 192, 75)'
@@ -496,6 +533,54 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
                   }}
                 />
               </div>
+            </div>
+
+            <div style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', marginTop: '30px' }}>
+              <h3 style={{ textAlign: 'center', marginBottom: '20px' }}>Pedidos de Flores Confirmados</h3>
+              {loadingPedidosFlores ? (
+                <div style={{ textAlign: 'center', padding: '40px' }}>
+                  <p>Cargando datos...</p>
+                </div>
+              ) : pedidosFloresData && pedidosFloresData.length > 0 ? (
+                <Bar
+                  data={{
+                    labels: pedidosFloresData.map(item => item.codigo),
+                    datasets: [
+                      {
+                        label: 'Cantidad Vendida',
+                        data: pedidosFloresData.map(item => item.cantidad),
+                        backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        borderWidth: 1
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    plugins: {
+                      legend: {
+                        display: true,
+                        position: 'top'
+                      },
+                      title: {
+                        display: false
+                      }
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        ticks: {
+                          stepSize: 1
+                        }
+                      }
+                    }
+                  }}
+                />
+              ) : (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                  <p>No existen pedidos confirmados aún.</p>
+                </div>
+              )}
             </div>
 
             <div className="content-section">
@@ -648,7 +733,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
   return (
     <div className="dashboard-container user-dashboard">
       <header className="dashboard-header">
-        <h1>🕊️ Panel de Usuario</h1>
+          <h1>🕊️ Panel de Usuario</h1>
         <div className="header-actions">
           {onGoToPerfil && (
             <button className="perfil-btn" onClick={onGoToPerfil}>
@@ -702,7 +787,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
           className={activeSection === 'obituario' ? 'active' : ''}
           onClick={() => setActiveSection('obituario')}
         >
-          📰 Obituario Online
+          🕯️ Obituario Online
         </button>
         <button 
           className={activeSection === 'contacto' ? 'active' : ''}
@@ -715,7 +800,7 @@ function Dashboard({ usuario, isGuest, onLogout, onGoToPerfil }) {
       {activeSection === 'dashboard' && (
         <>
           <div className="welcome-section user-welcome">
-            <h2>¡Bienvenido, {usuario.nombre}! 💝</h2>
+            <h2>¡Bienvenido, {usuario.nombre}! 💐</h2>
             <p className="welcome-subtitle">Gracias por confiar en Funerales Gonzalo Mendoza</p>
             <div className="user-info">
               <p><strong>Email:</strong> {usuario.email}</p>
