@@ -6,8 +6,7 @@ const {
   obtenerUsuarios
 } = require('../controllers/estadisticasController');
 const estadisticasFloresController = require('../controllers/estadisticasFloresController');
-const { isAdmin } = require('../middleware/auth');
-const auth = require('../middleware/auth');
+const { auth, isAdmin } = require('../middleware/auth');
 
 // Rutas públicas
 router.get('/', obtenerEstadisticas);

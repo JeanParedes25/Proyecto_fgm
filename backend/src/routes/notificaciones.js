@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const notificacionController = require('../controllers/notificacionController');
-const auth = require('../middleware/auth');
-const { isAdmin } = require('../middleware/auth');
+const { auth, isAdmin } = require('../middleware/auth');
 
 // Todas las rutas requieren autenticación de admin
 router.use(auth);

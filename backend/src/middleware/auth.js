@@ -60,5 +60,4 @@ const isAdmin = (req, res, next) => {
   }
 };
 
-module.exports = auth;
-module.exports.isAdmin = isAdmin;
+module.exports = { auth, isAdmin };

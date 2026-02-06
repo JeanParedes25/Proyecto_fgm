@@ -4,8 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const servicioController = require('../controllers/servicioController');
-const auth = require('../middleware/auth');
-const { isAdmin } = require('../middleware/auth');
+const { auth, isAdmin } = require('../middleware/auth');
 
 // Configurar Multer para fotos de servicios
 const storage = multer.diskStorage({

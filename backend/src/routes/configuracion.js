@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const configuracionController = require('../controllers/configuracionController');
-const auth = require('../middleware/auth');
-const { isAdmin } = require('../middleware/auth');
+const { auth, isAdmin } = require('../middleware/auth');
 
 // Obtener configuración (solo admin)
 router.get('/', auth, isAdmin, configuracionController.obtenerConfiguracion);

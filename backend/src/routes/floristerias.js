@@ -4,8 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const floristeriasController = require('../controllers/floristeriasController');
-const auth = require('../middleware/auth');
-const { isAdmin } = require('../middleware/auth');
+const { auth, isAdmin } = require('../middleware/auth');
 
 // Configurar Multer para fotos de floristerias
 const storage = multer.diskStorage({

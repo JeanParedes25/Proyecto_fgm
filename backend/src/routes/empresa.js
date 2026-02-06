@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { obtenerEmpresa, actualizarEmpresa } = require('../controllers/empresaController');
-const auth = require('../middleware/auth');
-const isAdmin = require('../middleware/isAdmin');
+const { auth, isAdmin } = require('../middleware/auth');
 
 // GET - Obtener información de la empresa (público)
 router.get('/', obtenerEmpresa);
