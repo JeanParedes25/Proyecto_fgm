@@ -537,11 +537,13 @@
 .google-login-container {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-bottom: 24px;
 }
 
 .google-login-container > div {
-  width: 100% !important;
+  width: auto !important;
+  margin: 0 auto !important;
 }
 
 .google-login-container button {
