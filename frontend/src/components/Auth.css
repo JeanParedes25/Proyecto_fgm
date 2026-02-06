@@ -542,13 +542,15 @@
 }
 
 .google-login-container > div {
-  width: auto !important;
-  margin: 0 auto !important;
+  width: 100% !important;
 }
 
 .google-login-container button {
   width: 100% !important;
-  height: 48px !important;
+  padding: 12px !important;
+  height: auto !important;
+  min-height: 48px !important;
+  font-size: 16px !important;
 }
 
 .auth-links {
