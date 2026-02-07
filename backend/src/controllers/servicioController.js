@@ -1,5 +1,7 @@
 const Servicio = require('../models/servicio');
 const { buildFotosUrls } = require('../utils/urlBuilder');
+const fs = require('fs');
+const path = require('path');
 
 // Obtener todos los servicios
 const obtenerServicios = async (req, res) => {
@@ -156,6 +158,23 @@ const eliminarServicio = async (req, res) => {
       return res.status(404).json({
         success: false,
         mensaje: 'Servicio no encontrado'
+      });
+    }
+
+    // Intentar eliminar imágenes del servidor
+    if (servicio.fotos && Array.isArray(servicio.fotos)) {
+      servicio.fotos.forEach(foto => {
+        if (foto.url) {
+          try {
+            const filename = foto.url.split('/').pop();
+            const imagePath = path.join(__dirname, '../../uploads/servicios', filename);
+            if (fs.existsSync(imagePath)) {
+              fs.unlinkSync(imagePath);
+            }
+          } catch (err) {
+            console.warn('No se pudo eliminar foto:', err.message);
+          }
+        }
       });
     }
 

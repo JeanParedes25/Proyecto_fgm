@@ -247,9 +247,13 @@ const eliminarObituario = async (req, res) => {
     
     // Eliminar imagen principal si existe
     if (obj.imagen_url) {
-      const imagePath = path.join(__dirname, '../..', obj.imagen_url);
-      if (fs.existsSync(imagePath)) {
-        fs.unlinkSync(imagePath);
+      try {
+        const imagePath = path.join(__dirname, '../..', obj.imagen_url);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      } catch (err) {
+        console.warn('No se pudo eliminar imagen principal:', err.message);
       }
     }
     
@@ -257,9 +261,13 @@ const eliminarObituario = async (req, res) => {
     if (obj.fotos && Array.isArray(obj.fotos)) {
       obj.fotos.forEach(foto => {
         if (foto.url) {
-          const fotoPath = path.join(__dirname, '../..', foto.url);
-          if (fs.existsSync(fotoPath)) {
-            fs.unlinkSync(fotoPath);
+          try {
+            const fotoPath = path.join(__dirname, '../..', foto.url);
+            if (fs.existsSync(fotoPath)) {
+              fs.unlinkSync(fotoPath);
+            }
+          } catch (err) {
+            console.warn('No se pudo eliminar foto:', err.message);
           }
         }
       });

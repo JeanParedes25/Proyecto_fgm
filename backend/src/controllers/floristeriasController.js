@@ -195,10 +195,14 @@ const eliminarFlor = async (req, res) => {
     if (flor.fotos && Array.isArray(flor.fotos)) {
       flor.fotos.forEach(foto => {
         if (foto.url) {
-          const filename = foto.url.split('/').pop();
-          const imagePath = path.join(__dirname, '../../uploads/floristerias', filename);
-          if (fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
+          try {
+            const filename = foto.url.split('/').pop();
+            const imagePath = path.join(__dirname, '../../uploads/floristerias', filename);
+            if (fs.existsSync(imagePath)) {
+              fs.unlinkSync(imagePath);
+            }
+          } catch (err) {
+            console.warn('No se pudo eliminar foto:', err.message);
           }
         }
       });
