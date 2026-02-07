@@ -117,19 +117,10 @@ function AsistenciaExequial({ onVolver }) {
       )}
 
       {/* Call to Action */}
-      <div className="cta-section">
-        <div className="cta-content">
-          <h2>¿Listo para Proteger a tu Familia?</h2>
-          <p>Contáctanos hoy mismo por WhatsApp para más información</p>
-          <div className="cta-buttons">
-            <button onClick={onVolver} className="btn-cta-primary">
-              📲 Contáctanos
-            </button>
-            <button onClick={onVolver} className="btn-cta-secondary">
-              ← Volver
-            </button>
-          </div>
-        </div>
+      <div style={{ maxWidth: '1200px', margin: '60px auto 40px', textAlign: 'center' }}>
+        <button onClick={onVolver} className="btn-volver">
+          ← Volver
+        </button>
       </div>
     </div>
   );

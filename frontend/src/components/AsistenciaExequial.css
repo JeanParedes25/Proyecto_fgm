@@ -2,7 +2,7 @@
 .asistencia-exequial-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f2ed 0%, #ebe5dc 100%);
-  padding-bottom: 60px;
+  padding: 20px 20px 60px 20px;
 }
 
 .asistencia-loading,
@@ -22,9 +22,10 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
-  margin: 20px;
+  margin: 0 0 40px 20px;
   transition: all 0.3s;
   box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+  display: inline-block;
 }
 
 .btn-volver-top:hover {
@@ -38,9 +39,12 @@
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0 auto 80px;
   padding: 60px 40px;
   align-items: center;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 .hero-content {
@@ -112,7 +116,7 @@
 /* Beneficios Section */
 .beneficios-section {
   max-width: 1400px;
-  margin: 80px auto;
+  margin: 100px auto;
   padding: 60px 40px;
   background: white;
   border-radius: 20px;
@@ -120,10 +124,13 @@
 }
 
 .beneficios-section h2 {
-  text-align: center;
-  font-size: 42px;
+  text-align: left;
+  font-size: 32px;
   color: #2b2f38;
-  margin-bottom: 50px;
+  margin: 0 0 40px 0;
+  border-bottom: 3px solid #c49a6c;
+  padding-bottom: 15px;
+  font-weight: 700;
 }
 
 .beneficios-grid {
@@ -174,15 +181,21 @@
 /* Por qué Section */
 .porque-section {
   max-width: 1400px;
-  margin: 80px auto;
+  margin: 100px auto;
   padding: 60px 40px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
 }
 
 .porque-section h2 {
-  text-align: center;
-  font-size: 42px;
+  text-align: left;
+  font-size: 32px;
   color: #2b2f38;
-  margin-bottom: 50px;
+  margin: 0 0 40px 0;
+  border-bottom: 3px solid #c49a6c;
+  padding-bottom: 15px;
+  font-weight: 700;
 }
 
 .porque-grid {
@@ -456,6 +469,123 @@
   transform: translateY(-3px);
 }
 
+/* Coberturas Section */
+.cobertura-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.cobertura-item {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid rgba(196, 154, 108, 0.15);
+}
+
+.cobertura-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border-color: #c49a6c;
+}
+
+.cobertura-icon {
+  font-size: 28px;
+  min-width: 40px;
+  text-align: center;
+}
+
+.cobertura-item p {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+  font-size: 15px;
+  flex: 1;
+}
+
+/* Requisitos Section */
+.requisitos-section {
+  max-width: 1400px;
+  margin: 100px auto;
+  padding: 60px 40px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+
+.requisitos-section h2 {
+  text-align: left;
+  font-size: 32px;
+  color: #2b2f38;
+  margin: 0 0 40px 0;
+  border-bottom: 3px solid #c49a6c;
+  padding-bottom: 15px;
+  font-weight: 700;
+}
+
+.requisitos-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.requisito-item {
+  background: linear-gradient(135deg, #f3efe8 0%, #ffffff 100%);
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid rgba(196, 154, 108, 0.15);
+}
+
+.requisito-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border-color: #c49a6c;
+}
+
+.requisito-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.requisito-item p {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+/* Button Volver - Final */
+.btn-volver {
+  background: linear-gradient(135deg, #8b7355 0%, #6e5c47 100%);
+  color: white;
+  border: none;
+  padding: 14px 35px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+  display: inline-block;
+}
+
+.btn-volver:hover {
+  background: linear-gradient(135deg, #6e5c47 0%, #5a4a39 100%);
+  transform: translateX(-5px);
+  box-shadow: 0 6px 16px rgba(139, 115, 85, 0.4);
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .exequial-hero {
@@ -489,6 +619,7 @@
   .beneficios-section,
   .porque-section,
   .contacto-section,
+  .requisitos-section,
   .cta-section {
     padding: 40px 20px;
     margin: 40px auto;
@@ -496,15 +627,18 @@
 
   .beneficios-section h2,
   .porque-section h2,
-  .contacto-section h2 {
-    font-size: 32px;
+  .contacto-section h2,
+  .requisitos-section h2 {
+    font-size: 28px;
   }
 
   .beneficios-grid,
   .porque-grid,
-  .contacto-grid {
+  .contacto-grid,
+  .cobertura-list,
+  .requisitos-list {
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 15px;
   }
 
   .cta-content h2 {
