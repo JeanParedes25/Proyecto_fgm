@@ -1,4 +1,5 @@
 const Servicio = require('../models/servicio');
+const { buildFotosUrls } = require('../utils/urlBuilder');
 
 // Obtener todos los servicios
 const obtenerServicios = async (req, res) => {
@@ -10,10 +11,7 @@ const obtenerServicios = async (req, res) => {
     const serviciosConUrl = servicios.map(serv => {
       const obj = serv.toObject ? serv.toObject() : serv;
       if (obj.fotos && Array.isArray(obj.fotos)) {
-        obj.fotos = obj.fotos.map(foto => ({
-          ...foto,
-          url: foto.url ? (foto.url.startsWith('http') ? foto.url : `http://localhost:5000${foto.url}`) : foto.url
-        }));
+        obj.fotos = buildFotosUrls(obj.fotos);
       }
       return obj;
     });
@@ -48,10 +46,7 @@ const obtenerServicioPorId = async (req, res) => {
     
     const obj = servicio.toObject ? servicio.toObject() : servicio;
     if (obj.fotos && Array.isArray(obj.fotos)) {
-      obj.fotos = obj.fotos.map(foto => ({
-        ...foto,
-        url: foto.url ? (foto.url.startsWith('http') ? foto.url : `http://localhost:5000${foto.url}`) : foto.url
-      }));
+      obj.fotos = buildFotosUrls(obj.fotos);
     }
     
     res.json({

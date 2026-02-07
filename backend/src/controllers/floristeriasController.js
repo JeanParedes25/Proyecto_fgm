@@ -1,6 +1,7 @@
 const Flor = require('../models/flor');
 const fs = require('fs');
 const path = require('path');
+const { buildFotosUrls, buildFullUrl } = require('../utils/urlBuilder');
 
 // Obtener todas las flores
 const obtenerFlores = async (req, res) => {
@@ -12,15 +13,12 @@ const obtenerFlores = async (req, res) => {
       
       // Procesar fotos (nueva estructura)
       if (obj.fotos && Array.isArray(obj.fotos)) {
-        obj.fotos = obj.fotos.map(foto => ({
-          ...foto,
-          url: foto.url ? (foto.url.startsWith('http') ? foto.url : `http://localhost:5000${foto.url}`) : foto.url
-        }));
+        obj.fotos = buildFotosUrls(obj.fotos);
       }
       
       // Procesar image (estructura antigua) - mantener compatibilidad
       if (obj.image) {
-        obj.image = obj.image.startsWith('http') ? obj.image : `http://localhost:5000${obj.image}`;
+        obj.image = buildFullUrl(obj.image);
       }
       
       return obj;
@@ -58,15 +56,12 @@ const obtenerFlorPorId = async (req, res) => {
     
     // Procesar fotos (nueva estructura)
     if (obj.fotos && Array.isArray(obj.fotos)) {
-      obj.fotos = obj.fotos.map(foto => ({
-        ...foto,
-        url: foto.url ? (foto.url.startsWith('http') ? foto.url : `http://localhost:5000${foto.url}`) : foto.url
-      }));
+      obj.fotos = buildFotosUrls(obj.fotos);
     }
     
     // Procesar image (estructura antigua) - mantener compatibilidad
     if (obj.image) {
-      obj.image = obj.image.startsWith('http') ? obj.image : `http://localhost:5000${obj.image}`;
+      obj.image = buildFullUrl(obj.image);
     }
 
     res.json({

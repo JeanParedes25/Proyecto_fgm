@@ -2,6 +2,7 @@ const Obituario = require('../models/obituario');
 const path = require('path');
 const fs = require('fs');
 const { registrarEvento } = require('./auditController');
+const { buildFotosUrls, buildFullUrl } = require('../utils/urlBuilder');
 
 // Obtener todos los obituarios
 const obtenerObituarios = async (req, res) => {
@@ -13,15 +14,12 @@ const obtenerObituarios = async (req, res) => {
       
       // Procesar fotos si existen
       if (obj.fotos && Array.isArray(obj.fotos)) {
-        obj.fotos = obj.fotos.map(foto => ({
-          ...foto,
-          url: foto.url ? `http://localhost:5000${foto.url}` : foto.url
-        }));
+        obj.fotos = buildFotosUrls(obj.fotos);
       }
       
       return {
         ...obj,
-        imagen_url: obj.imagen_url ? `http://localhost:5000${obj.imagen_url}` : null
+        imagen_url: buildFullUrl(obj.imagen_url)
       };
     });
     
@@ -55,14 +53,11 @@ const obtenerObituarioPorId = async (req, res) => {
     
     // Procesar fotos si existen
     if (obj.fotos && Array.isArray(obj.fotos)) {
-      obj.fotos = obj.fotos.map(foto => ({
-        ...foto,
-        url: foto.url ? `http://localhost:5000${foto.url}` : foto.url
-      }));
+      obj.fotos = buildFotosUrls(obj.fotos);
     }
     
     if (obj.imagen_url) {
-      obj.imagen_url = `http://localhost:5000${obj.imagen_url}`;
+      obj.imagen_url = buildFullUrl(obj.imagen_url);
     }
     
     res.json({ 
@@ -313,15 +308,12 @@ const obtenerObituariosRecientes = async (req, res) => {
       
       // Procesar fotos si existen
       if (obj.fotos && Array.isArray(obj.fotos)) {
-        obj.fotos = obj.fotos.map(foto => ({
-          ...foto,
-          url: foto.url ? `http://localhost:5000${foto.url}` : foto.url
-        }));
+        obj.fotos = buildFotosUrls(obj.fotos);
       }
       
       return {
         ...obj,
-        imagen_url: obj.imagen_url ? `http://localhost:5000${obj.imagen_url}` : null
+        imagen_url: buildFullUrl(obj.imagen_url)
       };
     });
     
