@@ -80,21 +80,17 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onForgotPass
       console.log('📦 Datos:', { token: data.token ? '✅' : '❌', usuario: data.usuario?.email });
 
       if (response.ok && data.token && data.usuario) {
-        console.log('✅ Google auth exitoso');
+        console.log('✅ Google auth exitoso, guardando en localStorage...');
+        // Guardar token y usuario ANTES de ejecutar callback
         localStorage.setItem('token', data.token);
         localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        console.log('💾 Datos guardados en localStorage');
         
-        // Usar callback del padre para actualizar estado
+        // Ejecutar callback del padre para actualizar estado de React
+        console.log('🎯 Ejecutando callback de login exitoso...');
         onLoginSuccess(data.usuario);
         
-        // Fuerza redireccionamiento después de callback
-        setTimeout(() => {
-          console.log('🔄 Redirigiendo al dashboard...');
-          // Si el componente padre no redirige, forzar reload
-          if (window.location.pathname !== '/dashboard') {
-            window.location.href = '/';
-          }
-        }, 200);
+        // El componente padre se encargará de redirigir al dashboard
       } else {
         console.error('❌ Error en respuesta:', data);
         setError(data.error || 'Error en el login con Google');

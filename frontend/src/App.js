@@ -13,22 +13,35 @@ function App() {
   const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Verificar si hay usuario guardado en localStorage
+  // Restaurar sesión desde localStorage al iniciar la app
   useEffect(() => {
-    // Comentado temporalmente para siempre iniciar en login
-    /*
+    console.log('🔄 [App] Verificando sesión guardada...');
+    
     const usuarioGuardado = localStorage.getItem('usuario');
     const modoInvitado = localStorage.getItem('modoInvitado');
     const token = localStorage.getItem('token');
     
     if (usuarioGuardado && token) {
-      setUsuario(JSON.parse(usuarioGuardado));
-      setCurrentPage('dashboard');
+      try {
+        const usuarioData = JSON.parse(usuarioGuardado);
+        console.log('✅ [App] Sesión encontrada para:', usuarioData.email);
+        setUsuario(usuarioData);
+        setCurrentPage('dashboard');
+      } catch (err) {
+        console.error('❌ [App] Error al parsear usuario guardado:', err);
+        localStorage.removeItem('usuario');
+        localStorage.removeItem('token');
+        setLoading(false);
+        return;
+      }
     } else if (modoInvitado === 'true') {
+      console.log('👤 [App] Sesión de invitado detectada');
       setIsGuest(true);
       setCurrentPage('dashboard');
+    } else {
+      console.log('🔐 [App] No hay sesión guardada, mostrando login');
     }
-    */
+    
     setLoading(false);
   }, []);
 
@@ -97,6 +110,7 @@ function App() {
         {currentPage === 'register' && !usuario && !isGuest && (
           <Register 
             onSwitchToLogin={handleSwitchToLogin}
+            onLoginSuccess={handleLoginSuccess}
           />
         )}
         {currentPage === 'recuperar-password' && (

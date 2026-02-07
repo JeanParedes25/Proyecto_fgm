@@ -4,7 +4,7 @@ import { API_BASE_URL } from '../constants/config';
 import VerificarEmail from './VerificarEmail';
 import './Auth.css';
 
-function Register({ onSwitchToLogin }) {
+function Register({ onSwitchToLogin, onLoginSuccess }) {
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [celular, setCelular] = useState('');
@@ -105,23 +105,17 @@ function Register({ onSwitchToLogin }) {
       console.log('📦 Datos:', { token: data.token ? '✅' : '❌', usuario: data.usuario?.email });
 
       if (response.ok && data.token && data.usuario) {
-        console.log('✅ Google signup exitoso');
+        console.log('✅ Google signup exitoso, guardando en localStorage...');
+        // Guardar token y usuario en localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        console.log('💾 Datos guardados en localStorage');
         
-        // Para Google, no necesita verificación de email
-        // Ir directamente a login (que redirigirá a dashboard)
-        setSuccess('¡Cuenta creada exitosamente con Google!');
+        // Ejecutar callback del padre para actualizar estado y redirigir al dashboard
+        console.log('🎯 Ejecutando callback de login exitoso...');
+        onLoginSuccess(data.usuario);
         
-        setTimeout(() => {
-          console.log('🔄 Redirigiendo a login/dashboard...');
-          // Redirigir al padre para que maneje el nav
-          onSwitchToLogin();
-          // Fuerza a que se vaya al home si el padre no lo hace
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 500);
-        }, 800);
+        // El componente padre (App.js) se encargará de cambiar a dashboard
       } else {
         console.error('❌ Error en respuesta:', data);
         setError(data.error || 'Error en el registro con Google');
