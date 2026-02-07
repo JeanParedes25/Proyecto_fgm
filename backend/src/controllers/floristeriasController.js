@@ -21,7 +21,10 @@ const obtenerFlores = async (req, res) => {
         obj.image = buildFullUrl(obj.image);
       }
       
-      return obj;
+      return {
+        ...obj,
+        id: obj._id || obj.id
+      };
     });
     
     res.json({
@@ -67,7 +70,10 @@ const obtenerFlorPorId = async (req, res) => {
     res.json({
       success: true,
       mensaje: 'Flor obtenida exitosamente',
-      flor: obj
+      flor: {
+        ...obj,
+        id: obj._id || obj.id
+      }
     });
   } catch (error) {
     console.error('Error al obtener flor:', error);

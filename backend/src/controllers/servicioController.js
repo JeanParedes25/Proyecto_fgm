@@ -15,7 +15,10 @@ const obtenerServicios = async (req, res) => {
       if (obj.fotos && Array.isArray(obj.fotos)) {
         obj.fotos = buildFotosUrls(obj.fotos);
       }
-      return obj;
+      return {
+        ...obj,
+        id: obj._id || obj.id
+      };
     });
     
     res.json({
@@ -54,7 +57,10 @@ const obtenerServicioPorId = async (req, res) => {
     res.json({
       success: true,
       mensaje: 'Servicio obtenido exitosamente',
-      servicio: obj
+      servicio: {
+        ...obj,
+        id: obj._id || obj.id
+      }
     });
   } catch (error) {
     console.error('Error al obtener servicio:', error);

@@ -19,6 +19,7 @@ const obtenerObituarios = async (req, res) => {
       
       return {
         ...obj,
+        id: obj._id || obj.id,
         imagen_url: buildFullUrl(obj.imagen_url)
       };
     });
@@ -62,7 +63,10 @@ const obtenerObituarioPorId = async (req, res) => {
     
     res.json({ 
       success: true, 
-      obituario: obj
+      obituario: {
+        ...obj,
+        id: obj._id || obj.id
+      }
     });
   } catch (error) {
     console.error('Error al obtener obituario:', error);
@@ -321,6 +325,7 @@ const obtenerObituariosRecientes = async (req, res) => {
       
       return {
         ...obj,
+        id: obj._id || obj.id,
         imagen_url: buildFullUrl(obj.imagen_url)
       };
     });
