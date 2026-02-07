@@ -211,7 +211,7 @@ function Register({ onSwitchToLogin }) {
             onError={handleGoogleError}
             useOneTap={false}
             theme="outline"
-            size="large"
+            size="medium"
             text="signup_with"
             locale="es"
           />
