@@ -19,6 +19,7 @@ function Register({ onSwitchToLogin }) {
   const [registroExitoso, setRegistroExitoso] = useState(false);
   const [emailRegistrado, setEmailRegistrado] = useState('');
   const [emailFallo, setEmailFallo] = useState(false);
+  const [emailYaExiste, setEmailYaExiste] = useState(false);
 
   const containerStyle = {
     backgroundImage: `url(${process.env.PUBLIC_URL}/logo_fgm.png)`,
@@ -32,9 +33,12 @@ function Register({ onSwitchToLogin }) {
     e.preventDefault();
     setError('');
     setSuccess('');
+    setEmailYaExiste(false);
     setLoading(true);
 
     try {
+      console.log('🔄 Enviando solicitud de registro a:', `${API_BASE_URL}/api/auth/register`);
+      
       const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: {
@@ -49,19 +53,34 @@ function Register({ onSwitchToLogin }) {
         })
       });
 
+      console.log('📥 Respuesta recibida:', response.status, response.statusText);
+
       const data = await response.json();
+      console.log('📦 Datos recibidos:', data);
 
       if (response.ok) {
+        console.log('✅ Registro exitoso');
         setSuccess(data.mensaje);
         setEmailRegistrado(email);
         setEmailFallo(data.emailFallo || false);
+        setLoading(false);
         setRegistroExitoso(true);
       } else {
-        setError(data.error || 'Error en el registro');
+        console.log('❌ Error en registro:', data.error);
+        const errorMsg = data.error || 'Error en el registro';
+        // Si el email ya está registrado, agregar sugerencia de inicio de sesión
+        if (errorMsg.toLowerCase().includes('ya está registrado') || errorMsg.toLowerCase().includes('ya existe')) {
+          setError(errorMsg + ' Por favor, inicie sesión.');
+          setEmailYaExiste(true);
+        } else {
+          setError(errorMsg);
+          setEmailYaExiste(false);
+        }
+        setLoading(false);
       }
     } catch (err) {
+      console.error('💥 Error en catch:', err);
       setError('Error de conexión: ' + err.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -199,6 +218,16 @@ function Register({ onSwitchToLogin }) {
           </div>
           {error && <div className="error-message">{error}</div>}
           {success && <div className="success-message">{success}</div>}
+          {emailYaExiste && (
+            <button 
+              type="button"
+              className="secondary-button"
+              onClick={onSwitchToLogin}
+              style={{ marginBottom: '10px', width: '100%', backgroundColor: '#c49a6c', color: 'white' }}
+            >
+              Ir a Iniciar Sesión
+            </button>
+          )}
           <button type="submit" disabled={loading}>
             {loading ? 'Registrando...' : 'Registrarse'}
           </button>

@@ -101,24 +101,28 @@ exports.register = async (req, res) => {
       ip: req.ip || null
     });
 
-    // Enviar código por correo
-    const emailEnviado = await enviarCodigoVerificacion(
+    // Enviar código por correo (no bloqueante - se ejecuta en background)
+    enviarCodigoVerificacion(
       nuevoUsuario.email,
       codigoVerificacion,
       nuevoUsuario.nombre
-    );
+    ).then(emailEnviado => {
+      if (!emailEnviado) {
+        console.error('⚠️ No se pudo enviar el código de verificación a:', nuevoUsuario.email);
+      } else {
+        console.log('✅ Código enviado exitosamente a:', nuevoUsuario.email);
+      }
+    }).catch(err => {
+      console.error('❌ Error enviando email:', err);
+    });
 
-    if (!emailEnviado) {
-      console.error('⚠️ No se pudo enviar el código de verificación a:', nuevoUsuario.email);
-      // No frenamos el registro si el email falla - el usuario puede intentar reenviar después
-    }
-
+    // Responder inmediatamente sin esperar el email
     res.status(201).json({ 
       mensaje: 'Registro exitoso. Te enviamos un código de verificación a tu correo',
       usuarioId: nuevoUsuario._id,
       email: nuevoUsuario.email,
       requiereVerificacion: true,
-      emailFallo: !emailEnviado
+      emailFallo: false
     });
   } catch (err) {
     console.error('Error en registro:', err);
@@ -534,20 +538,22 @@ exports.reenviarCodigoVerificacion = async (req, res) => {
 
     await usuario.save();
 
-    // Enviar código por correo
-    const emailEnviado = await enviarCodigoVerificacion(
+    // Enviar código por correo (no bloqueante)
+    enviarCodigoVerificacion(
       usuario.email,
       codigoVerificacion,
       usuario.nombre
-    );
+    ).then(emailEnviado => {
+      if (!emailEnviado) {
+        console.error('⚠️ No se pudo reenviar el código a:', usuario.email);
+      } else {
+        console.log('✅ Código reenviado exitosamente a:', usuario.email);
+      }
+    }).catch(err => {
+      console.error('❌ Error reenviando email:', err);
+    });
 
-    if (!emailEnviado) {
-      console.error('⚠️ No se pudo reenviar el código a:', usuario.email);
-      return res.status(500).json({ 
-        error: 'No se pudo enviar el código de verificación. Intenta nuevamente o contacta a soporte.' 
-      });
-    }
-
+    // Responder inmediatamente
     res.json({ 
       mensaje: 'Código de verificación reenviado a tu correo',
       email: usuario.email
@@ -583,20 +589,22 @@ exports.enviarCodigoRecuperacionPassword = async (req, res) => {
 
     await usuario.save();
 
-    // Enviar código por correo
-    const emailEnviado = await enviarCodigoRecuperacion(
+    // Enviar código por correo (no bloqueante)
+    enviarCodigoRecuperacion(
       usuario.email,
       codigoVerificacion,
       usuario.nombre
-    );
+    ).then(emailEnviado => {
+      if (!emailEnviado) {
+        console.error('⚠️ No se pudo enviar el código de recuperación a:', usuario.email);
+      } else {
+        console.log('✅ Código de recuperación enviado exitosamente a:', usuario.email);
+      }
+    }).catch(err => {
+      console.error('❌ Error enviando código de recuperación:', err);
+    });
 
-    if (!emailEnviado) {
-      console.error('⚠️ No se pudo enviar el código de recuperación a:', usuario.email);
-      return res.status(500).json({ 
-        error: 'No se pudo enviar el código de recuperación. Intenta nuevamente o contacta a soporte.' 
-      });
-    }
-
+    // Responder inmediatamente
     res.json({ 
       mensaje: 'Código de recuperación enviado a tu correo',
       email: usuario.email,
