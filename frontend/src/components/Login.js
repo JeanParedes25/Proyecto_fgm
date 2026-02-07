@@ -161,7 +161,7 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onForgotPass
             onError={handleGoogleError}
             useOneTap={false}
             theme="outline"
-            size="medium"
+            size="large"
             text="signin_with"
             locale="es"
           />

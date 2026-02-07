@@ -538,9 +538,11 @@
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
-  margin: 0 auto 24px auto !important;
+  margin: 24px auto !important;
   width: 100% !important;
   padding: 0 !important;
+  box-sizing: border-box !important;
+  min-height: 56px !important;
 }
 
 .google-login-container > div {
@@ -550,6 +552,7 @@
   align-items: center !important;
   margin: 0 !important;
   padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .google-login-container > div > div {
@@ -557,21 +560,19 @@
   display: flex !important;
   justify-content: center !important;
   margin: 0 !important;
-}
-
-.google-login-container iframe {
-  width: 100% !important;
-  max-width: 100% !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .google-login-container button {
   width: 100% !important;
   max-width: 100% !important;
-  padding: 12px !important;
+  padding: 14px 12px !important;
   height: auto !important;
-  min-height: 48px !important;
+  min-height: 56px !important;
   font-size: 16px !important;
   margin: 0 !important;
+  box-sizing: border-box !important;
 }
   min-height: 48px !important;
   font-size: 16px !important;
