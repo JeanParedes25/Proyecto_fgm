@@ -86,10 +86,12 @@ function Register({ onSwitchToLogin }) {
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    console.log('🔵 Google signup callback ejecutado');
     setError('');
     setLoading(true);
 
     try {
+      console.log('📤 Enviando token de Google al backend...');
       const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
         method: 'POST',
         headers: {
@@ -98,26 +100,42 @@ function Register({ onSwitchToLogin }) {
         body: JSON.stringify({ token: credentialResponse.credential })
       });
 
+      console.log('📥 Respuesta backend:', response.status);
       const data = await response.json();
+      console.log('📦 Datos:', { token: data.token ? '✅' : '❌', usuario: data.usuario?.email });
 
-      if (response.ok) {
+      if (response.ok && data.token && data.usuario) {
+        console.log('✅ Google signup exitoso');
         localStorage.setItem('token', data.token);
         localStorage.setItem('usuario', JSON.stringify(data.usuario));
-        setSuccess('Registrado e iniciando sesión...');
+        
+        // Para Google, no necesita verificación de email
+        // Ir directamente a login (que redirigirá a dashboard)
+        setSuccess('¡Cuenta creada exitosamente con Google!');
+        
         setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+          console.log('🔄 Redirigiendo a login/dashboard...');
+          // Redirigir al padre para que maneje el nav
+          onSwitchToLogin();
+          // Fuerza a que se vaya al home si el padre no lo hace
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 500);
+        }, 800);
       } else {
+        console.error('❌ Error en respuesta:', data);
         setError(data.error || 'Error en el registro con Google');
+        setLoading(false);
       }
     } catch (err) {
+      console.error('💥 Error en handleGoogleSuccess:', err);
       setError('Error de conexión: ' + err.message);
-    } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleError = () => {
+  const handleGoogleError = (error) => {
+    console.error('🔴 Error Google OAuth:', error);
     setError('Error al registrarse con Google');
   };
 

@@ -33,8 +33,11 @@ function App() {
   }, []);
 
   const handleLoginSuccess = (usuarioData) => {
+    console.log('✅ Login exitoso:', usuarioData.email);
     setUsuario(usuarioData);
     setCurrentPage('dashboard');
+    // Scroll a top para mejor UX
+    window.scrollTo(0, 0);
   };
 
   const handleForgotPassword = () => {

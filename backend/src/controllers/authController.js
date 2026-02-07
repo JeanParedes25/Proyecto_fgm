@@ -370,8 +370,10 @@ exports.reautenticar = async (req, res) => {
 exports.googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
+    console.log('🔵 [Google Login] Iniciando validación de token');
 
     if (!token) {
+      console.log('❌ [Google Login] Token no proporcionado');
       return res.status(400).json({ error: 'Token de Google es requerido' });
     }
 
@@ -379,6 +381,7 @@ exports.googleLogin = async (req, res) => {
     const { OAuth2Client } = require('google-auth-library');
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+    console.log('🔐 [Google Login] Verificando token con Google...');
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID
@@ -386,8 +389,10 @@ exports.googleLogin = async (req, res) => {
 
     const payload = ticket.getPayload();
     const { sub: googleId, email, name, picture } = payload;
+    console.log('✅ [Google Login] Token válido para:', email);
 
     if (!email) {
+      console.log('❌ [Google Login] No se obtuvo email del token');
       return res.status(400).json({ error: 'No se pudo obtener el email de Google' });
     }
 
@@ -397,7 +402,7 @@ exports.googleLogin = async (req, res) => {
 
     if (!usuario) {
       // Crear nuevo usuario con Google
-      console.log('🆕 Creando nuevo usuario con Google:', emailNormalizado);
+      console.log('🆕 [Google Login] Creando nuevo usuario:', emailNormalizado);
       
       usuario = new Usuario({
         nombre: name || 'Usuario de Google',
@@ -425,10 +430,13 @@ exports.googleLogin = async (req, res) => {
         ip: req.ip || null
       });
 
-      console.log('✅ Usuario creado con Google:', usuario.email);
+      console.log('✅ [Google Login] Usuario creado con Google:', usuario.email);
+    } else {
+      console.log('👤 [Google Login] Usuario existente encontrado:', email);
     }
 
     if (usuario.activo === false) {
+      console.log('🔒 [Google Login] Usuario inactivo:', email);
       return res.status(403).json({ error: 'Usuario inactivo. Contacta al administrador' });
     }
 
@@ -467,10 +475,11 @@ exports.googleLogin = async (req, res) => {
       rol: usuario.rol,
       accion: 'LOGIN',
       modulo: 'Usuarios',
-      descripcion: `Login con Google (${emailNormalizado}) desde ${req.ip || 'IP desconocida'}`,
+      descripcion: `Login con Google (${emailNormalizado})`,
       ip: req.ip || null
     });
 
+    console.log('✅ [Google Login] Autenticación exitosa:', usuario.email);
     res.json({
       token: jwtToken,
       usuario: {
@@ -482,7 +491,7 @@ exports.googleLogin = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Error en login de Google:', err);
+    console.error('❌ [Google Login] Error:', err.message);
     res.status(500).json({ error: 'Error en el servidor: ' + err.message });
   }
 };

@@ -61,10 +61,12 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onForgotPass
   };
 
   const handleGoogleSuccess = async (credentialResponse) => {
+    console.log('🔵 Google callback ejecutado');
     setError('');
     setLoading(true);
 
     try {
+      console.log('📤 Enviando token de Google al backend...');
       const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
         method: 'POST',
         headers: {
@@ -73,23 +75,40 @@ function Login({ onLoginSuccess, onSwitchToRegister, onGuestAccess, onForgotPass
         body: JSON.stringify({ token: credentialResponse.credential })
       });
 
+      console.log('📥 Respuesta backend:', response.status);
       const data = await response.json();
+      console.log('📦 Datos:', { token: data.token ? '✅' : '❌', usuario: data.usuario?.email });
 
-      if (response.ok) {
+      if (response.ok && data.token && data.usuario) {
+        console.log('✅ Google auth exitoso');
         localStorage.setItem('token', data.token);
         localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        
+        // Usar callback del padre para actualizar estado
         onLoginSuccess(data.usuario);
+        
+        // Fuerza redireccionamiento después de callback
+        setTimeout(() => {
+          console.log('🔄 Redirigiendo al dashboard...');
+          // Si el componente padre no redirige, forzar reload
+          if (window.location.pathname !== '/dashboard') {
+            window.location.href = '/';
+          }
+        }, 200);
       } else {
+        console.error('❌ Error en respuesta:', data);
         setError(data.error || 'Error en el login con Google');
+        setLoading(false);
       }
     } catch (err) {
+      console.error('💥 Error en handleGoogleSuccess:', err);
       setError('Error de conexión: ' + err.message);
-    } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleError = () => {
+  const handleGoogleError = (error) => {
+    console.error('🔴 Error Google OAuth:', error);
     setError('Error al iniciar sesión con Google');
   };
 
