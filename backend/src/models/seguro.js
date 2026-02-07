@@ -19,7 +19,20 @@ const seguroSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  precio: {
+    type: Number,
+    default: 0
+  },
   beneficios: [{
+    type: String
+  }],
+  caracteristicas: [{
+    type: String
+  }],
+  coberturas: [{
+    type: String
+  }],
+  requisitos: [{
     type: String
   }],
   contacto: {
@@ -34,7 +47,7 @@ const seguroSchema = new mongoose.Schema({
   }
 }, {
   timestamps: true,
-  collection: 'servicios' // Nombre explícito de la colección
+  collection: 'seguros' // Nombre correcto de la colección
 });
 
 module.exports = mongoose.model('Seguro', seguroSchema);
