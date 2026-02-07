@@ -396,7 +396,36 @@ exports.googleLogin = async (req, res) => {
     let usuario = await Usuario.findOne({ email: emailNormalizado });
 
     if (!usuario) {
-      return res.status(403).json({ error: 'Acceso denegado. Usuario no registrado' });
+      // Crear nuevo usuario con Google
+      console.log('🆕 Creando nuevo usuario con Google:', emailNormalizado);
+      
+      usuario = new Usuario({
+        nombre: name || 'Usuario de Google',
+        email: emailNormalizado,
+        celular: '', // No disponible desde Google
+        password: '', // No necesario para usuarios de Google
+        proveedor: 'google',
+        googleId: googleId,
+        fotoGoogle: picture,
+        verificadoCorreo: true, // Google ya verificó el email
+        rol: emailNormalizado === ADMIN_EMAIL ? 'admin' : 'usuario',
+        activo: true
+      });
+
+      await usuario.save();
+
+      // Registrar creación
+      await registrarEvento({
+        usuarioId: usuario._id.toString(),
+        nombreUsuario: usuario.nombre,
+        rol: usuario.rol,
+        accion: 'CREATE',
+        modulo: 'Usuarios',
+        descripcion: `Registro automático con Google (${emailNormalizado})`,
+        ip: req.ip || null
+      });
+
+      console.log('✅ Usuario creado con Google:', usuario.email);
     }
 
     if (usuario.activo === false) {
