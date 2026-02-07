@@ -540,6 +540,8 @@
   align-items: center;
   margin: 24px 0;
   width: 100%;
+  overflow: hidden;
+  min-height: 44px;
 }
 
 .auth-links {
