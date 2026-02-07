@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './AsistenciaExequial.css';
-import { WHATSAPP_NUMBER } from '../constants/config';
+import { WHATSAPP_NUMBER, API_BASE_URL } from '../constants/config';
 
 function AsistenciaExequial({ onVolver }) {
   const [seguro, setSeguro] = useState(null);
@@ -13,7 +13,7 @@ function AsistenciaExequial({ onVolver }) {
   const fetchSeguro = async () => {
     try {
       console.log('Intentando cargar seguro exequial...');
-      const res = await fetch('http://localhost:5000/api/seguros/exequial');
+      const res = await fetch(`${API_BASE_URL}/api/seguros/exequial`);
       console.log('Respuesta recibida:', res.status);
       
       if (res.ok) {

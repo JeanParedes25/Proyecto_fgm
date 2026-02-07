@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './AdminFloristerias.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminFloristerias() {
   const [flores, setFlores] = useState([]);
@@ -20,7 +21,7 @@ function AdminFloristerias() {
 
   const fetchFlores = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/floristerias', {
+      const response = await fetch(`${API_BASE_URL}/api/floristerias`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -99,8 +100,8 @@ function AdminFloristerias() {
 
     try {
       const url = editingId
-        ? `http://localhost:5000/api/floristerias/${editingId}`
-        : 'http://localhost:5000/api/floristerias';
+        ? `${API_BASE_URL}/api/floristerias/${editingId}`
+        : `${API_BASE_URL}/api/floristerias`;
 
       const method = editingId ? 'PUT' : 'POST';
 
@@ -151,7 +152,7 @@ function AdminFloristerias() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/floristerias/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/floristerias/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

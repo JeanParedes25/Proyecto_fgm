@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import './AdminServicios.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminServicios() {
   const [servicios, setServicios] = useState([]);
@@ -23,7 +24,7 @@ function AdminServicios() {
 
   const fetchServicios = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/servicios', {
+      const res = await fetch(`${API_BASE_URL}/api/servicios`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -88,8 +89,8 @@ function AdminServicios() {
     });
 
     const url = editingId
-      ? `http://localhost:5000/api/servicios/${editingId}`
-      : 'http://localhost:5000/api/servicios';
+      ? `${API_BASE_URL}/api/servicios/${editingId}`
+      : `${API_BASE_URL}/api/servicios`;
     const method = editingId ? 'PUT' : 'POST';
 
     try {
@@ -128,7 +129,7 @@ function AdminServicios() {
   const onDelete = async (id) => {
     if (!window.confirm('¿Eliminar este servicio?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/servicios/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/servicios/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

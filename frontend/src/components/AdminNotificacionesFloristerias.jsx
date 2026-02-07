@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './AdminNotificacionesFloristerias.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminNotificacionesFloristerias() {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -15,8 +16,8 @@ function AdminNotificacionesFloristerias() {
   const fetchNotificaciones = async () => {
     try {
       const url = filtro === 'no-leidas' 
-        ? 'http://localhost:5000/api/notificaciones-floristerias/no-leidas'
-        : 'http://localhost:5000/api/notificaciones-floristerias';
+        ? `${API_BASE_URL}/api/notificaciones-floristerias/no-leidas`
+        : `${API_BASE_URL}/api/notificaciones-floristerias`;
 
       const response = await fetch(url, {
         headers: {
@@ -37,7 +38,7 @@ function AdminNotificacionesFloristerias() {
 
   const marcarComoLeida = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/notificaciones-floristerias/${id}/leer`, {
+      const response = await fetch(`${API_BASE_URL}/api/notificaciones-floristerias/${id}/leer`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -58,7 +59,7 @@ function AdminNotificacionesFloristerias() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/notificaciones-floristerias/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/notificaciones-floristerias/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

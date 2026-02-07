@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AdminNotificaciones.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminNotificaciones() {
   const [notificaciones, setNotificaciones] = useState([]);
@@ -15,8 +16,8 @@ function AdminNotificaciones() {
   const fetchNotificaciones = async () => {
     try {
       const url = filtro === 'no-leidas'
-        ? 'http://localhost:5000/api/notificaciones/no-leidas'
-        : 'http://localhost:5000/api/notificaciones';
+        ? `${API_BASE_URL}/api/notificaciones/no-leidas`
+        : `${API_BASE_URL}/api/notificaciones`;
 
       const response = await fetch(url, {
         headers: {
@@ -44,7 +45,7 @@ function AdminNotificaciones() {
 
   const marcarComoLeida = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/notificaciones/${id}/leer`, {
+      const response = await fetch(`${API_BASE_URL}/api/notificaciones/${id}/leer`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -61,7 +62,7 @@ function AdminNotificaciones() {
 
   const marcarTodasComoLeidas = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/notificaciones/marcar-todas-leidas', {
+      const response = await fetch(`${API_BASE_URL}/api/notificaciones/marcar-todas-leidas`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -79,7 +80,7 @@ function AdminNotificaciones() {
   const eliminarNotificacion = async (id) => {
     if (window.confirm('¿Estás seguro de eliminar esta notificación?')) {
       try {
-        const response = await fetch(`http://localhost:5000/api/notificaciones/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/notificaciones/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -98,7 +99,7 @@ function AdminNotificaciones() {
   const limpiarLeidas = async () => {
     if (window.confirm('¿Eliminar todas las notificaciones leídas?')) {
       try {
-        const response = await fetch('http://localhost:5000/api/notificaciones/limpiar/leidas', {
+        const response = await fetch(`${API_BASE_URL}/api/notificaciones/limpiar/leidas`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`

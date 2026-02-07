@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './AdminCuentasBancarias.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminCuentasBancarias() {
   const [cuentas, setCuentas] = useState([]);
@@ -19,7 +20,7 @@ function AdminCuentasBancarias() {
 
   const fetchCuentas = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/cuentas-bancarias/todas', {
+      const response = await fetch(`${API_BASE_URL}/api/cuentas-bancarias/todas`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -54,8 +55,8 @@ function AdminCuentasBancarias() {
 
     try {
       const url = editingId
-        ? `http://localhost:5000/api/cuentas-bancarias/${editingId}`
-        : 'http://localhost:5000/api/cuentas-bancarias';
+        ? `${API_BASE_URL}/api/cuentas-bancarias/${editingId}`
+        : `${API_BASE_URL}/api/cuentas-bancarias`;
 
       const method = editingId ? 'PUT' : 'POST';
 
@@ -99,7 +100,7 @@ function AdminCuentasBancarias() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/cuentas-bancarias/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/cuentas-bancarias/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

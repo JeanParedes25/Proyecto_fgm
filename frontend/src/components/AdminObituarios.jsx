@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './AdminObituarios.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminObituarios() {
   const [obituarios, setObituarios] = useState([]);
@@ -22,7 +23,7 @@ function AdminObituarios() {
 
   const fetchObituarios = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/obituarios', {
+      const response = await fetch(`${API_BASE_URL}/api/obituarios`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -103,8 +104,8 @@ function AdminObituarios() {
 
     try {
       const url = editingId 
-        ? `http://localhost:5000/api/obituarios/${editingId}`
-        : 'http://localhost:5000/api/obituarios';
+        ? `${API_BASE_URL}/api/obituarios/${editingId}`
+        : `${API_BASE_URL}/api/obituarios`;
       
       const method = editingId ? 'PUT' : 'POST';
       
@@ -150,7 +151,7 @@ function AdminObituarios() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/obituarios/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/obituarios/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`

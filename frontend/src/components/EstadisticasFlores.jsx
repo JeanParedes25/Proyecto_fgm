@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
 import './EstadisticasFlores.css';
+import { API_BASE_URL } from '../constants/config';
 
 function EstadisticasFlores() {
   const [estadisticas, setEstadisticas] = useState(null);
@@ -15,7 +16,7 @@ function EstadisticasFlores() {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/estadisticas/flores', {
+      const response = await fetch(`${API_BASE_URL}/api/estadisticas/flores`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

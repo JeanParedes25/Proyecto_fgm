@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Auth.css';
+import { API_BASE_URL } from '../constants/config';
 
 function RecuperarPassword({ onBackToLogin, onRecoverySuccess }) {
   // Estados generales
@@ -30,7 +31,7 @@ function RecuperarPassword({ onBackToLogin, onRecoverySuccess }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/enviar-codigo-recuperacion', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/enviar-codigo-recuperacion`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -67,7 +68,7 @@ function RecuperarPassword({ onBackToLogin, onRecoverySuccess }) {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verificar-codigo-recuperacion', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/verificar-codigo-recuperacion`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -108,7 +109,7 @@ function RecuperarPassword({ onBackToLogin, onRecoverySuccess }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/enviar-codigo-recuperacion', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/enviar-codigo-recuperacion`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

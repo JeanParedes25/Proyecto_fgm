@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './Perfil.css';
+import { API_BASE_URL } from '../constants/config';
 
 function Perfil({ usuario, onBack }) {
   const [perfil, setPerfil] = useState(null);
@@ -33,7 +34,7 @@ function Perfil({ usuario, onBack }) {
   const cargarPerfil = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/perfil', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/perfil`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -64,7 +65,7 @@ function Perfil({ usuario, onBack }) {
   const handleReautenticar = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/reautenticar', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/reautenticar`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ function Perfil({ usuario, onBack }) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/perfil', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/perfil`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +127,7 @@ function Perfil({ usuario, onBack }) {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/auth/cambiar-password', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/cambiar-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

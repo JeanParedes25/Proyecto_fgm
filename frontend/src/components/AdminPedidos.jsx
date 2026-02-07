@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './AdminPedidos.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminPedidos() {
   const [pedidos, setPedidos] = useState([]);
@@ -13,7 +14,7 @@ function AdminPedidos() {
   const fetchPedidos = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/pedidos-floristerias/todos', {
+      const response = await fetch(`${API_BASE_URL}/api/pedidos-floristerias/todos`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -33,7 +34,7 @@ function AdminPedidos() {
   const actualizarEstado = async (pedidoId, nuevoEstado) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/pedidos-floristerias/${pedidoId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/pedidos-floristerias/${pedidoId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

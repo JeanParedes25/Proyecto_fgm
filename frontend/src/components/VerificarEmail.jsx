@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './Auth.css';
+import { API_BASE_URL } from '../constants/config';
 
 function VerificarEmail({ email, onVerificationSuccess, onBackToLogin }) {
   const [codigo, setCodigo] = useState('');
@@ -23,7 +24,7 @@ function VerificarEmail({ email, onVerificationSuccess, onBackToLogin }) {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/verificar-codigo-correo', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/verificar-codigo-correo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -54,7 +55,7 @@ function VerificarEmail({ email, onVerificationSuccess, onBackToLogin }) {
     setResending(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/reenviar-codigo-verificacion', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/reenviar-codigo-verificacion`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

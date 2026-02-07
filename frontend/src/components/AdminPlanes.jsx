@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import './AdminPlanes.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminPlanes() {
   const [planes, setPlanes] = useState([]);
@@ -79,7 +80,7 @@ function AdminPlanes() {
 
   const fetchPlanes = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/planes/admin/todos', {
+      const res = await fetch(`${API_BASE_URL}/api/planes/admin/todos`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -165,8 +166,8 @@ function AdminPlanes() {
     e.preventDefault();
     
     const url = editingId
-      ? `http://localhost:5000/api/planes/${editingId}`
-      : 'http://localhost:5000/api/planes';
+      ? `${API_BASE_URL}/api/planes/${editingId}`
+      : `${API_BASE_URL}/api/planes`;
     const method = editingId ? 'PUT' : 'POST';
 
     try {
@@ -306,7 +307,7 @@ function AdminPlanes() {
   const eliminarPlan = async (id) => {
     if (!window.confirm('¿Eliminar este plan?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/planes/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/planes/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -322,7 +323,7 @@ function AdminPlanes() {
 
   const toggleDestacado = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/planes/${id}/destacado`, {
+      const res = await fetch(`${API_BASE_URL}/api/planes/${id}/destacado`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });

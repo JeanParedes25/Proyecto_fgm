@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './AsistenciaPrepago.css';
-import { WHATSAPP_NUMBER } from '../constants/config';
+import { API_BASE_URL, WHATSAPP_NUMBER } from '../constants/config';
 
 function AsistenciaPrepago({ onVolver }) {
   const [planes, setPlanes] = useState([]);
@@ -84,8 +84,8 @@ function AsistenciaPrepago({ onVolver }) {
   const fetchPlanes = async (esAdmin) => {
     try {
       const endpoint = esAdmin 
-        ? 'http://localhost:5000/api/asistencia-prepago/admin/todos'
-        : 'http://localhost:5000/api/asistencia-prepago/activos';
+        ? `${API_BASE_URL}/api/asistencia-prepago/admin/todos`
+        : `${API_BASE_URL}/api/asistencia-prepago/activos`;
       
       const headers = esAdmin 
         ? { Authorization: `Bearer ${token}` }
@@ -174,8 +174,8 @@ function AsistenciaPrepago({ onVolver }) {
     e.preventDefault();
     
     const url = editingId
-      ? `http://localhost:5000/api/asistencia-prepago/${editingId}`
-      : 'http://localhost:5000/api/asistencia-prepago';
+      ? `${API_BASE_URL}/api/asistencia-prepago/${editingId}`
+      : `${API_BASE_URL}/api/asistencia-prepago`;
     const method = editingId ? 'PUT' : 'POST';
 
     try {
@@ -280,7 +280,7 @@ function AsistenciaPrepago({ onVolver }) {
   const eliminarPlan = async (id) => {
     if (!window.confirm('¿Eliminar este plan?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/asistencia-prepago/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/api/asistencia-prepago/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -296,7 +296,7 @@ function AsistenciaPrepago({ onVolver }) {
 
   const toggleDestacado = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/asistencia-prepago/${id}/destacado`, {
+      const res = await fetch(`${API_BASE_URL}/api/asistencia-prepago/${id}/destacado`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` }
       });

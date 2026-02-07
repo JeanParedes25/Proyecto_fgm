@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import './AdminAudit.css';
+import { API_BASE_URL } from '../constants/config';
 
 function AdminAudit() {
   const [auditLogs, setAuditLogs] = useState([]);
@@ -12,7 +13,7 @@ function AdminAudit() {
 
   const fetchAuditLogs = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/audit/logs', {
+      const response = await fetch(`${API_BASE_URL}/api/audit/logs`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
