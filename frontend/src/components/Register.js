@@ -18,6 +18,7 @@ function Register({ onSwitchToLogin }) {
   const [loading, setLoading] = useState(false);
   const [registroExitoso, setRegistroExitoso] = useState(false);
   const [emailRegistrado, setEmailRegistrado] = useState('');
+  const [emailFallo, setEmailFallo] = useState(false);
 
   const containerStyle = {
     backgroundImage: `url(${process.env.PUBLIC_URL}/logo_fgm.png)`,
@@ -53,6 +54,7 @@ function Register({ onSwitchToLogin }) {
       if (response.ok) {
         setSuccess(data.mensaje);
         setEmailRegistrado(email);
+        setEmailFallo(data.emailFallo || false);
         setRegistroExitoso(true);
       } else {
         setError(data.error || 'Error en el registro');
@@ -105,6 +107,7 @@ function Register({ onSwitchToLogin }) {
     return (
       <VerificarEmail
         email={emailRegistrado}
+        emailFallo={emailFallo}
         onVerificationSuccess={() => {
           onSwitchToLogin();
         }}

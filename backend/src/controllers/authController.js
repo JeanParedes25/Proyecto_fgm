@@ -102,17 +102,23 @@ exports.register = async (req, res) => {
     });
 
     // Enviar código por correo
-    await enviarCodigoVerificacion(
+    const emailEnviado = await enviarCodigoVerificacion(
       nuevoUsuario.email,
       codigoVerificacion,
       nuevoUsuario.nombre
     );
 
+    if (!emailEnviado) {
+      console.error('⚠️ No se pudo enviar el código de verificación a:', nuevoUsuario.email);
+      // No frenamos el registro si el email falla - el usuario puede intentar reenviar después
+    }
+
     res.status(201).json({ 
       mensaje: 'Registro exitoso. Te enviamos un código de verificación a tu correo',
       usuarioId: nuevoUsuario._id,
       email: nuevoUsuario.email,
-      requiereVerificacion: true
+      requiereVerificacion: true,
+      emailFallo: !emailEnviado
     });
   } catch (err) {
     console.error('Error en registro:', err);
@@ -529,11 +535,18 @@ exports.reenviarCodigoVerificacion = async (req, res) => {
     await usuario.save();
 
     // Enviar código por correo
-    await enviarCodigoVerificacion(
+    const emailEnviado = await enviarCodigoVerificacion(
       usuario.email,
       codigoVerificacion,
       usuario.nombre
     );
+
+    if (!emailEnviado) {
+      console.error('⚠️ No se pudo reenviar el código a:', usuario.email);
+      return res.status(500).json({ 
+        error: 'No se pudo enviar el código de verificación. Intenta nuevamente o contacta a soporte.' 
+      });
+    }
 
     res.json({ 
       mensaje: 'Código de verificación reenviado a tu correo',
@@ -571,11 +584,18 @@ exports.enviarCodigoRecuperacionPassword = async (req, res) => {
     await usuario.save();
 
     // Enviar código por correo
-    await enviarCodigoRecuperacion(
+    const emailEnviado = await enviarCodigoRecuperacion(
       usuario.email,
       codigoVerificacion,
       usuario.nombre
     );
+
+    if (!emailEnviado) {
+      console.error('⚠️ No se pudo enviar el código de recuperación a:', usuario.email);
+      return res.status(500).json({ 
+        error: 'No se pudo enviar el código de recuperación. Intenta nuevamente o contacta a soporte.' 
+      });
+    }
 
     res.json({ 
       mensaje: 'Código de recuperación enviado a tu correo',
