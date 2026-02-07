@@ -49,17 +49,6 @@ function AsistenciaExequial({ onVolver }) {
     );
   }
 
-  const contactarWhatsApp = () => {
-    const mensaje = `Hola, me interesa información sobre el ${seguro.titulo}.%0A%0A` +
-      `Información del seguro:%0A` +
-      `• ${seguro.subtitulo}%0A` +
-      `• ${seguro.descripcion}%0A%0A` +
-      `Quisiera conocer más detalles sobre los beneficios y cobertura.`;
-    
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${mensaje}`;
-    window.open(url, '_blank');
-  };
-
   return (
     <div className="asistencia-exequial-container">
       <button onClick={onVolver} className="btn-volver-top">
@@ -69,126 +58,76 @@ function AsistenciaExequial({ onVolver }) {
       {/* Hero Section */}
       <div className="exequial-hero">
         <div className="hero-content">
-          <div className="hero-icon">🛡️</div>
+          <div className="hero-icon">�️</div>
           <h1>{seguro.titulo}</h1>
-          <h2>{seguro.subtitulo}</h2>
+          <p className="hero-precio">Desde ${seguro.precio}/mes</p>
           <p className="hero-descripcion">{seguro.descripcion}</p>
         </div>
         <div className="hero-image">
           <div className="image-placeholder">
-            <span className="placeholder-icon">🕊️</span>
+            <span className="placeholder-icon">🛡️</span>
             <p>Protegiendo a las familias ecuatorianas</p>
           </div>
         </div>
       </div>
 
-      {/* Beneficios Section */}
-      <div className="beneficios-section">
-        <h2>✨ Beneficios de Nuestro Seguro</h2>
-        <div className="beneficios-grid">
-          {seguro.beneficios.map((beneficio, index) => (
-            <div key={index} className="beneficio-card">
-              <div className="beneficio-icon">✓</div>
-              <p>{beneficio}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Por qué elegirnos */}
-      <div className="porque-section">
-        <h2>💝 ¿Por Qué Elegirnos?</h2>
-        <div className="porque-grid">
-          <div className="porque-card">
-            <h3>Protección Familiar</h3>
-            <p>Cuida de los que más amas en los momentos más difíciles</p>
-          </div>
-          <div className="porque-card">
-            <h3>Accesible</h3>
-            <p>Desde $1 mensual, adaptable a tu economía</p>
-          </div>
-          <div className="porque-card">
-            <h3>Cobertura Inmediata</h3>
-            <p>Sin trámites complicados ni esperas</p>
-          </div>
-          <div className="porque-card">
-            <h3>Empresa de Confianza</h3>
-            <p>Años de experiencia sirviendo a la comunidad</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Contacto Section */}
-      <div className="contacto-section">
-        <h2>📞 Contáctanos</h2>
-        <p className="contacto-intro">Estamos aquí para responder todas tus preguntas</p>
-        
-        <div className="contacto-grid">
-          <div className="contacto-item">
-            <h4>Correo Electrónico</h4>
-            <a href={`mailto:${seguro.contacto.correo}`}>{seguro.contacto.correo}</a>
-          </div>
-
-          <div className="contacto-item">
-            <h4>Sitio Web</h4>
-            <a href={`https://${seguro.contacto.web}`} target="_blank" rel="noopener noreferrer">
-              {seguro.contacto.web}
-            </a>
-          </div>
-
-          <div className="contacto-item">
-            <h4>Dirección</h4>
-            <p>{seguro.contacto.direccion}</p>
-          </div>
-
-          <div className="contacto-item">
-            <h4>📞 Teléfonos</h4>
-            <div className="telefonos-categoria">
-              <p className="telefono-tipo">Celular:</p>
-              <div className="telefonos-lista">
-                <a href="tel:+593992829095" className="telefono-link">099 28 29 095</a>
-                <span className="separador-telefono">|</span>
-                <a href="tel:+593999090860" className="telefono-link">099 90 90 860</a>
+      {/* Características Section */}
+      {seguro.caracteristicas && seguro.caracteristicas.length > 0 && (
+        <div className="beneficios-section">
+          <h2>✨ Características</h2>
+          <div className="beneficios-grid">
+            {seguro.caracteristicas.map((caracteristica, index) => (
+              <div key={index} className="beneficio-card">
+                <div className="beneficio-icon">✓</div>
+                <p>{caracteristica}</p>
               </div>
-            </div>
-            <div className="telefonos-categoria">
-              <p className="telefono-tipo">Oficina:</p>
-              <div className="telefonos-lista">
-                <a href="tel:+59332944608" className="telefono-link">032 944 608</a>
-              </div>
-            </div>
-          </div>
-
-          <div className="contacto-item">
-            <h4>📧 Email</h4>
-            <a href="mailto:israelmendoza18@hotmail.com" className="email-link">israelmendoza18@hotmail.com</a>
-          </div>
-
-          <div className="contacto-item contacto-imagen-item">
-            <img 
-              src={`${process.env.PUBLIC_URL}/previsor.png`}
-              alt="Seguro Previsor" 
-              className="contacto-imagen-institucional"
-            />
+            ))}
           </div>
         </div>
-      </div>
+      )}
+
+      {/* Coberturas Section */}
+      {seguro.coberturas && seguro.coberturas.length > 0 && (
+        <div className="porque-section">
+          <h2>💝 Coberturas Incluidas</h2>
+          <div className="cobertura-list">
+            {seguro.coberturas.map((cobertura, index) => (
+              <div key={index} className="cobertura-item">
+                <span className="cobertura-icon">🏥</span>
+                <p>{cobertura}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Requisitos Section */}
+      {seguro.requisitos && seguro.requisitos.length > 0 && (
+        <div className="requisitos-section">
+          <h2>✅ Requisitos</h2>
+          <div className="requisitos-list">
+            {seguro.requisitos.map((requisito, index) => (
+              <div key={index} className="requisito-item">
+                <span className="requisito-icon">📋</span>
+                <p>{requisito}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Call to Action */}
       <div className="cta-section">
         <div className="cta-content">
           <h2>¿Listo para Proteger a tu Familia?</h2>
-          <p>Contáctanos hoy mismo y conoce más sobre nuestros planes</p>
+          <p>Contáctanos hoy mismo por WhatsApp para más información</p>
           <div className="cta-buttons">
-            <button onClick={contactarWhatsApp} className="btn-cta-primary">
-              📲 Contáctanos por WhatsApp
+            <button onClick={onVolver} className="btn-cta-primary">
+              📲 Contáctanos
             </button>
-            <a href={`tel:${seguro.contacto.telefonos[0].replace(/\s/g, '')}`} className="btn-cta-secondary">
-              📞 Llamar Ahora
-            </a>
-            <a href={`mailto:${seguro.contacto.correo}`} className="btn-cta-secondary">
-              ✉️ Enviar Correo
-            </a>
+            <button onClick={onVolver} className="btn-cta-secondary">
+              ← Volver
+            </button>
           </div>
         </div>
       </div>
