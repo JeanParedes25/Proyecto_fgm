@@ -21,7 +21,7 @@ const seedearClientes = async () => {
       },
       {
         nombre: 'Administrador',
-        email: 'admin@gmail.com',
+        email: 'administrador@gmail.com',
         celular: '0999999999',
         password: 'admin123'
       }
@@ -62,7 +62,7 @@ const seedearClientes = async () => {
     console.log('📝 Credenciales de administradores:');
     console.log('   Email: fgmtransmisiones@gmail.com');
     console.log('   Contraseña: FGM2024!Admin');
-    console.log('   Email: admin@gmail.com');
+    console.log('   Email: administrador@gmail.com');
     console.log('   Contraseña: admin123');
     console.log('   ⚠️  Cambiar estas contraseñas después del primer login');
 

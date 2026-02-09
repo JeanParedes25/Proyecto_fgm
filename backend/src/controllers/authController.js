@@ -9,7 +9,10 @@ const MAX_LOGIN_ATTEMPTS = 5;
 const LOCK_TIME = 15 * 60 * 1000; // 15 minutos
 const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_funeraria_2024';
 const CODIGO_VERIFICACION_TIEMPO = 10 * 60 * 1000; // 10 minutos
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'fgmtransmisiones@gmail.com').toLowerCase();
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'fgmtransmisiones@gmail.com,administrador@gmail.com')
+  .split(',')
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
 
 // Función para generar código numérico de 5 dígitos
 const generarCodigoVerificacion = () => {
@@ -76,7 +79,7 @@ exports.register = async (req, res) => {
       email: emailNormalizado,
       celular,
       password: hashedPassword,
-      rol: emailNormalizado === ADMIN_EMAIL ? 'admin' : 'usuario',
+      rol: ADMIN_EMAILS.includes(emailNormalizado) ? 'admin' : 'usuario',
       activo: true
     });
 
@@ -446,14 +449,10 @@ exports.googleLogin = async (req, res) => {
     if (emailNormalizado === ADMIN_EMAIL && usuario.rol !== 'admin') {
       usuario.rol = 'admin';
     }
-    if (emailNormalizado !== ADMIN_EMAIL && usuario.rol === 'admin') {
-      usuario.rol = 'usuario';
+    if (ADMIN_EMAILS.includes(emailNormalizado) && usuario.rol !== 'admin') {
+      usuario.rol = 'admin';
+      await usuario.save();
     }
-
-    await usuario.save();
-
-    // Generar JWT
-    const jwtToken = jwt.sign(
       {
         id: usuario._id,
         email: usuario.email,
