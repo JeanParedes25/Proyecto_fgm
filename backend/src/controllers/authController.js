@@ -190,13 +190,9 @@ exports.login = async (req, res) => {
       await usuario.save();
     }
 
-    // Forzar regla de administrador unico
+    // Asegurar admin principal, sin degradar otros administradores
     if (emailNormalizado === ADMIN_EMAIL && usuario.rol !== 'admin') {
       usuario.rol = 'admin';
-      await usuario.save();
-    }
-    if (emailNormalizado !== ADMIN_EMAIL && usuario.rol === 'admin') {
-      usuario.rol = 'usuario';
       await usuario.save();
     }
 
