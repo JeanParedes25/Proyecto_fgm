@@ -43,6 +43,14 @@ const ejecutarSeeding = async () => {
         password: adminPassword,
         rol: 'admin',
         isVerified: true
+      },
+      {
+        nombre: 'Administrador',
+        email: 'admin@gmail.com',
+        celular: '0999999999',
+        password: 'admin123',
+        rol: 'admin',
+        isVerified: true
       }
     ];
 
@@ -62,9 +70,10 @@ const ejecutarSeeding = async () => {
     }
 
     console.log('\n🌱 Seeding completado exitosamente');
-    console.log('📝 Usuario administrador creado:');
+    console.log('📝 Usuarios administradores creados:');
     console.log('   Admin: fgmtransmisiones@gmail.com');
-    console.log('   ⚠️  Cambia la contraseña después del primer login');
+    console.log('   Admin: admin@gmail.com');
+    console.log('   ⚠️  Cambia las contraseñas después del primer login');
 
     await mongoose.disconnect();
     console.log('\n✅ Desconexión completada');
