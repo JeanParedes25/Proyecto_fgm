@@ -193,8 +193,8 @@ exports.login = async (req, res) => {
       await usuario.save();
     }
 
-    // Asegurar admin principal, sin degradar otros administradores
-    if (emailNormalizado === ADMIN_EMAIL && usuario.rol !== 'admin') {
+    // Asegurar admin, sin degradar otros administradores
+    if (ADMIN_EMAILS.includes(emailNormalizado) && usuario.rol !== 'admin') {
       usuario.rol = 'admin';
       await usuario.save();
     }
@@ -412,7 +412,7 @@ exports.googleLogin = async (req, res) => {
         googleId: googleId,
         fotoGoogle: picture,
         verificadoCorreo: true, // Google ya verificó el email
-        rol: emailNormalizado === ADMIN_EMAIL ? 'admin' : 'usuario',
+        rol: ADMIN_EMAILS.includes(emailNormalizado) ? 'admin' : 'usuario',
         activo: true
       });
 
@@ -446,13 +446,13 @@ exports.googleLogin = async (req, res) => {
     }
 
     // Forzar regla de administrador unico
-    if (emailNormalizado === ADMIN_EMAIL && usuario.rol !== 'admin') {
-      usuario.rol = 'admin';
-    }
     if (ADMIN_EMAILS.includes(emailNormalizado) && usuario.rol !== 'admin') {
       usuario.rol = 'admin';
       await usuario.save();
     }
+
+    // Generar token JWT
+    const jwtToken = jwt.sign(
       {
         id: usuario._id,
         email: usuario.email,
