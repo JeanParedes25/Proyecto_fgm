@@ -9,7 +9,7 @@ const MAX_LOGIN_ATTEMPTS = 5;
 const LOCK_TIME = 15 * 60 * 1000; // 15 minutos
 const JWT_SECRET = process.env.JWT_SECRET || 'clave_secreta_funeraria_2024';
 const CODIGO_VERIFICACION_TIEMPO = 10 * 60 * 1000; // 10 minutos
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'fgmtransmisiones@gmail.com,administrador@gmail.com')
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'fgmtransmisiones@gmail.com,administrador@gmail.com,admin@gmail.com')
   .split(',')
   .map((email) => email.trim().toLowerCase())
   .filter(Boolean);
